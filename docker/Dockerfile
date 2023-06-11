@@ -1,5 +1,9 @@
 FROM ubuntu:latest
 
+MAINTAINER tuimac
+
+ENV PJT_ROOT_DIR=/root/pwd-manager/src
+ENV PORT=8000
 ENV PJT_NAME=flutter-server
 ENV FLUTTER_DIR=/opt/flutter
 ENV WORK_DIR=/root
@@ -7,7 +11,9 @@ ENV PATH="${PATH}:${FLUTTER_DIR}/bin"
 
 WORKDIR $WORK_DIR
 
-EXPOSE 8000
+EXPOSE $PORT
+
+ADD entrypoint.sh /root/entrypoint.sh
 
 RUN apt update && \
     apt upgrade -y && \
@@ -23,9 +29,9 @@ RUN apt update && \
     curl -L https://raw.githubusercontent.com/tuimac/tools/master/linux/bashrc/.bashrc_node_docker -o /root/.bashrc && \
     curl -L https://raw.githubusercontent.com/tuimac/tools/master/git/setup.sh -o setup.sh && \
     chmod +x setup.sh && \
-    git clone https://github.com/tuimac/flutter-server && \
+    git clone https://github.com/tuimac/pwd-manager && \
     git clone https://github.com/flutter/flutter.git -b stable --depth 1 $FLUTTER_DIR && \
     flutter doctor && \
     flutter config --enable-web
     
-ENTRYPOINT flutter run -d web-server --web-hostname=0.0.0.0 --web-port=8000
+ENTRYPOINT /root/entrypoint.sh ${PJT_ROOT_DIR} ${PORT}

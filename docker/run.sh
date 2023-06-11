@@ -1,12 +1,12 @@
 #!/bin/bash
 
-NAME='flutter'
+NAME='pwd-manager'
 
 function runContainer(){
     docker build -t ${NAME} . --no-cache
     docker run -itd --name ${NAME} \
             -h ${NAME} \
-            -p 80:8000 \
+            -p 4000:8000 \
             ${NAME}
 }
 
