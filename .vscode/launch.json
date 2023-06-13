@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "src",
+            "cwd": "src",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--device-id",
+                "web-server",
+                "--web-port=$PORT"
+            ]
+        }
+    ]
+}

@@ -19,5 +19,4 @@ function main() {
     run_flutter
 }
 
-
 main $1 $2
