@@ -2,14 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "src",
-            "cwd": "src",
+            "name": "start",
+            "program": "app/lib/main.dart",
             "request": "launch",
             "type": "dart",
             "args": [
                 "--device-id",
                 "web-server",
-                "--web-port=$PORT"
+                "--web-hostname=0.0.0.0",
+                "--web-port=80"
             ]
         }
     ]
