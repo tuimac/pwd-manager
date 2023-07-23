@@ -1,13 +1,13 @@
 #!/bin/bash
 
-NAME='flutter-dev'
+NAME='pwd-manager'
 
 function runContainer(){
     docker build -t ${NAME} . --no-cache
     docker run -itd \
         --name ${NAME} \
         -h ${NAME} \
-        -p 8081:80 \
+        -p 8080:80 \
         ${NAME}
 }
 
