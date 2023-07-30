@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'layout/layout.dart';
+import 'router.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,12 +11,14 @@ class MainApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'PWD Manager',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const LayoutWidget(title: 'Password Manager'));
+    return MaterialApp.router(
+      routeInformationProvider: AppRouter.router.routeInformationProvider,
+      routeInformationParser: AppRouter.router.routeInformationParser,
+      routerDelegate: AppRouter.router.routerDelegate,
+      title: 'PWD Manager',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          primarySwatch: Colors.blue, scaffoldBackgroundColor: Colors.black),
+    );
   }
 }
