@@ -18,7 +18,8 @@ class MainApp extends StatelessWidget {
       title: 'PWD Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primarySwatch: Colors.blue, scaffoldBackgroundColor: Colors.black),
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Color.fromARGB(255, 36, 57, 65)),
     );
   }
 }

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
 import '../services/s3.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class ListItems extends StatelessWidget {
-  const ListItems({super.key});
+class ListItems extends StatefulWidget {
+  const ListItems({Key? key}) : super(key: key);
 
+  @override
+  State<ListItems> createState() => _ListItemsState();
+}
+
+class _ListItemsState extends State<ListItems> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,6 +19,7 @@ class ListItems extends StatelessWidget {
             child: FutureBuilder<String?>(
                 future: S3Service.getPasswordFile(),
                 builder: (context, snapshot) {
+                  List<Widget> children;
                   if (snapshot.hasError) {
                     final error = snapshot.error;
                     return Text(
@@ -19,15 +27,25 @@ class ListItems extends StatelessWidget {
                       style: const TextStyle(fontSize: 20, color: Colors.white),
                     );
                   } else if (snapshot.hasData) {
-                    String result = snapshot.data!;
-                    return Text(
-                      result,
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
-                    );
+                    final result = convert.json.decode(snapshot.data!)
+                        as Map<String, dynamic>;
+
+                    children = <Widget>[
+                      Container(
+                          height: 125,
+                          padding: const EdgeInsets.all(4),
+                          child: ListView(children: <Widget>[
+                            Container(
+                              height: 50,
+                              color: Colors.blue[600],
+                              child: Text('Item 1'),
+                            )
+                          ]))
+                    ];
                   } else {
-                    return const Text(
-                      "しばらくお待ち下さい",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    return LoadingAnimationWidget.staggeredDotsWave(
+                      color: Colors.white,
+                      size: 200,
                     );
                   }
                 })));
