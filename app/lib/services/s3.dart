@@ -1,10 +1,13 @@
 import 'package:minio_new/minio.dart';
 import 'dart:typed_data';
+import 'dart:convert' as convert;
 
 class S3Service {
-  static Future<String> getPasswordFile() async {
+  static Future<Map<String, dynamic>> getPasswordFile() async {
     final minio = Minio(
       endPoint: 's3.ap-northeast-3.amazonaws.com',
+      accessKey: '',
+      secretKey: '',
       region: 'ap-northeast-3',
       useSSL: true,
     );
@@ -13,6 +16,7 @@ class S3Service {
     await for (var value in stream) {
       memory.addAll(value);
     }
-    return String.fromCharCodes(Uint8List.fromList(memory));
+    return convert.json.decode(String.fromCharCodes(Uint8List.fromList(memory)))
+        as Map<String, dynamic>;
   }
 }
