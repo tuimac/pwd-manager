@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../services/s3.dart';
+import 'dart:developer';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -9,18 +12,17 @@ class ListItems extends StatefulWidget {
 }
 
 class _ListItemsState extends State<ListItems> {
-  Map<String, dynamic> _password_list = {};
+  late Future<dynamic> _get_password_future;
 
   @override
   void initState() {
     super.initState();
-    getPassowrdFile();
+    _get_password_future = getPassowrdFile();
   }
 
-  void getPassowrdFile() {
-    Future(() async {
-      _password_list = await S3Service.getPasswordFile();
-      setState(() {});
+  Future getPassowrdFile() {
+    return Future(() async {
+      return S3Service.getPasswordFile();
     });
   }
 
