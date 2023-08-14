@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../services/s3.dart';
-import 'dart:developer';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _ListItemsState extends State<ListItems> {
     _get_password_future = getPassowrdFile();
   }
 
-  Future getPassowrdFile() {
+  Future<Map<String, dynamic>> getPassowrdFile() {
     return Future(() async {
       return S3Service.getPasswordFile();
     });
@@ -34,28 +34,46 @@ class _ListItemsState extends State<ListItems> {
 
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
-        body: SizedBox(
-            height: ui_height,
-            child: SingleChildScrollView(
-                child: Column(children: [
-              Container(
-                padding: EdgeInsets.only(
-                    right: ui_width * 0.1, left: ui_width * 0.1),
-                height: ui_height * 0.6,
-                child: ListView.builder(
-                    itemCount: _password_list.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: ListTile(
-                          subtitle: Text(_password_list['passwords']
-                                  [index.toString()]['name']
-                              .toString()),
-                          title: Text(_password_list['passwords']
-                              [index.toString()]['name']),
-                        ),
-                      );
-                    }),
-              )
-            ]))));
+        body: FutureBuilder<dynamic>(
+            future: _get_password_future,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                final error = snapshot.error;
+                return Text(
+                  'Errro: $error',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                );
+              } else if (snapshot.hasData) {
+                var password_data = snapshot.data!['passwords'];
+                return SizedBox(
+                    height: ui_height,
+                    child: SingleChildScrollView(
+                        child: Column(children: [
+                      Container(
+                        padding: EdgeInsets.only(
+                            right: ui_width * 0.1, left: ui_width * 0.1),
+                        height: ui_height * 0.6,
+                        child: ListView.builder(
+                            itemCount: password_data.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: ListTile(
+                                  subtitle: Text(password_data[index.toString()]
+                                          ['name']
+                                      .toString()),
+                                  title: Text(
+                                      password_data[index.toString()]['name']),
+                                ),
+                              );
+                            }),
+                      )
+                    ])));
+              } else {
+                return LoadingAnimationWidget.staggeredDotsWave(
+                  color: Colors.white,
+                  size: 200,
+                );
+              }
+            }));
   }
 }
