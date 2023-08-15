@@ -1,5 +1,5 @@
+// ignore: file_names
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../services/s3.dart';
@@ -12,12 +12,12 @@ class ListItems extends StatefulWidget {
 }
 
 class _ListItemsState extends State<ListItems> {
-  late Future<dynamic> _get_password_future;
+  late Future<dynamic> _getPasswordFuture;
 
   @override
   void initState() {
     super.initState();
-    _get_password_future = getPassowrdFile();
+    _getPasswordFuture = getPassowrdFile();
   }
 
   Future<Map<String, dynamic>> getPassowrdFile() {
@@ -28,51 +28,52 @@ class _ListItemsState extends State<ListItems> {
 
   @override
   Widget build(BuildContext context) {
-    Size ui_size = MediaQuery.of(context).size;
-    double ui_height = ui_size.height;
-    double ui_width = ui_size.width;
+    Size uiSize = MediaQuery.of(context).size;
+    double uiHeight = uiSize.height;
+    double uiWidth = uiSize.width;
 
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
         body: FutureBuilder<dynamic>(
-            future: _get_password_future,
+            future: _getPasswordFuture,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 final error = snapshot.error;
                 return Text(
                   'Errro: $error',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, color: Colors.red),
                 );
               } else if (snapshot.hasData) {
-                var password_data = snapshot.data!['passwords'];
+                var passwordData = snapshot.data!['passwords'];
                 return SizedBox(
-                    height: ui_height,
+                    height: uiHeight,
                     child: SingleChildScrollView(
                         child: Column(children: [
                       Container(
                         padding: EdgeInsets.only(
-                            right: ui_width * 0.1, left: ui_width * 0.1),
-                        height: ui_height * 0.6,
+                            right: uiWidth * 0.1, left: uiWidth * 0.1),
+                        height: uiHeight * 0.6,
                         child: ListView.builder(
-                            itemCount: password_data.length,
+                            itemCount: passwordData.length,
                             itemBuilder: (context, index) {
                               return Card(
                                 child: ListTile(
-                                  subtitle: Text(password_data[index.toString()]
+                                  subtitle: Text(passwordData[index.toString()]
                                           ['name']
                                       .toString()),
                                   title: Text(
-                                      password_data[index.toString()]['name']),
+                                      passwordData[index.toString()]['name']),
                                 ),
                               );
                             }),
                       )
                     ])));
               } else {
-                return LoadingAnimationWidget.staggeredDotsWave(
+                return Center(
+                    child: LoadingAnimationWidget.discreteCircle(
                   color: Colors.white,
-                  size: 200,
-                );
+                  size: uiWidth * 0.2,
+                ));
               }
             }));
   }

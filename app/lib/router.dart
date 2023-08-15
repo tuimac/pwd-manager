@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'widgets/list_widgets.dart';
+import 'widgets/listPwdWidgets.dart';
+import 'widgets/managePwdWidget.dart';
 
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -10,6 +10,11 @@ class AppRouter {
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
             return const ListItems();
+          }),
+      GoRoute(
+          path: '/managepwd',
+          builder: (BuildContext context, GoRouterState state) {
+            return const ManagePassword();
           }),
     ],
   );
