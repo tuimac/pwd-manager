@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:go_router/go_router.dart';
 import '../services/s3.dart';
 
 class ListItems extends StatefulWidget {
@@ -25,6 +26,8 @@ class _ListItemsState extends State<ListItems> {
       return S3Service.getPasswordFile();
     });
   }
+
+  void openPasswordInfo(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +61,13 @@ class _ListItemsState extends State<ListItems> {
                             itemBuilder: (context, index) {
                               return Card(
                                 child: ListTile(
-                                  subtitle: Text(passwordData[index.toString()]
-                                          ['name']
-                                      .toString()),
-                                  title: Text(
-                                      passwordData[index.toString()]['name']),
-                                ),
+                                    subtitle: Text(
+                                        passwordData[index.toString()]['name']
+                                            .toString()),
+                                    title: Text(
+                                        passwordData[index.toString()]['name']),
+                                    onTap: () =>
+                                        GoRouter.of(context).go('/managepwd')),
                               );
                             }),
                       )

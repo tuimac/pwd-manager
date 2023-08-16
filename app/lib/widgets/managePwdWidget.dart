@@ -1,6 +1,5 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ManagePassword extends StatefulWidget {
   const ManagePassword({Key? key}) : super(key: key);
@@ -21,6 +20,8 @@ class _ManagePasswordState extends State<ManagePassword> {
 
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
-        body: const Text('test'));
+        body: const Center(
+            child: Text('test',
+                style: TextStyle(fontSize: 20, color: Colors.white))));
   }
 }
