@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -42,10 +43,19 @@ class _ListItemsState extends State<ListItems> {
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 final error = snapshot.error;
-                return Text(
-                  'Errro: $error',
-                  style: const TextStyle(fontSize: 20, color: Colors.red),
-                );
+                return Center(
+                    child: SizedBox(
+                        width: uiWidth * 0.8,
+                        height: uiHeight * 0.2,
+                        child: Card(
+                            margin: const EdgeInsets.all(30),
+                            color: Colors.grey,
+                            elevation: 10,
+                            shadowColor: Colors.black,
+                            child: Center(
+                                child: Text('Error: $error',
+                                    style: const TextStyle(
+                                        fontSize: 15, color: Colors.black))))));
               } else if (snapshot.hasData) {
                 var passwordData = snapshot.data!['passwords'];
                 return SizedBox(
@@ -57,6 +67,7 @@ class _ListItemsState extends State<ListItems> {
                             right: uiWidth * 0.1, left: uiWidth * 0.1),
                         height: uiHeight * 0.6,
                         child: ListView.builder(
+                            padding: const EdgeInsets.only(top: 30),
                             itemCount: passwordData.length,
                             itemBuilder: (context, index) {
                               return Card(
@@ -66,8 +77,12 @@ class _ListItemsState extends State<ListItems> {
                                             .toString()),
                                     title: Text(
                                         passwordData[index.toString()]['name']),
-                                    onTap: () =>
-                                        GoRouter.of(context).go('/managepwd')),
+                                    onTap: () {
+                                      String passData = json.encode(
+                                          passwordData[index.toString()]);
+                                      GoRouter.of(context)
+                                          .go('/managepwd/$passData');
+                                    }),
                               );
                             }),
                       )
@@ -82,3 +97,5 @@ class _ListItemsState extends State<ListItems> {
             }));
   }
 }
+
+mixin passData {}

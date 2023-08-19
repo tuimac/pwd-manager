@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Color.fromARGB(255, 36, 57, 65)),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 36, 57, 65)),
     );
   }
 }

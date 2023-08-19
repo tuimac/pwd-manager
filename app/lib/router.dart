@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/listPwdWidgets.dart';
@@ -12,9 +14,11 @@ class AppRouter {
             return const ListItems();
           }),
       GoRoute(
-          path: '/managepwd',
+          path: '/managepwd/:data',
           builder: (BuildContext context, GoRouterState state) {
-            return const ManagePassword();
+            final Map<String, dynamic> passwordData =
+                json.decode(state.pathParameters['data']!);
+            return ManagePassword(data: passwordData);
           }),
     ],
   );

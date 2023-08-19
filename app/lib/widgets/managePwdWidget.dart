@@ -2,16 +2,20 @@
 import 'package:flutter/material.dart';
 
 class ManagePassword extends StatefulWidget {
-  const ManagePassword({Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const ManagePassword({Key? key, required this.data}) : super(key: key);
 
   @override
   State<ManagePassword> createState() => _ManagePasswordState();
 }
 
 class _ManagePasswordState extends State<ManagePassword> {
+  late Map<String, dynamic> data;
+
   @override
   void initState() {
     super.initState();
+    data = widget.data;
   }
 
   @override
@@ -20,8 +24,8 @@ class _ManagePasswordState extends State<ManagePassword> {
 
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
-        body: const Center(
-            child: Text('test',
-                style: TextStyle(fontSize: 20, color: Colors.white))));
+        body: Center(
+            child: Text(data['name'],
+                style: const TextStyle(fontSize: 20, color: Colors.white))));
   }
 }
