@@ -16,6 +16,7 @@ ENV FLUTTER_DIR=/opt/flutter
 ENV GITHUB_REPO=pwd-manager
 ENV GITHUB_USER=tuimac
 ENV GITHUB_EMAIL=tuimac.devadm01@gmail.com
+ENV APT_REPO_HOSTNAME=ap-northeast-3.ec2.archive.ubuntu.com
 ENV PJT_DIR="${WORK_DIR}/${GITHUB_REPO}/app"
 ENV ANDROID_HOME=/opt/android
 ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
@@ -37,7 +38,7 @@ WORKDIR ${WORK_DIR}
 
 SHELL ["/bin/bash", "-c"]
 
-RUN sed -i 's/archive.ubuntu.com/ap-northeast-3.ec2.archive.ubuntu.com/g' /etc/apt/sources.list && \
+RUN sed -i 's/archive.ubuntu.com/'$APT_REPO_HOSTNAME'/g' /etc/apt/sources.list && \
     apt update && \
     apt upgrade -y && \
     apt install -y git unzip tree curl jq clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev openjdk-17-jdk openjdk-17-jre fonts-liberation libu2f-udev libvulkan1 wget xdg-utils && \
