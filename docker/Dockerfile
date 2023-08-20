@@ -37,7 +37,8 @@ WORKDIR ${WORK_DIR}
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt update && \
+RUN sed -i 's/archive.ubuntu.com/ap-northeast-3.ec2.archive.ubuntu.com/g' /etc/apt/sources.list && \
+    apt update && \
     apt upgrade -y && \
     apt install -y git unzip tree curl jq clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev openjdk-17-jdk openjdk-17-jre fonts-liberation libu2f-udev libvulkan1 wget xdg-utils && \
     apt --fix-broken install && \
