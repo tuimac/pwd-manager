@@ -9,8 +9,8 @@
             "args": [
                 "--device-id",
                 "web-server",
-                "--web-hostname=0.0.0.0",
-                "--web-port=80"
+                "--web-hostname=develop.tuimac.com",
+                "--web-port=8080"
             ]
         }
     ]
