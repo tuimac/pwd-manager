@@ -41,8 +41,9 @@ SHELL ["/bin/bash", "-c"]
 RUN sed -i 's/archive.ubuntu.com/'$APT_REPO_HOSTNAME'/g' /etc/apt/sources.list && \
     apt update && \
     apt upgrade -y && \
-    apt install -y git unzip tree curl jq clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev openjdk-17-jdk openjdk-17-jre fonts-liberation libu2f-udev libvulkan1 wget xdg-utils && \
+    apt install -y tzdata git unzip tree curl jq clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev openjdk-17-jdk openjdk-17-jre fonts-liberation libu2f-udev libvulkan1 wget xdg-utils && \
     apt --fix-broken install && \
+    apt clean && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -i google-chrome-stable_current_amd64.deb && \
     rm -rf google-chrome-stable_current_amd64.deb && \
@@ -67,3 +68,8 @@ RUN sed -i 's/archive.ubuntu.com/'$APT_REPO_HOSTNAME'/g' /etc/apt/sources.list &
     sdkmanager --install "cmdline-tools;latest" --sdk_root=${ANDROID_HOME} && \
     yes | flutter doctor --android-licenses && \
     flutter doctor
+
+#
+# Timezone
+#
+ENV TZ=Asia/Tokyo
