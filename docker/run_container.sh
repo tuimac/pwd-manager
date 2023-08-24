@@ -6,6 +6,7 @@ function runContainer(){
     docker build -t ${NAME} . --no-cache
     docker run -itd \
         --name ${NAME} \
+        --restart always \
         -h ${NAME} \
         -p 8080:80 \
         ${NAME}
