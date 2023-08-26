@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import '../services/fileio.dart';
+import 'dart:developer';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class ListItems extends StatefulWidget {
 
 class _ListItemsState extends State<ListItems> {
   late Future<dynamic> _getPasswordFuture;
+  late Map<String, dynamic> passwordData;
 
   @override
   void initState() {
@@ -57,7 +59,8 @@ class _ListItemsState extends State<ListItems> {
                                     style: const TextStyle(
                                         fontSize: 15, color: Colors.black))))));
               } else if (snapshot.hasData) {
-                var passwordData = snapshot.data!['passwords'];
+                passwordData = snapshot.data!;
+                log(jsonEncode(passwordData));
                 return SizedBox(
                     height: uiHeight,
                     child: SingleChildScrollView(
@@ -68,18 +71,19 @@ class _ListItemsState extends State<ListItems> {
                         height: uiHeight * 0.6,
                         child: ListView.builder(
                             padding: const EdgeInsets.only(top: 30),
-                            itemCount: passwordData.length,
+                            itemCount: passwordData['passwords'].length,
                             itemBuilder: (context, index) {
                               return Card(
                                 child: ListTile(
-                                    subtitle: Text(
-                                        passwordData[index.toString()]['name']
-                                            .toString()),
-                                    title: Text(
-                                        passwordData[index.toString()]['name']),
+                                    subtitle: Text(passwordData['passwords']
+                                            [index.toString()]['name']
+                                        .toString()),
+                                    title: Text(passwordData['passwords']
+                                        [index.toString()]['name']),
                                     onTap: () {
                                       String passData = json.encode(
-                                          passwordData[index.toString()]);
+                                          passwordData['passwords']
+                                              [index.toString()]);
                                       GoRouter.of(context)
                                           .go('/managepwd/$passData');
                                     }),
@@ -94,7 +98,14 @@ class _ListItemsState extends State<ListItems> {
                   size: uiWidth * 0.2,
                 ));
               }
-            }));
+            }),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            String passData = json.encode(passwordData);
+            GoRouter.of(context).go('/createpwd/$passData');
+          },
+        ));
   }
 }
 
