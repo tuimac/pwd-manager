@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
-import '../services/fileio.dart';
+import '../../services/fileio.dart';
 import 'dart:developer';
 
 class ListItems extends StatefulWidget {
@@ -81,11 +81,11 @@ class _ListItemsState extends State<ListItems> {
                                     title: Text(passwordData['passwords']
                                         [index.toString()]['name']),
                                     onTap: () {
-                                      String passData = json.encode(
+                                      String passData = jsonEncode(
                                           passwordData['passwords']
                                               [index.toString()]);
                                       GoRouter.of(context)
-                                          .go('/managepwd/$passData');
+                                          .push('/editpwd/$passData');
                                     }),
                               );
                             }),
@@ -102,8 +102,8 @@ class _ListItemsState extends State<ListItems> {
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            String passData = json.encode(passwordData);
-            GoRouter.of(context).go('/createpwd/$passData');
+            String passData = jsonEncode(passwordData);
+            GoRouter.of(context).push('/createpwd/$passData');
           },
         ));
   }

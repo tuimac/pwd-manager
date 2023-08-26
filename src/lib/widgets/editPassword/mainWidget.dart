@@ -1,17 +1,15 @@
 // ignore: file_names
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
-class CreatePassword extends StatefulWidget {
+class EditPassword extends StatefulWidget {
   final Map<String, dynamic> data;
-  const CreatePassword({Key? key, required this.data}) : super(key: key);
+  const EditPassword({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<CreatePassword> createState() => _CreatePasswordState();
+  State<EditPassword> createState() => _EditPasswordState();
 }
 
-class _CreatePasswordState extends State<CreatePassword> {
+class _EditPasswordState extends State<EditPassword> {
   late Map<String, dynamic> data;
 
   @override
@@ -27,7 +25,7 @@ class _CreatePasswordState extends State<CreatePassword> {
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
         body: Center(
-            child: Text(data['passwords'],
+            child: Text(data['name'],
                 style: const TextStyle(fontSize: 20, color: Colors.white))));
   }
 }
