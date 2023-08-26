@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "start",
+            "name": "startOnWeb",
             "program": "app/lib/main.dart",
             "request": "launch",
             "type": "dart",
@@ -12,6 +12,12 @@
                 "--web-hostname=0.0.0.0",
                 "--web-port=8080"
             ]
+        },
+        {
+            "name": "startOnLocal",
+            "program": "app/lib/main.dart",
+            "request": "launch",
+            "type": "dart"
         }
     ]
 }
