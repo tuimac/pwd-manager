@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "startOnWeb",
-            "program": "app/lib/main.dart",
+            "program": "src/lib/main.dart",
             "request": "launch",
             "type": "dart",
             "args": [
@@ -15,7 +15,7 @@
         },
         {
             "name": "startOnLocal",
-            "program": "app/lib/main.dart",
+            "program": "src/lib/main.dart",
             "request": "launch",
             "type": "dart"
         }
