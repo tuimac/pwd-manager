@@ -79,6 +79,8 @@ class _ListItemsState extends State<ListItems> {
                                 itemCount: passwordData['passwords'].length,
                                 itemBuilder: (context, index) {
                                   return Card(
+                                    color: const Color.fromARGB(
+                                        255, 196, 228, 232),
                                     child: ListTile(
                                         subtitle: Text(passwordData['passwords']
                                                 [index]['name']
@@ -114,7 +116,17 @@ class _ListItemsState extends State<ListItems> {
                 .push('/createpwd/$passData')
                 .then((value) => reloadList());
           },
-        ));
+        ),
+        drawer: Drawer(
+            child: ListView(padding: EdgeInsets.zero, children: [
+          const DrawerHeader(
+            child: Text('Drawer Header'),
+          ),
+          ListTile(
+            title: const Text('Home'),
+            onTap: () {},
+          )
+        ])));
   }
 }
 
