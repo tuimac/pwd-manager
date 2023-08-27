@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
-import 'dart:developer';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -24,13 +23,16 @@ class _ListItemsState extends State<ListItems> {
     _getPasswordFuture = getPassowrdFile();
   }
 
-  Future<Map<String, dynamic>> getPassowrdFile() {
+  Future<Map<String, dynamic>> getPassowrdFile() async {
     return Future(() async {
       return FIleIO.getPassword;
     });
   }
 
-  void openPasswordInfo(BuildContext context) {}
+  void reloadList() {
+    _getPasswordFuture = getPassowrdFile();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,36 +62,38 @@ class _ListItemsState extends State<ListItems> {
                                         fontSize: 15, color: Colors.black))))));
               } else if (snapshot.hasData) {
                 passwordData = snapshot.data!;
-                log(jsonEncode(passwordData));
                 return SizedBox(
                     height: uiHeight,
                     child: SingleChildScrollView(
                         child: Column(children: [
                       Container(
-                        padding: EdgeInsets.only(
-                            right: uiWidth * 0.1, left: uiWidth * 0.1),
-                        height: uiHeight * 0.6,
-                        child: ListView.builder(
-                            padding: const EdgeInsets.only(top: 30),
-                            itemCount: passwordData['passwords'].length,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                child: ListTile(
-                                    subtitle: Text(passwordData['passwords']
-                                            [index.toString()]['name']
-                                        .toString()),
-                                    title: Text(passwordData['passwords']
-                                        [index.toString()]['name']),
-                                    onTap: () {
-                                      String passData = jsonEncode(
-                                          passwordData['passwords']
-                                              [index.toString()]);
-                                      GoRouter.of(context)
-                                          .push('/editpwd/$passData');
-                                    }),
-                              );
-                            }),
-                      )
+                          padding: EdgeInsets.only(
+                              right: uiWidth * 0.1, left: uiWidth * 0.1),
+                          height: uiHeight * 0.6,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              reloadList();
+                            },
+                            child: ListView.builder(
+                                padding: const EdgeInsets.only(top: 30),
+                                itemCount: passwordData['passwords'].length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: ListTile(
+                                        subtitle: Text(passwordData['passwords']
+                                                [index]['name']
+                                            .toString()),
+                                        title: Text(passwordData['passwords']
+                                            [index]['name']),
+                                        onTap: () {
+                                          String passData = jsonEncode(
+                                              passwordData['passwords'][index]);
+                                          GoRouter.of(context)
+                                              .push('/editpwd/$passData');
+                                        }),
+                                  );
+                                }),
+                          ))
                     ])));
               } else {
                 return Center(
@@ -103,7 +107,9 @@ class _ListItemsState extends State<ListItems> {
           child: const Icon(Icons.add),
           onPressed: () {
             String passData = jsonEncode(passwordData);
-            GoRouter.of(context).push('/createpwd/$passData');
+            GoRouter.of(context)
+                .push('/createpwd/$passData')
+                .then((value) => reloadList());
           },
         ));
   }

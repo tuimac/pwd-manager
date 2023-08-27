@@ -6,16 +6,17 @@ class FIleIO {
   static Future<Map<String, dynamic>> get getPassword async {
     try {
       final baseDirInfo = await getApplicationDocumentsDirectory();
-      final pwdPath = '${baseDirInfo.path}/data/password.json';
+      final pwdPath = '${baseDirInfo.path}/password.json';
       return jsonDecode(await File(pwdPath).readAsString());
     } catch (e) {
-      return {'passwords': {}};
+      return {'passwords': []};
     }
   }
 
   static void createPassword(data) async {
     final baseDirInfo = await getApplicationDocumentsDirectory();
-    final pwdPath = '${baseDirInfo.path}/data/password.json';
-    File(pwdPath).writeAsString(jsonEncode(data));
+    final pwdPath = '${baseDirInfo.path}/password.json';
+    await File(pwdPath)
+        .writeAsString(jsonEncode(data), mode: FileMode.writeOnly);
   }
 }

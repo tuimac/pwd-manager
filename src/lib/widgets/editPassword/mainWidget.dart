@@ -20,8 +20,6 @@ class _EditPasswordState extends State<EditPassword> {
 
   @override
   Widget build(BuildContext context) {
-    Size uiSize = MediaQuery.of(context).size;
-
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
         body: Center(
