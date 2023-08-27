@@ -15,11 +15,11 @@ class AppRouter {
             return const ListItems();
           }),
       GoRoute(
-          path: '/editpwd/:data',
+          path: '/editpwd/:data/:dataIndex',
           builder: (BuildContext context, GoRouterState state) {
-            final Map<String, dynamic> passwordData =
-                json.decode(state.pathParameters['data']!);
-            return EditPassword(data: passwordData);
+            return EditPassword(
+                data: json.decode(state.pathParameters['data']!),
+                dataIndex: int.parse(state.pathParameters['dataIndex']!));
           }),
       GoRoute(
           path: '/createpwd/:data',

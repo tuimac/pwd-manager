@@ -24,7 +24,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   void savePassword(newPasswordInfo) {
     data['passwords'].add(newPasswordInfo);
-    FIleIO.createPassword(data);
+    FIleIO.savePassword(data);
     GoRouter.of(context).pop();
   }
 

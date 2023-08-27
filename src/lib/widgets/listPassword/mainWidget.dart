@@ -75,7 +75,7 @@ class _ListItemsState extends State<ListItems> {
                               reloadList();
                             },
                             child: ListView.builder(
-                                padding: const EdgeInsets.only(top: 30),
+                                padding: EdgeInsets.only(top: uiHeight * 0.03),
                                 itemCount: passwordData['passwords'].length,
                                 itemBuilder: (context, index) {
                                   return Card(
@@ -86,10 +86,13 @@ class _ListItemsState extends State<ListItems> {
                                         title: Text(passwordData['passwords']
                                             [index]['name']),
                                         onTap: () {
-                                          String passData = jsonEncode(
-                                              passwordData['passwords'][index]);
+                                          String passData =
+                                              jsonEncode(passwordData);
+                                          String dataIndex = index.toString();
                                           GoRouter.of(context)
-                                              .push('/editpwd/$passData');
+                                              .push(
+                                                  '/editpwd/$passData/$dataIndex')
+                                              .then((value) => reloadList());
                                         }),
                                   );
                                 }),

@@ -13,7 +13,7 @@ class FIleIO {
     }
   }
 
-  static void createPassword(data) async {
+  static void savePassword(data) async {
     final baseDirInfo = await getApplicationDocumentsDirectory();
     final pwdPath = '${baseDirInfo.path}/password.json';
     await File(pwdPath)
