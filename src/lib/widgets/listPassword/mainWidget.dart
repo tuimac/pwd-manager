@@ -117,17 +117,28 @@ class _ListItemsState extends State<ListItems> {
                 .then((value) => reloadList());
           },
         ),
-        drawer: Drawer(
-            child: ListView(padding: EdgeInsets.zero, children: [
-          const DrawerHeader(
-            child: Text('Drawer Header'),
-          ),
-          ListTile(
-            title: const Text('Home'),
-            onTap: () {},
-          )
-        ])));
+        drawer: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: const Color.fromARGB(255, 196, 228, 232),
+            ),
+            child: Drawer(
+                width: uiWidth * 0.6,
+                child: ListView(padding: EdgeInsets.zero, children: [
+                  SizedBox(
+                    height: uiHeight * 0.12,
+                    child: const DrawerHeader(
+                      child: Center(
+                          child: Text('Menu',
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.black))),
+                    ),
+                  ),
+                  Container(
+                      color: const Color.fromARGB(255, 134, 179, 185),
+                      child: ListTile(
+                        title: const Text('Home'),
+                        onTap: () {},
+                      ))
+                ]))));
   }
 }
-
-mixin passData {}
