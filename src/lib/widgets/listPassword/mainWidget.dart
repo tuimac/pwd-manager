@@ -137,7 +137,20 @@ class _ListItemsState extends State<ListItems> {
                       color: const Color.fromARGB(255, 134, 179, 185),
                       child: ListTile(
                         title: const Text('Home'),
-                        onTap: () {},
+                        onTap: () {
+                          GoRouter.of(context).pop();
+                        },
+                      )),
+                  Container(
+                      color: const Color.fromARGB(255, 134, 179, 185),
+                      child: ListTile(
+                        title: const Text('Setting'),
+                        onTap: () {
+                          GoRouter.of(context)
+                              .push('/systemconfig')
+                              .then((value) => GoRouter.of(context).pop())
+                              .then((value) => reloadList());
+                        },
                       ))
                 ]))));
   }
