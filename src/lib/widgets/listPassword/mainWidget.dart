@@ -25,13 +25,18 @@ class _ListItemsState extends State<ListItems> {
 
   Future<Map<String, dynamic>> getPassowrdFile() async {
     return Future(() async {
-      return FIleIO.getPassword;
+      return FileIO.getPassword;
     });
   }
 
   void reloadList() {
     _getPasswordFuture = getPassowrdFile();
     setState(() {});
+  }
+
+  void deletePassword(index) {
+    passwordData['passwords'].removeAt(index);
+    FileIO.savePassword(passwordData);
   }
 
   @override
@@ -81,21 +86,38 @@ class _ListItemsState extends State<ListItems> {
                                   return Card(
                                     color: const Color.fromARGB(
                                         255, 196, 228, 232),
-                                    child: ListTile(
-                                        subtitle: Text(passwordData['passwords']
-                                                [index]['name']
-                                            .toString()),
-                                        title: Text(passwordData['passwords']
-                                            [index]['name']),
-                                        onTap: () {
-                                          String passData =
-                                              jsonEncode(passwordData);
-                                          String dataIndex = index.toString();
-                                          GoRouter.of(context)
-                                              .push(
-                                                  '/editpwd/$passData/$dataIndex')
-                                              .then((value) => reloadList());
-                                        }),
+                                    child: Dismissible(
+                                        onDismissed:
+                                            (DismissDirection direction) {
+                                          setState(() {
+                                            deletePassword(index);
+                                          });
+                                        },
+                                        direction: DismissDirection.endToStart,
+                                        background: Container(
+                                          color: Colors.red,
+                                        ),
+                                        key: ValueKey<String>(
+                                            passwordData['passwords'][index]
+                                                ['name']),
+                                        child: ListTile(
+                                            subtitle: Text(
+                                                passwordData['passwords'][index]
+                                                    ['name']),
+                                            title: Text(
+                                                passwordData['passwords'][index]
+                                                    ['name']),
+                                            onTap: () {
+                                              String passData =
+                                                  jsonEncode(passwordData);
+                                              String dataIndex =
+                                                  index.toString();
+                                              GoRouter.of(context)
+                                                  .push(
+                                                      '/editpwd/$passData/$dataIndex')
+                                                  .then(
+                                                      (value) => reloadList());
+                                            })),
                                   );
                                 }),
                           ))
@@ -134,21 +156,26 @@ class _ListItemsState extends State<ListItems> {
                     ),
                   ),
                   Container(
-                      color: const Color.fromARGB(255, 134, 179, 185),
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 134, 179, 185),
+                      ),
                       child: ListTile(
                         title: const Text('Home'),
                         onTap: () {
                           GoRouter.of(context).pop();
                         },
                       )),
+                  const Divider(height: 1, color: Colors.black),
                   Container(
-                      color: const Color.fromARGB(255, 134, 179, 185),
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 134, 179, 185),
+                      ),
                       child: ListTile(
                         title: const Text('Setting'),
                         onTap: () {
+                          GoRouter.of(context).pop();
                           GoRouter.of(context)
                               .push('/systemconfig')
-                              .then((value) => GoRouter.of(context).pop())
                               .then((value) => reloadList());
                         },
                       ))

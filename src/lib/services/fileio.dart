@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class FIleIO {
+class FileIO {
   static Future<Map<String, dynamic>> get getPassword async {
     try {
       final baseDirInfo = await getApplicationDocumentsDirectory();

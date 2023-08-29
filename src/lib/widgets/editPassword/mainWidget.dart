@@ -27,7 +27,7 @@ class _EditPasswordState extends State<EditPassword> {
   }
 
   void savePassword(passwordData) {
-    FIleIO.savePassword(passwordData);
+    FileIO.savePassword(passwordData);
     GoRouter.of(context).pop();
   }
 
