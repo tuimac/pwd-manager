@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
+import 'package:src/widgets/listPassword/deleteDialog.dart';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -32,11 +33,6 @@ class _ListItemsState extends State<ListItems> {
   void reloadList() {
     _getPasswordFuture = getPassowrdFile();
     setState(() {});
-  }
-
-  void deletePassword(index) {
-    passwordData['passwords'].removeAt(index);
-    FileIO.savePassword(passwordData);
   }
 
   @override
@@ -87,11 +83,22 @@ class _ListItemsState extends State<ListItems> {
                                     color: const Color.fromARGB(
                                         255, 196, 228, 232),
                                     child: Dismissible(
-                                        onDismissed:
-                                            (DismissDirection direction) {
+                                        onDismissed: (DismissDirection
+                                            dismissDirection) {
                                           setState(() {
-                                            deletePassword(index);
+                                            passwordData['passwords']
+                                                .removeAt(index);
                                           });
+                                        },
+                                        confirmDismiss: (direction) async {
+                                          return await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DeleteDialog(
+                                                    passwordData: passwordData,
+                                                    passwordIndex: index,
+                                                    reloadList: reloadList);
+                                              });
                                         },
                                         direction: DismissDirection.endToStart,
                                         background: Container(
@@ -101,9 +108,6 @@ class _ListItemsState extends State<ListItems> {
                                             passwordData['passwords'][index]
                                                 ['name']),
                                         child: ListTile(
-                                            subtitle: Text(
-                                                passwordData['passwords'][index]
-                                                    ['name']),
                                             title: Text(
                                                 passwordData['passwords'][index]
                                                     ['name']),

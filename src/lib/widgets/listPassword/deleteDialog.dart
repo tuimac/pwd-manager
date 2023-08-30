@@ -1,171 +1,102 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
 
-class CreatePassword extends StatefulWidget {
-  final Map<String, dynamic> data;
-  const CreatePassword({Key? key, required this.data}) : super(key: key);
+class DeleteDialog extends StatefulWidget {
+  final Map<String, dynamic> passwordData;
+  final int passwordIndex;
+  final Function reloadList;
+  const DeleteDialog(
+      {Key? key,
+      required this.passwordData,
+      required this.passwordIndex,
+      required this.reloadList})
+      : super(key: key);
 
   @override
-  State<CreatePassword> createState() => _CreatePasswordState();
+  State<DeleteDialog> createState() => _DeleteDialogState();
 }
 
-class _CreatePasswordState extends State<CreatePassword> {
-  late Map<String, dynamic> data;
-  late bool passwordVisible;
+class _DeleteDialogState extends State<DeleteDialog> {
+  late Map<String, dynamic> passwordData;
+  late int passwordIndex;
+  late bool deleteConfirm = false;
 
   @override
   void initState() {
     super.initState();
-    data = widget.data;
-    passwordVisible = true;
+    passwordData = widget.passwordData;
+    passwordIndex = widget.passwordIndex;
   }
 
-  void savePassword(newPasswordInfo) {
-    data['passwords'].add(newPasswordInfo);
-    FileIO.savePassword(data);
-    GoRouter.of(context).pop();
+  void deletePassword() {
+    passwordData['passwords'].removeAt(passwordIndex);
+    FileIO.savePassword(passwordData);
   }
 
   @override
   Widget build(BuildContext context) {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
-    double uiWidth = uiSize.width;
-    final formKey = GlobalKey<FormState>();
-    Map<String, dynamic> newPasswordInfo = {};
 
-    return Scaffold(
-        appBar: AppBar(title: const Text('Password Manager')),
-        body: Center(
-            child: SizedBox(
-                width: uiWidth * 0.8,
-                child: Form(
-                    key: formKey,
-                    child: Column(children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.only(top: uiHeight * 0.035),
-                          child: TextFormField(
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 142, 164, 231),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              labelText: 'Password Name',
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                            cursorColor: Colors.white,
-                            onSaved: (String? value) {
-                              newPasswordInfo['name'] = value;
-                            },
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(top: uiHeight * 0.035),
-                          child: TextFormField(
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 158, 158, 158),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.white, width: 2.0)),
-                              labelText: 'User Name',
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                            cursorColor: Colors.white,
-                            onSaved: (String? value) {
-                              newPasswordInfo['username'] = value;
-                            },
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(top: uiHeight * 0.035),
-                          child: TextFormField(
-                              obscureText: passwordVisible,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      const Color.fromARGB(255, 158, 158, 158),
-                                  enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 2.0)),
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 2.0)),
-                                  border: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 2.0)),
-                                  labelText: 'Password',
-                                  labelStyle: TextStyle(color: Colors.white),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(passwordVisible
-                                        ? Icons.visibility_off
-                                        : Icons.visibility),
-                                    onPressed: () {
-                                      setState(() {
-                                        passwordVisible = !passwordVisible;
-                                      });
-                                    },
-                                  )),
-                              cursorColor: Colors.white,
-                              onSaved: (String? value) {
-                                newPasswordInfo['password'] = value;
-                              })),
-                      Padding(
-                          padding: EdgeInsets.only(top: uiHeight * 0.035),
-                          child: TextFormField(
-                              decoration: const InputDecoration(
-                                filled: true,
-                                fillColor: Color.fromARGB(255, 113, 141, 157),
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 2.0)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 2.0)),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.white, width: 2.0)),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                labelText: 'Memo',
-                                labelStyle: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              maxLines: 20,
-                              minLines: 10,
-                              cursorColor: Colors.black,
-                              onSaved: (String? value) {
-                                newPasswordInfo['memo'] = value;
-                              })),
-                      Padding(
-                          padding: EdgeInsets.only(top: uiHeight * 0.035),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.orange,
-                            ),
-                            onPressed: () {
-                              formKey.currentState!.save();
-                              savePassword(newPasswordInfo);
-                            },
-                            child: const Text('Create'),
-                          )),
-                    ])))));
+    return AlertDialog(
+      backgroundColor: const Color.fromARGB(255, 209, 226, 228),
+      title: Text(
+          // ignore: prefer_interpolation_to_compose_strings
+          'Delete ' + passwordData['passwords'][passwordIndex]['name'] + ' ?'),
+      content: SizedBox(
+          height: uiHeight * 0.13,
+          child: Column(children: [
+            const Text('Please type "delete" in the box below.',
+                style: TextStyle(fontSize: 14)),
+            Padding(padding: EdgeInsets.only(top: uiHeight * 0.035)),
+            TextFormField(
+                textInputAction: TextInputAction.next,
+                onChanged: (input) {
+                  if (input == 'delete') {
+                    setState(() {
+                      deleteConfirm = true;
+                    });
+                  } else {
+                    setState(() {
+                      deleteConfirm = false;
+                    });
+                  }
+                },
+                style: const TextStyle(fontSize: 14),
+                decoration: const InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 0.1),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 1.0)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 1.0)),
+                    border: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 1.0)),
+                    hintText: 'delete'))
+          ])),
+      actions: [
+        ElevatedButton.icon(
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+            label: const Text('Delete'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red,
+            ),
+            onPressed: deleteConfirm == true
+                ? () {
+                    deletePassword();
+                    GoRouter.of(context).pop();
+                    widget.reloadList();
+                  }
+                : null)
+      ],
+    );
   }
 }
