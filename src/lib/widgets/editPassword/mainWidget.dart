@@ -1,12 +1,13 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/fileio.dart';
+import 'package:src/services/fileio.dart';
+import 'dart:developer';
 
 class EditPassword extends StatefulWidget {
+  final String primaryKey;
   final Map<String, dynamic> data;
-  final int dataIndex;
-  const EditPassword({Key? key, required this.data, required this.dataIndex})
+  const EditPassword({Key? key, required this.primaryKey, required this.data})
       : super(key: key);
 
   @override
@@ -14,20 +15,20 @@ class EditPassword extends StatefulWidget {
 }
 
 class _EditPasswordState extends State<EditPassword> {
-  late Map<String, dynamic> passwordData;
-  late int dataIndex;
+  late Map<String, dynamic> data;
+  late String primaryKey;
   late bool passwordVisible;
 
   @override
   void initState() {
     super.initState();
-    passwordData = widget.data;
-    dataIndex = widget.dataIndex;
+    data = widget.data;
+    primaryKey = widget.primaryKey;
     passwordVisible = true;
   }
 
-  void savePassword(passwordData) {
-    FileIO.savePassword(passwordData);
+  void savePassword() {
+    FileIO.saveData(data);
     GoRouter.of(context).pop();
   }
 
@@ -49,8 +50,7 @@ class _EditPasswordState extends State<EditPassword> {
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                            initialValue: passwordData['passwords'][dataIndex]
-                                ['name'],
+                            initialValue: primaryKey,
                             autofocus: true,
                             decoration: const InputDecoration(
                               filled: true,
@@ -69,14 +69,13 @@ class _EditPasswordState extends State<EditPassword> {
                             ),
                             cursorColor: Colors.white,
                             onSaved: (String? value) {
-                              passwordData['passwords'][dataIndex]['name'] =
-                                  value;
+                              data['passwords'][primaryKey]['name'] = value;
                             },
                           )),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                            initialValue: passwordData['passwords'][dataIndex]
+                            initialValue: data['passwords'][primaryKey]
                                 ['username'],
                             autofocus: true,
                             decoration: const InputDecoration(
@@ -96,14 +95,13 @@ class _EditPasswordState extends State<EditPassword> {
                             ),
                             cursorColor: Colors.white,
                             onSaved: (String? value) {
-                              passwordData['passwords'][dataIndex]['username'] =
-                                  value;
+                              data['passwords'][primaryKey]['username'] = value;
                             },
                           )),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                              initialValue: passwordData['passwords'][dataIndex]
+                              initialValue: data['passwords'][primaryKey]
                                   ['password'],
                               obscureText: passwordVisible,
                               decoration: InputDecoration(
@@ -134,13 +132,13 @@ class _EditPasswordState extends State<EditPassword> {
                                   )),
                               cursorColor: Colors.white,
                               onSaved: (String? value) {
-                                passwordData['passwords'][dataIndex]
-                                    ['password'] = value;
+                                data['passwords'][primaryKey]['password'] =
+                                    value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                              initialValue: passwordData['passwords'][dataIndex]
+                              initialValue: data['passwords'][primaryKey]
                                   ['memo'],
                               decoration: const InputDecoration(
                                 filled: true,
@@ -165,8 +163,7 @@ class _EditPasswordState extends State<EditPassword> {
                               minLines: 10,
                               cursorColor: Colors.black,
                               onSaved: (String? value) {
-                                passwordData['passwords'][dataIndex]['memo'] =
-                                    value;
+                                data['passwords'][primaryKey]['memo'] = value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
@@ -178,7 +175,7 @@ class _EditPasswordState extends State<EditPassword> {
                             ),
                             onPressed: () {
                               formKey.currentState!.save();
-                              savePassword(passwordData);
+                              savePassword();
                             },
                             child: const Text('Save'),
                           )),

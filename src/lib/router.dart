@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/widgets/createPassword/mainWidget.dart';
@@ -16,23 +16,25 @@ class AppRouter {
             return const ListItems();
           }),
       GoRoute(
-          path: '/editpwd/:data/:dataIndex',
+          path: '/editpwd/:data/:primaryKey',
           builder: (BuildContext context, GoRouterState state) {
+            log(state.pathParameters['data']!);
             return EditPassword(
                 data: json.decode(state.pathParameters['data']!),
-                dataIndex: int.parse(state.pathParameters['dataIndex']!));
+                primaryKey: state.pathParameters['primaryKey']!);
           }),
       GoRoute(
           path: '/createpwd/:data',
           builder: (BuildContext context, GoRouterState state) {
-            final Map<String, dynamic> passwordData =
-                json.decode(state.pathParameters['data']!);
-            return CreatePassword(data: passwordData);
+            return CreatePassword(
+                data: json.decode(state.pathParameters['data']!));
           }),
       GoRoute(
-          path: '/systemconfig',
+          path: '/systemconfig/:data',
           builder: (BuildContext context, GoRouterState state) {
-            return SystemConfig();
+            final Map<String, dynamic> passwordData =
+                json.decode(state.pathParameters['data']!);
+            return SystemConfig(data: passwordData);
           }),
     ],
   );

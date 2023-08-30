@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
+import 'dart:developer';
 
 class CreatePassword extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -14,6 +15,7 @@ class CreatePassword extends StatefulWidget {
 class _CreatePasswordState extends State<CreatePassword> {
   late Map<String, dynamic> data;
   late bool passwordVisible;
+  late String primaryKey;
 
   @override
   void initState() {
@@ -22,9 +24,9 @@ class _CreatePasswordState extends State<CreatePassword> {
     passwordVisible = true;
   }
 
-  void savePassword(newPasswordInfo) {
-    data['passwords'].add(newPasswordInfo);
-    FileIO.savePassword(data);
+  void savePassword(newPassword) {
+    data['passwords'][primaryKey] = newPassword;
+    FileIO.saveData(data);
     GoRouter.of(context).pop();
   }
 
@@ -33,8 +35,8 @@ class _CreatePasswordState extends State<CreatePassword> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
+    Map<String, dynamic> newPassword = {};
     final formKey = GlobalKey<FormState>();
-    Map<String, dynamic> newPasswordInfo = {};
 
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
@@ -65,7 +67,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             ),
                             cursorColor: Colors.white,
                             onSaved: (String? value) {
-                              newPasswordInfo['name'] = value;
+                              primaryKey = value!;
                             },
                           )),
                       Padding(
@@ -89,7 +91,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             ),
                             cursorColor: Colors.white,
                             onSaved: (String? value) {
-                              newPasswordInfo['username'] = value;
+                              newPassword['username'] = value;
                             },
                           )),
                       Padding(
@@ -110,7 +112,8 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       borderSide: BorderSide(
                                           color: Colors.white, width: 2.0)),
                                   labelText: 'Password',
-                                  labelStyle: TextStyle(color: Colors.white),
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white),
                                   suffixIcon: IconButton(
                                     icon: Icon(passwordVisible
                                         ? Icons.visibility_off
@@ -123,7 +126,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                   )),
                               cursorColor: Colors.white,
                               onSaved: (String? value) {
-                                newPasswordInfo['password'] = value;
+                                newPassword['password'] = value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
@@ -151,7 +154,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                               minLines: 10,
                               cursorColor: Colors.black,
                               onSaved: (String? value) {
-                                newPasswordInfo['memo'] = value;
+                                newPassword['memo'] = value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
@@ -163,7 +166,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             ),
                             onPressed: () {
                               formKey.currentState!.save();
-                              savePassword(newPasswordInfo);
+                              savePassword(newPassword);
                             },
                             child: const Text('Create'),
                           )),

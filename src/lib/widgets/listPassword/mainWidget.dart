@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -15,24 +16,20 @@ class ListItems extends StatefulWidget {
 }
 
 class _ListItemsState extends State<ListItems> {
-  late Future<dynamic> _getPasswordFuture;
-  late Map<String, dynamic> passwordData;
+  late Map<String, dynamic> data;
 
   @override
   void initState() {
+    getData();
     super.initState();
-    _getPasswordFuture = getPassowrdFile();
   }
 
-  Future<Map<String, dynamic>> getPassowrdFile() async {
-    return Future(() async {
-      return FileIO.getPassword;
+  void getData() async {
+    await FileIO.getData.then((value) {
+      setState(() {
+        data = value;
+      });
     });
-  }
-
-  void reloadList() {
-    _getPasswordFuture = getPassowrdFile();
-    setState(() {});
   }
 
   @override
@@ -44,7 +41,7 @@ class _ListItemsState extends State<ListItems> {
     return Scaffold(
         appBar: AppBar(title: const Text('Password Manager')),
         body: FutureBuilder<dynamic>(
-            future: _getPasswordFuture,
+            future: FileIO.getData,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 final error = snapshot.error;
@@ -62,7 +59,7 @@ class _ListItemsState extends State<ListItems> {
                                     style: const TextStyle(
                                         fontSize: 15, color: Colors.black))))));
               } else if (snapshot.hasData) {
-                passwordData = snapshot.data!;
+                data = snapshot.data!;
                 return SizedBox(
                     height: uiHeight,
                     child: SingleChildScrollView(
@@ -73,12 +70,14 @@ class _ListItemsState extends State<ListItems> {
                           height: uiHeight * 0.6,
                           child: RefreshIndicator(
                             onRefresh: () async {
-                              reloadList();
+                              getData();
                             },
                             child: ListView.builder(
                                 padding: EdgeInsets.only(top: uiHeight * 0.03),
-                                itemCount: passwordData['passwords'].length,
+                                itemCount: data['passwords'].length,
                                 itemBuilder: (context, index) {
+                                  String primaryKey =
+                                      data['passwords'].keys.elementAt(index);
                                   return Card(
                                     color: const Color.fromARGB(
                                         255, 196, 228, 232),
@@ -86,8 +85,8 @@ class _ListItemsState extends State<ListItems> {
                                         onDismissed: (DismissDirection
                                             dismissDirection) {
                                           setState(() {
-                                            passwordData['passwords']
-                                                .removeAt(index);
+                                            data['passwords']
+                                                .remove(primaryKey);
                                           });
                                         },
                                         confirmDismiss: (direction) async {
@@ -95,32 +94,24 @@ class _ListItemsState extends State<ListItems> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return DeleteDialog(
-                                                    passwordData: passwordData,
+                                                    data: data,
                                                     passwordIndex: index,
-                                                    reloadList: reloadList);
+                                                    getData: getData);
                                               });
                                         },
                                         direction: DismissDirection.endToStart,
                                         background: Container(
                                           color: Colors.red,
                                         ),
-                                        key: ValueKey<String>(
-                                            passwordData['passwords'][index]
-                                                ['name']),
+                                        key: ValueKey<String>(primaryKey),
                                         child: ListTile(
-                                            title: Text(
-                                                passwordData['passwords'][index]
-                                                    ['name']),
+                                            title: Text(primaryKey),
                                             onTap: () {
-                                              String passData =
-                                                  jsonEncode(passwordData);
-                                              String dataIndex =
-                                                  index.toString();
+                                              String tmpData = jsonEncode(data);
                                               GoRouter.of(context)
                                                   .push(
-                                                      '/editpwd/$passData/$dataIndex')
-                                                  .then(
-                                                      (value) => reloadList());
+                                                      '/editpwd/$tmpData/$primaryKey')
+                                                  .then((value) => getData());
                                             })),
                                   );
                                 }),
@@ -137,10 +128,10 @@ class _ListItemsState extends State<ListItems> {
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            String passData = jsonEncode(passwordData);
+            String tmpData = jsonEncode(data);
             GoRouter.of(context)
-                .push('/createpwd/$passData')
-                .then((value) => reloadList());
+                .push('/createpwd/$tmpData')
+                .then((value) => getData());
           },
         ),
         drawer: Theme(
@@ -177,10 +168,11 @@ class _ListItemsState extends State<ListItems> {
                       child: ListTile(
                         title: const Text('Setting'),
                         onTap: () {
+                          String tmpData = jsonEncode(data);
                           GoRouter.of(context).pop();
                           GoRouter.of(context)
-                              .push('/systemconfig')
-                              .then((value) => reloadList());
+                              .push('/systemconfig/$tmpData')
+                              .then((value) => getData());
                         },
                       ))
                 ]))));

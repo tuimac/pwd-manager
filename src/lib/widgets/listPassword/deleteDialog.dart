@@ -3,14 +3,14 @@ import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
 
 class DeleteDialog extends StatefulWidget {
-  final Map<String, dynamic> passwordData;
+  final Map<String, dynamic> data;
   final int passwordIndex;
-  final Function reloadList;
+  final Function getData;
   const DeleteDialog(
       {Key? key,
-      required this.passwordData,
+      required this.data,
       required this.passwordIndex,
-      required this.reloadList})
+      required this.getData})
       : super(key: key);
 
   @override
@@ -18,20 +18,20 @@ class DeleteDialog extends StatefulWidget {
 }
 
 class _DeleteDialogState extends State<DeleteDialog> {
-  late Map<String, dynamic> passwordData;
+  late Map<String, dynamic> data;
   late int passwordIndex;
   late bool deleteConfirm = false;
 
   @override
   void initState() {
     super.initState();
-    passwordData = widget.passwordData;
+    data = widget.data;
     passwordIndex = widget.passwordIndex;
   }
 
   void deletePassword() {
-    passwordData['passwords'].removeAt(passwordIndex);
-    FileIO.savePassword(passwordData);
+    data['passwords'].removeAt(passwordIndex);
+    FileIO.saveData(data);
   }
 
   @override
@@ -43,7 +43,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
       backgroundColor: const Color.fromARGB(255, 209, 226, 228),
       title: Text(
           // ignore: prefer_interpolation_to_compose_strings
-          'Delete ' + passwordData['passwords'][passwordIndex]['name'] + ' ?'),
+          'Delete ' + data['passwords'][passwordIndex]['name'] + ' ?'),
       content: SizedBox(
           height: uiHeight * 0.13,
           child: Column(children: [
@@ -93,7 +93,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
                 ? () {
                     deletePassword();
                     GoRouter.of(context).pop();
-                    widget.reloadList();
+                    widget.getData();
                   }
                 : null)
       ],
