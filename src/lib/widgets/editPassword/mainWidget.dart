@@ -120,7 +120,8 @@ class _EditPasswordState extends State<EditPassword> {
                                       borderSide: BorderSide(
                                           color: Colors.white, width: 2.0)),
                                   labelText: 'Password',
-                                  labelStyle: TextStyle(color: Colors.white),
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white),
                                   suffixIcon: IconButton(
                                     icon: Icon(passwordVisible
                                         ? Icons.visibility_off
@@ -171,8 +172,9 @@ class _EditPasswordState extends State<EditPassword> {
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.black,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 87, 180, 90),
                             ),
                             onPressed: () {
                               formKey.currentState!.save();

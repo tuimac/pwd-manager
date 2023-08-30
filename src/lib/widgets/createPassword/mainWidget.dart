@@ -157,8 +157,9 @@ class _CreatePasswordState extends State<CreatePassword> {
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.black,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 87, 180, 90),
                             ),
                             onPressed: () {
                               formKey.currentState!.save();
