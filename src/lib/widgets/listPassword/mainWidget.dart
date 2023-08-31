@@ -212,6 +212,34 @@ class _ListItemsState extends State<ListItems> {
                               .push('/systemconfig/$tmpData')
                               .then((value) => getData());
                         },
+                      )),
+                  const Divider(height: 1, color: Colors.black),
+                  Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 134, 179, 185),
+                      ),
+                      child: ListTile(
+                        title: const Text('Restore'),
+                        onTap: () {
+                          GoRouter.of(context).pop();
+                          GoRouter.of(context)
+                              .push('/restore')
+                              .then((value) => getData());
+                        },
+                      )),
+                  const Divider(height: 1, color: Colors.black),
+                  Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 134, 179, 185),
+                      ),
+                      child: ListTile(
+                        title: const Text('Import/Export'),
+                        onTap: () {
+                          GoRouter.of(context).pop();
+                          GoRouter.of(context)
+                              .push('/importexport')
+                              .then((value) => getData());
+                        },
                       ))
                 ]))));
   }
