@@ -4,12 +4,12 @@ import '../../services/fileio.dart';
 
 class DeleteDialog extends StatefulWidget {
   final Map<String, dynamic> data;
-  final int passwordIndex;
+  final String primaryKey;
   final Function getData;
   const DeleteDialog(
       {Key? key,
       required this.data,
-      required this.passwordIndex,
+      required this.primaryKey,
       required this.getData})
       : super(key: key);
 
@@ -19,18 +19,18 @@ class DeleteDialog extends StatefulWidget {
 
 class _DeleteDialogState extends State<DeleteDialog> {
   late Map<String, dynamic> data;
-  late int passwordIndex;
+  late String primaryKey;
   late bool deleteConfirm = false;
 
   @override
   void initState() {
     super.initState();
     data = widget.data;
-    passwordIndex = widget.passwordIndex;
+    primaryKey = widget.primaryKey;
   }
 
   void deletePassword() {
-    data['passwords'].removeAt(passwordIndex);
+    data['passwords'].remove(primaryKey);
     FileIO.saveData(data);
   }
 
@@ -43,7 +43,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
       backgroundColor: const Color.fromARGB(255, 209, 226, 228),
       title: Text(
           // ignore: prefer_interpolation_to_compose_strings
-          'Delete ' + data['passwords'][passwordIndex]['name'] + ' ?'),
+          'Delete ' + primaryKey + ' ?'),
       content: SizedBox(
           height: uiHeight * 0.13,
           child: Column(children: [

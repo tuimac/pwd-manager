@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:src/services/fileio.dart';
 
 class SystemConfig extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -10,12 +11,12 @@ class SystemConfig extends StatefulWidget {
 }
 
 class _SystemConfigState extends State<SystemConfig> {
-  late Map<String, dynamic> passwordData;
+  late Map<String, dynamic> data;
 
   @override
   void initState() {
     super.initState();
-    passwordData = widget.data;
+    data = widget.data;
   }
 
   @override
@@ -24,19 +25,25 @@ class _SystemConfigState extends State<SystemConfig> {
     double uiHeight = uiSize.height;
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Password Manager')),
+        appBar: AppBar(
+            title: const Text('Setting'),
+            backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
         body: SizedBox(
             height: uiHeight,
             child: SingleChildScrollView(
                 child: Column(children: [
-              CheckboxListTile(
+              SwitchListTile(
                 title: const Text('Auto Backup',
                     style: TextStyle(color: Colors.white)),
-                value: passwordData['setting']['auto_backup']!,
+                subtitle: const Text(
+                    'Backup the data when change the password status.',
+                    style: TextStyle(color: Colors.white, fontSize: 12)),
+                value: data['setting']['auto_backup']!,
                 onChanged: (value) {
                   setState(() {
-                    passwordData['setting']['auto_backup'] = value;
+                    data['setting']['auto_backup'] = value;
                   });
+                  FileIO.saveData(data);
                 },
               )
             ]))));

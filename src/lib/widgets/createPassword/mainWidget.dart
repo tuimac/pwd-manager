@@ -1,7 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/fileio.dart';
+import 'package:src/services/fileio.dart';
 import 'dart:developer';
 
 class CreatePassword extends StatefulWidget {
@@ -24,7 +24,7 @@ class _CreatePasswordState extends State<CreatePassword> {
     passwordVisible = true;
   }
 
-  void savePassword(newPassword) {
+  void savePassword(Map<String, dynamic> newPassword) {
     data['passwords'][primaryKey] = newPassword;
     FileIO.saveData(data);
     GoRouter.of(context).pop();
@@ -39,7 +39,9 @@ class _CreatePasswordState extends State<CreatePassword> {
     final formKey = GlobalKey<FormState>();
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Password Manager')),
+        appBar: AppBar(
+            title: const Text('Create new Password'),
+            backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
         body: Center(
             child: SizedBox(
                 width: uiWidth * 0.8,
@@ -50,8 +52,12 @@ class _CreatePasswordState extends State<CreatePassword> {
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
                             autofocus: true,
+                            textInputAction: TextInputAction.next,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: const InputDecoration(
                               filled: true,
+                              errorStyle: TextStyle(color: Colors.white),
                               fillColor: Color.fromARGB(255, 142, 164, 231),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -66,6 +72,17 @@ class _CreatePasswordState extends State<CreatePassword> {
                               labelStyle: TextStyle(color: Colors.white),
                             ),
                             cursorColor: Colors.white,
+                            validator: (input) {
+                              if (input!.isEmpty) {
+                                return '"User Name" is empty.';
+                              } else {
+                                if (data['passwords'].containsKey(input)) {
+                                  return '"$input" have already been registered.';
+                                } else {
+                                  return null;
+                                }
+                              }
+                            },
                             onSaved: (String? value) {
                               primaryKey = value!;
                             },
@@ -73,9 +90,9 @@ class _CreatePasswordState extends State<CreatePassword> {
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                            autofocus: true,
                             decoration: const InputDecoration(
                               filled: true,
+                              errorStyle: TextStyle(color: Colors.white),
                               fillColor: Color.fromARGB(255, 158, 158, 158),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -90,6 +107,13 @@ class _CreatePasswordState extends State<CreatePassword> {
                               labelStyle: TextStyle(color: Colors.white),
                             ),
                             cursorColor: Colors.white,
+                            validator: (input) {
+                              if (input!.isEmpty) {
+                                return '"User Name" is empty.';
+                              } else {
+                                return null;
+                              }
+                            },
                             onSaved: (String? value) {
                               newPassword['username'] = value;
                             },
@@ -100,6 +124,8 @@ class _CreatePasswordState extends State<CreatePassword> {
                               obscureText: passwordVisible,
                               decoration: InputDecoration(
                                   filled: true,
+                                  errorStyle:
+                                      const TextStyle(color: Colors.white),
                                   fillColor:
                                       const Color.fromARGB(255, 158, 158, 158),
                                   enabledBorder: const OutlineInputBorder(
@@ -125,6 +151,13 @@ class _CreatePasswordState extends State<CreatePassword> {
                                     },
                                   )),
                               cursorColor: Colors.white,
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  return '"User Name" is empty.';
+                                } else {
+                                  return null;
+                                }
+                              },
                               onSaved: (String? value) {
                                 newPassword['password'] = value;
                               })),
@@ -165,8 +198,10 @@ class _CreatePasswordState extends State<CreatePassword> {
                                   const Color.fromARGB(255, 87, 180, 90),
                             ),
                             onPressed: () {
-                              formKey.currentState!.save();
-                              savePassword(newPassword);
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                savePassword(newPassword);
+                              }
                             },
                             child: const Text('Create'),
                           )),

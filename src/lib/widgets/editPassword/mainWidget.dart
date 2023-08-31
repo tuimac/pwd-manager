@@ -27,7 +27,8 @@ class _EditPasswordState extends State<EditPassword> {
     passwordVisible = true;
   }
 
-  void savePassword() {
+  void savePassword(Map<String, dynamic> editedPassword) {
+    data['passwords'][primaryKey] = editedPassword;
     FileIO.saveData(data);
     GoRouter.of(context).pop();
   }
@@ -37,10 +38,13 @@ class _EditPasswordState extends State<EditPassword> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
+    Map<String, dynamic> editedPassword = {};
     final formKey = GlobalKey<FormState>();
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Password Manager')),
+        appBar: AppBar(
+            title: const Text('Edit Password'),
+            backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
         body: Center(
             child: SizedBox(
                 width: uiWidth * 0.8,
@@ -52,8 +56,11 @@ class _EditPasswordState extends State<EditPassword> {
                           child: TextFormField(
                             initialValue: primaryKey,
                             autofocus: true,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: const InputDecoration(
                               filled: true,
+                              errorStyle: TextStyle(color: Colors.white),
                               fillColor: Color.fromARGB(255, 142, 164, 231),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -68,8 +75,23 @@ class _EditPasswordState extends State<EditPassword> {
                               labelStyle: TextStyle(color: Colors.white),
                             ),
                             cursorColor: Colors.white,
+                            validator: (input) {
+                              if (input!.isEmpty) {
+                                return '"User Name" is empty.';
+                              } else {
+                                if (data['passwords'].containsKey(input) &&
+                                    input != primaryKey) {
+                                  return '"$input" have already been registered.';
+                                } else {
+                                  return null;
+                                }
+                              }
+                            },
                             onSaved: (String? value) {
-                              data['passwords'][primaryKey]['name'] = value;
+                              if (primaryKey != value) {
+                                data['passwords'].remove(primaryKey);
+                                primaryKey = value!;
+                              }
                             },
                           )),
                       Padding(
@@ -80,6 +102,7 @@ class _EditPasswordState extends State<EditPassword> {
                             autofocus: true,
                             decoration: const InputDecoration(
                               filled: true,
+                              errorStyle: TextStyle(color: Colors.white),
                               fillColor: Color.fromARGB(255, 158, 158, 158),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -94,8 +117,15 @@ class _EditPasswordState extends State<EditPassword> {
                               labelStyle: TextStyle(color: Colors.white),
                             ),
                             cursorColor: Colors.white,
+                            validator: (input) {
+                              if (input!.isEmpty) {
+                                return '"User Name" is empty.';
+                              } else {
+                                return null;
+                              }
+                            },
                             onSaved: (String? value) {
-                              data['passwords'][primaryKey]['username'] = value;
+                              editedPassword['username'] = value;
                             },
                           )),
                       Padding(
@@ -108,6 +138,8 @@ class _EditPasswordState extends State<EditPassword> {
                                   filled: true,
                                   fillColor:
                                       const Color.fromARGB(255, 158, 158, 158),
+                                  errorStyle:
+                                      const TextStyle(color: Colors.white),
                                   enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Colors.white, width: 2.0)),
@@ -131,9 +163,15 @@ class _EditPasswordState extends State<EditPassword> {
                                     },
                                   )),
                               cursorColor: Colors.white,
+                              validator: (input) {
+                                if (input!.isEmpty) {
+                                  return '"User Name" is empty.';
+                                } else {
+                                  return null;
+                                }
+                              },
                               onSaved: (String? value) {
-                                data['passwords'][primaryKey]['password'] =
-                                    value;
+                                editedPassword['password'] = value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
@@ -163,7 +201,7 @@ class _EditPasswordState extends State<EditPassword> {
                               minLines: 10,
                               cursorColor: Colors.black,
                               onSaved: (String? value) {
-                                data['passwords'][primaryKey]['memo'] = value;
+                                editedPassword['memo'] = value;
                               })),
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
@@ -174,8 +212,10 @@ class _EditPasswordState extends State<EditPassword> {
                                   const Color.fromARGB(255, 87, 180, 90),
                             ),
                             onPressed: () {
-                              formKey.currentState!.save();
-                              savePassword();
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                savePassword(editedPassword);
+                              }
                             },
                             child: const Text('Save'),
                           )),

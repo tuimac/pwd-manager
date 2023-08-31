@@ -1,5 +1,4 @@
 // ignore: file_names
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -17,6 +16,7 @@ class ListItems extends StatefulWidget {
 
 class _ListItemsState extends State<ListItems> {
   late Map<String, dynamic> data;
+  late List listData;
 
   @override
   void initState() {
@@ -28,7 +28,18 @@ class _ListItemsState extends State<ListItems> {
     await FileIO.getData.then((value) {
       setState(() {
         data = value;
+        listData = data['passwords'].keys.toList();
       });
+    });
+  }
+
+  void filterList(String searchWord) {
+    setState(() {
+      List tmpListData = data['passwords'].keys.toList();
+      listData = tmpListData
+          .where(
+              (item) => item.toLowerCase().contains(searchWord.toLowerCase()))
+          .toList();
     });
   }
 
@@ -39,7 +50,9 @@ class _ListItemsState extends State<ListItems> {
     double uiWidth = uiSize.width;
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Password Manager')),
+        appBar: AppBar(
+            title: const Text('Password Manager'),
+            backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
         body: FutureBuilder<dynamic>(
             future: FileIO.getData,
             builder: (context, snapshot) {
@@ -59,64 +72,88 @@ class _ListItemsState extends State<ListItems> {
                                     style: const TextStyle(
                                         fontSize: 15, color: Colors.black))))));
               } else if (snapshot.hasData) {
-                data = snapshot.data!;
                 return SizedBox(
                     height: uiHeight,
-                    child: SingleChildScrollView(
-                        child: Column(children: [
-                      Container(
-                          padding: EdgeInsets.only(
-                              right: uiWidth * 0.1, left: uiWidth * 0.1),
-                          height: uiHeight * 0.6,
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              getData();
-                            },
-                            child: ListView.builder(
-                                padding: EdgeInsets.only(top: uiHeight * 0.03),
-                                itemCount: data['passwords'].length,
-                                itemBuilder: (context, index) {
-                                  String primaryKey =
-                                      data['passwords'].keys.elementAt(index);
-                                  return Card(
-                                    color: const Color.fromARGB(
-                                        255, 196, 228, 232),
-                                    child: Dismissible(
-                                        onDismissed: (DismissDirection
-                                            dismissDirection) {
-                                          setState(() {
-                                            data['passwords']
-                                                .remove(primaryKey);
-                                          });
-                                        },
-                                        confirmDismiss: (direction) async {
-                                          return await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return DeleteDialog(
-                                                    data: data,
-                                                    passwordIndex: index,
-                                                    getData: getData);
-                                              });
-                                        },
-                                        direction: DismissDirection.endToStart,
-                                        background: Container(
-                                          color: Colors.red,
-                                        ),
-                                        key: ValueKey<String>(primaryKey),
-                                        child: ListTile(
-                                            title: Text(primaryKey),
-                                            onTap: () {
-                                              String tmpData = jsonEncode(data);
-                                              GoRouter.of(context)
-                                                  .push(
-                                                      '/editpwd/$tmpData/$primaryKey')
-                                                  .then((value) => getData());
-                                            })),
-                                  );
-                                }),
-                          ))
-                    ])));
+                    child: Column(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          onChanged: (input) {
+                            filterList(input);
+                          },
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 216, 212, 243)),
+                          decoration: const InputDecoration(
+                              labelText: 'Search',
+                              labelStyle: TextStyle(
+                                  color: Color.fromARGB(255, 216, 212, 243)),
+                              hintText: 'Search',
+                              hintStyle: TextStyle(
+                                  color: Color.fromARGB(255, 159, 156, 179)),
+                              prefixIcon: Icon(Icons.search),
+                              prefixIconColor: Colors.white),
+                        ),
+                      ),
+                      SingleChildScrollView(
+                          child: Column(children: [
+                        Container(
+                            padding: EdgeInsets.only(
+                                right: uiWidth * 0.1, left: uiWidth * 0.1),
+                            height: uiHeight * 0.6,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                getData();
+                              },
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  padding:
+                                      EdgeInsets.only(top: uiHeight * 0.03),
+                                  itemCount: listData.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      color: const Color.fromARGB(
+                                          255, 196, 228, 232),
+                                      child: Dismissible(
+                                          onDismissed: (DismissDirection
+                                              dismissDirection) {
+                                            setState(() {});
+                                          },
+                                          confirmDismiss: (direction) async {
+                                            return await showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return DeleteDialog(
+                                                      data: data,
+                                                      primaryKey:
+                                                          listData[index],
+                                                      getData: getData);
+                                                });
+                                          },
+                                          direction:
+                                              DismissDirection.endToStart,
+                                          background: Container(
+                                            color: Colors.red,
+                                          ),
+                                          key:
+                                              ValueKey<String>(listData[index]),
+                                          child: ListTile(
+                                              title: Text(listData[index]),
+                                              onTap: () {
+                                                String tmpData =
+                                                    jsonEncode(data);
+                                                String primaryKey =
+                                                    listData[index];
+                                                GoRouter.of(context)
+                                                    .push(
+                                                        '/editpwd/$tmpData/$primaryKey')
+                                                    .then((value) => getData());
+                                              })),
+                                    );
+                                  }),
+                            ))
+                      ]))
+                    ]));
               } else {
                 return Center(
                     child: LoadingAnimationWidget.discreteCircle(
@@ -140,12 +177,13 @@ class _ListItemsState extends State<ListItems> {
             ),
             child: Drawer(
                 width: uiWidth * 0.6,
+                backgroundColor: const Color.fromARGB(255, 173, 218, 232),
                 child: ListView(padding: EdgeInsets.zero, children: [
                   SizedBox(
                     height: uiHeight * 0.12,
                     child: const DrawerHeader(
                       child: Center(
-                          child: Text('Menu',
+                          child: Text('Sub Menu',
                               style: TextStyle(
                                   fontSize: 15, color: Colors.black))),
                     ),
