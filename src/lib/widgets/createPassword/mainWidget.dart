@@ -51,7 +51,6 @@ class _CreatePasswordState extends State<CreatePassword> {
                       Padding(
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
-                            autofocus: true,
                             textInputAction: TextInputAction.next,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,

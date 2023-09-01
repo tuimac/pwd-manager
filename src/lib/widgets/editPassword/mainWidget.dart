@@ -55,7 +55,6 @@ class _EditPasswordState extends State<EditPassword> {
                           padding: EdgeInsets.only(top: uiHeight * 0.035),
                           child: TextFormField(
                             initialValue: primaryKey,
-                            autofocus: true,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             decoration: const InputDecoration(
