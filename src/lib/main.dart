@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'router.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:developer';
 
 void main() {
   runApp(const MainApp());
-}
-
-void initData() {
-  final baseDirInfo = getApplicationDocumentsDirectory();
-  log(baseDirInfo.toString());
 }
 
 class MainApp extends StatelessWidget {
@@ -18,7 +11,6 @@ class MainApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    initData();
     return MaterialApp.router(
       routeInformationProvider: AppRouter.router.routeInformationProvider,
       routeInformationParser: AppRouter.router.routeInformationParser,
