@@ -74,7 +74,8 @@ class _ListItemsState extends State<ListItems> {
               } else if (snapshot.hasData) {
                 return SizedBox(
                     height: uiHeight,
-                    child: Column(children: [
+                    child: SingleChildScrollView(
+                        child: Column(children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextField(
@@ -94,8 +95,7 @@ class _ListItemsState extends State<ListItems> {
                               prefixIconColor: Colors.white),
                         ),
                       ),
-                      SingleChildScrollView(
-                          child: Column(children: [
+                      Column(children: [
                         Container(
                             padding: EdgeInsets.only(
                                 right: uiWidth * 0.1, left: uiWidth * 0.1),
@@ -152,8 +152,8 @@ class _ListItemsState extends State<ListItems> {
                                     );
                                   }),
                             ))
-                      ]))
-                    ]));
+                      ])
+                    ])));
               } else {
                 return Center(
                     child: LoadingAnimationWidget.discreteCircle(
