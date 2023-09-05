@@ -235,9 +235,10 @@ class _ListItemsState extends State<ListItems> {
                       child: ListTile(
                         title: const Text('Import/Export'),
                         onTap: () {
+                          String tmpData = jsonEncode(data);
                           GoRouter.of(context).pop();
                           GoRouter.of(context)
-                              .push('/importexport')
+                              .push('/importexport/$tmpData')
                               .then((value) => getData());
                         },
                       ))

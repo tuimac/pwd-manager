@@ -5,8 +5,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';
 import 'dart:developer';
+import 'package:external_path/external_path.dart';
 
-import 'package:src/utils/dateFormat.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FileIO {
   static Future<Map<String, dynamic>> get getData async {
@@ -43,11 +44,10 @@ class FileIO {
           await Directory('${baseDirInfo.path}${Config.dataDir}')
               .list()
               .toList();
-      List<FileSystemEntity> backupInfo =
-          await Directory('${baseDirInfo.path}${Config.dataDir}')
-              .list()
-              .toList();
-      if (dataInfo.isEmpty || backupInfo.isEmpty) {
+      await Directory('${baseDirInfo.path}${Config.autoBackupDir}')
+          .list()
+          .toList();
+      if (dataInfo.isEmpty) {
         await saveData(Config.dataTemplate);
       } else {
         try {
@@ -69,21 +69,21 @@ class FileIO {
     }
   }
 
-  static Future<List<String>> getRestoreInfo() async {
+  static Future<List<Map<String, dynamic>>> getRestoreInfo() async {
     final baseDirInfo = await getApplicationDocumentsDirectory();
     try {
-      List<FileSystemEntity> backupInfo =
+      List<FileSystemEntity> backupFileList =
           await Directory('${baseDirInfo.path}${Config.autoBackupDir}')
               .list()
               .toList();
-      log(backupInfo.toString());
-      List<String> tmpList = [
-        for (var backup in backupInfo)
-          DateConverter.dateForDisplay(
-              backup.path.split('/').last.split('.').first)
-      ];
-      tmpList.sort((a, b) => b.compareTo(a));
-      return tmpList;
+      List<Map<String, dynamic>> backupInfo = [];
+      for (var backupName in backupFileList) {
+        backupInfo.add({
+          'name': backupName.path.split('/').last.split('.').first,
+          'size': File(backupName.path).lengthSync()
+        });
+      }
+      return backupInfo;
     } catch (e) {
       rethrow;
     }
@@ -93,9 +93,34 @@ class FileIO {
     final baseDirInfo = await getApplicationDocumentsDirectory();
     try {
       await File('${baseDirInfo.path}${Config.dataDir}/${Config.latestData}').copy(
-          '${baseDirInfo.path}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-H-m-s').format(DateTime.now())}${Config.dataExtension}');
+          '${baseDirInfo.path}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
       File('${baseDirInfo.path}${Config.autoBackupDir}/$targetFileName${Config.dataExtension}')
           .copy('${baseDirInfo.path}${Config.dataDir}/${Config.latestData}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static void deleteRestoreData(String restoreFileName) async {
+    final baseDirInfo = await getApplicationDocumentsDirectory();
+    try {
+      await File(
+              '${baseDirInfo.path}${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
+          .delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<void> exportDataFile(String data) async {
+    try {
+      await [Permission.storage].request();
+      String downloadDirPath = '';
+      downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+      log(downloadDirPath);
+      File('$downloadDirPath/${Config.exportFileName}')
+          .writeAsString(data, mode: FileMode.writeOnly);
     } catch (e) {
       rethrow;
     }

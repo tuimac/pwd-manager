@@ -9,13 +9,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:src/utils/cipher.dart';
 
 class ImportExport extends StatefulWidget {
-  const ImportExport({Key? key}) : super(key: key);
+  final String data;
+  const ImportExport({Key? key, required this.data}) : super(key: key);
 
   @override
   State<ImportExport> createState() => _ImportExportState();
 }
 
 class _ImportExportState extends State<ImportExport> {
+  late String data;
   List<bool> isToggleSelected = <bool>[true, false];
   List<Widget> importExport = [
     const Text('Import', style: TextStyle(fontSize: 16)),
@@ -31,11 +33,15 @@ class _ImportExportState extends State<ImportExport> {
         'import': false
       }
     },
+    'export': {
+      'button': {'text': 'Export File', 'color': Colors.blue}
+    }
   };
 
   @override
   void initState() {
     super.initState();
+    data = widget.data;
   }
 
   void get chooseFile async {
@@ -71,6 +77,12 @@ class _ImportExportState extends State<ImportExport> {
         log(e.toString());
       }
     }
+  }
+
+  void exportData() {
+    setState(() {
+      FileIO.exportDataFile(data);
+    });
   }
 
   @override
@@ -169,7 +181,30 @@ class _ImportExportState extends State<ImportExport> {
                   ])
                 : Padding(
                     padding: EdgeInsets.only(top: uiHeight * 0.03),
-                    child: Container()),
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: uiHeight * 0.015,
+                            horizontal: uiWidth * 0.1),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor: switcher['export']['button']
+                                ['color'],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (switcher['import']['button']['import']) {
+                                importData();
+                              } else {
+                                chooseFile;
+                              }
+                            });
+                          },
+                          child: Text(switcher['export']['button']['text']),
+                        ))),
           ],
         ));
   }

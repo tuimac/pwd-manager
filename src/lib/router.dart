@@ -41,12 +41,12 @@ class AppRouter {
       GoRoute(
           path: '/restore',
           builder: (BuildContext context, GoRouterState state) {
-            return Restore();
+            return const Restore();
           }),
       GoRoute(
-          path: '/importexport',
+          path: '/importexport/:data',
           builder: (BuildContext context, GoRouterState state) {
-            return const ImportExport();
+            return ImportExport(data: state.pathParameters['data']!);
           }),
     ],
   );

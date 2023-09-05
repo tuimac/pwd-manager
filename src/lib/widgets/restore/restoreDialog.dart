@@ -40,6 +40,7 @@ class _RestoreDialogState extends State<RestoreDialog> {
             onPressed: (() {
               FileIO.restoreData(DateConverter.dateForFileName(restoreTarget));
               GoRouter.of(context).pop();
+              GoRouter.of(context).pop();
             })),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
