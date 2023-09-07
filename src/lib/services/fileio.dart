@@ -6,15 +6,19 @@ import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';
 import 'dart:developer';
 import 'package:external_path/external_path.dart';
-
 import 'package:permission_handler/permission_handler.dart';
 
+// File read/write service classs
 class FileIO {
+  static Future<String> get _baseDirInfo async {
+    return (await getLibraryDirectory()).path;
+  }
+
+  // Read the data file
   static Future<Map<String, dynamic>> get getData async {
     try {
-      final baseDirInfo = await getApplicationDocumentsDirectory();
       return jsonDecode(Cipher.decryptString(await File(
-              '${baseDirInfo.path}${Config.dataDir}/${Config.latestData}')
+              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
           .readAsString()));
     } on PathNotFoundException {
       initData();
@@ -22,13 +26,14 @@ class FileIO {
     }
   }
 
+  // Write the data file
   static Future saveData(data) async {
-    final baseDirInfo = await getApplicationDocumentsDirectory();
-    final pwdPath = '${baseDirInfo.path}${Config.dataDir}/${Config.latestData}';
+    final pwdPath =
+        '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}';
     try {
       if (data['setting']['auto_backup']) {
         await File(pwdPath).copy(
-            '${baseDirInfo.path}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+            '${await FileIO._baseDirInfo}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
       }
       await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
           mode: FileMode.writeOnly);
@@ -37,43 +42,54 @@ class FileIO {
     }
   }
 
+  // Create the folder and data file as initialization
   static Future initData() async {
-    final baseDirInfo = await getApplicationDocumentsDirectory();
+    // If there is no data in data directory.
     try {
       List<FileSystemEntity> dataInfo =
-          await Directory('${baseDirInfo.path}${Config.dataDir}')
+          await Directory('${await FileIO._baseDirInfo}${Config.dataDir}')
               .list()
               .toList();
-      await Directory('${baseDirInfo.path}${Config.autoBackupDir}')
-          .list()
-          .toList();
       if (dataInfo.isEmpty) {
         await saveData(Config.dataTemplate);
       } else {
         try {
           await File(
-                  '${baseDirInfo.path}${Config.dataDir}/${Config.latestData}')
+                  '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
               .readAsString();
         } on PathNotFoundException {
           saveData(Config.dataTemplate);
         }
       }
-    } on PathNotFoundException {
-      await Directory('${baseDirInfo.path}${Config.dataDir}')
-          .create(recursive: true);
-      await Directory('${baseDirInfo.path}${Config.autoBackupDir}')
-          .create(recursive: true);
-      saveData(Config.dataTemplate);
     } catch (e) {
-      rethrow;
+      await Directory('${await FileIO._baseDirInfo}${Config.dataDir}')
+          .create(recursive: true);
+    }
+    // If there is no back up directory.
+    try {
+      await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
+          .list()
+          .toList();
+    } catch (e) {
+      await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
+          .create(recursive: true);
+    }
+    // If there is no log directory.
+    try {
+      await Directory('${await FileIO._baseDirInfo}${Config.loggingDir}')
+          .list()
+          .toList();
+    } catch (e) {
+      await Directory('${await FileIO._baseDirInfo}${Config.loggingDir}')
+          .create(recursive: true);
     }
   }
 
+  // Read Restore file names in the autobackup folder
   static Future<List<Map<String, dynamic>>> getRestoreInfo() async {
-    final baseDirInfo = await getApplicationDocumentsDirectory();
     try {
       List<FileSystemEntity> backupFileList =
-          await Directory('${baseDirInfo.path}${Config.autoBackupDir}')
+          await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
               .list()
               .toList();
       List<Map<String, dynamic>> backupInfo = [];
@@ -89,23 +105,26 @@ class FileIO {
     }
   }
 
+  // Restore data file from the data in autobackup folder
   static void restoreData(String targetFileName) async {
-    final baseDirInfo = await getApplicationDocumentsDirectory();
     try {
-      await File('${baseDirInfo.path}${Config.dataDir}/${Config.latestData}').copy(
-          '${baseDirInfo.path}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-      File('${baseDirInfo.path}${Config.autoBackupDir}/$targetFileName${Config.dataExtension}')
-          .copy('${baseDirInfo.path}${Config.dataDir}/${Config.latestData}');
+      await File(
+              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
+          .copy(
+              '${await FileIO._baseDirInfo}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+      File('${await FileIO._baseDirInfo}${Config.autoBackupDir}/$targetFileName${Config.dataExtension}')
+          .copy(
+              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}');
     } catch (e) {
       rethrow;
     }
   }
 
+  // Delete autobackup file
   static void deleteRestoreData(String restoreFileName) async {
-    final baseDirInfo = await getApplicationDocumentsDirectory();
     try {
       await File(
-              '${baseDirInfo.path}${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
+              '${await FileIO._baseDirInfo}${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
           .delete();
     } catch (e) {
       rethrow;
@@ -116,11 +135,16 @@ class FileIO {
     try {
       await [Permission.storage].request();
       String downloadDirPath = '';
-      downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
-          ExternalPath.DIRECTORY_DOWNLOADS);
+      if (Platform.isAndroid) {
+        downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
+            ExternalPath.DIRECTORY_DOWNLOADS);
+      } else if (Platform.isIOS) {
+        downloadDirPath = (await getApplicationDocumentsDirectory()).path;
+      }
       log(downloadDirPath);
-      File('$downloadDirPath/${Config.exportFileName}')
-          .writeAsString(data, mode: FileMode.writeOnly);
+      File('$downloadDirPath/${Config.exportFileName}').writeAsString(
+          Cipher.encryptString(jsonEncode(data)),
+          mode: FileMode.writeOnly);
     } catch (e) {
       rethrow;
     }

@@ -26,7 +26,7 @@ class _SystemConfigState extends State<SystemConfig> {
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Setting'),
+            title: const Text('Settings'),
             backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
         body: SizedBox(
             height: uiHeight,
@@ -38,10 +38,10 @@ class _SystemConfigState extends State<SystemConfig> {
                 subtitle: const Text(
                     'Backup the data when change the password status.',
                     style: TextStyle(color: Colors.white, fontSize: 12)),
-                value: data['setting']['auto_backup']!,
+                value: data['settings']['auto_backup']!,
                 onChanged: (value) {
                   setState(() {
-                    data['setting']['auto_backup'] = value;
+                    data['settings']['auto_backup'] = value;
                   });
                   FileIO.saveData(data);
                 },

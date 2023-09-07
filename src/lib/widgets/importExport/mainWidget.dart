@@ -196,11 +196,7 @@ class _ImportExportState extends State<ImportExport> {
                           ),
                           onPressed: () {
                             setState(() {
-                              if (switcher['import']['button']['import']) {
-                                importData();
-                              } else {
-                                chooseFile;
-                              }
+                              exportData();
                             });
                           },
                           child: Text(switcher['export']['button']['text']),
