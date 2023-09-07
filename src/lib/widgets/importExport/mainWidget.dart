@@ -1,12 +1,13 @@
 // ignore: file_names
-import 'package:flutter/material.dart';
-import 'package:src/services/fileio.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:src/utils/cipher.dart';
+import 'package:flutter/material.dart';
+import 'package:src/services/fileio.dart';
+import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
 
 class ImportExport extends StatefulWidget {
   final String data;
@@ -34,7 +35,10 @@ class _ImportExportState extends State<ImportExport> {
       }
     },
     'export': {
-      'button': {'text': 'Export File', 'color': Colors.blue}
+      'button': {
+        'text': 'Export File',
+        'color': Color.fromARGB(255, 82, 218, 231)
+      }
     }
   };
 
@@ -77,12 +81,6 @@ class _ImportExportState extends State<ImportExport> {
         log(e.toString());
       }
     }
-  }
-
-  void exportData() {
-    setState(() {
-      FileIO.exportDataFile(data);
-    });
   }
 
   @override
@@ -151,8 +149,8 @@ class _ImportExportState extends State<ImportExport> {
                         )),
                     Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: uiHeight * 0.03,
-                            horizontal: uiWidth * 0.02),
+                            vertical: uiHeight * 0.015,
+                            horizontal: uiWidth * 0.01),
                         child: switcher['import']['text']['switch']
                             ? TextField(
                                 readOnly: true,
@@ -180,27 +178,24 @@ class _ImportExportState extends State<ImportExport> {
                             : Container())
                   ])
                 : Padding(
-                    padding: EdgeInsets.only(top: uiHeight * 0.03),
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: uiHeight * 0.015,
-                            horizontal: uiWidth * 0.1),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                            backgroundColor: switcher['export']['button']
-                                ['color'],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              exportData();
+                    padding: EdgeInsets.only(top: uiHeight * 0.015),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: switcher['export']['button']['color'],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () async {
+                        return await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ConfirmEncryptDialog(data: data);
                             });
-                          },
-                          child: Text(switcher['export']['button']['text']),
-                        ))),
+                      },
+                      child: Text(switcher['export']['button']['text']),
+                    )),
           ],
         ));
   }

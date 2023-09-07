@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
+import 'dart:developer';
 import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';
-import 'dart:developer';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,7 +20,7 @@ class FileIO {
       return jsonDecode(Cipher.decryptString(await File(
               '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
           .readAsString()));
-    } on PathNotFoundException {
+    } catch (e) {
       initData();
       return Config.dataTemplate;
     }
@@ -31,7 +31,7 @@ class FileIO {
     final pwdPath =
         '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}';
     try {
-      if (data['setting']['auto_backup']) {
+      if (data['settings']['auto_backup']) {
         await File(pwdPath).copy(
             '${await FileIO._baseDirInfo}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
       }
@@ -131,7 +131,7 @@ class FileIO {
     }
   }
 
-  static Future<void> exportDataFile(String data) async {
+  static Future<String> exportDataFile(String data) async {
     try {
       await [Permission.storage].request();
       String downloadDirPath = '';
@@ -141,10 +141,9 @@ class FileIO {
       } else if (Platform.isIOS) {
         downloadDirPath = (await getApplicationDocumentsDirectory()).path;
       }
-      log(downloadDirPath);
-      File('$downloadDirPath/${Config.exportFileName}').writeAsString(
-          Cipher.encryptString(jsonEncode(data)),
-          mode: FileMode.writeOnly);
+      File('$downloadDirPath/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}_password${Config.dataExtension}')
+          .writeAsString(data, mode: FileMode.writeOnly);
+      return downloadDirPath;
     } catch (e) {
       rethrow;
     }
