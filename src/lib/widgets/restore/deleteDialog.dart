@@ -5,10 +5,9 @@ import 'package:src/utils/dateFormat.dart';
 
 class DeleteDialog extends StatefulWidget {
   final String restoreFileName;
-  const DeleteDialog({
-    Key? key,
-    required this.restoreFileName,
-  }) : super(key: key);
+
+  const DeleteDialog({Key? key, required this.restoreFileName})
+      : super(key: key);
 
   @override
   State<DeleteDialog> createState() => _DeleteDialogState();
@@ -84,6 +83,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
                     setState(() {
                       FileIO.deleteRestoreData(restoreFileName);
                     });
+                    GoRouter.of(context).pop();
                   }
                 : null)
       ],

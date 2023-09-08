@@ -34,9 +34,10 @@ class _EditPasswordState extends State<EditPassword> {
   }
 
   void savePassword(Map<String, dynamic> editedPassword) {
-    data['passwords'][primaryKey] = editedPassword;
-    FileIO.saveData(data);
-    GoRouter.of(context).pop();
+    setState(() {
+      data['passwords'][primaryKey] = editedPassword;
+      FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+    });
   }
 
   void switchEdit() {

@@ -25,10 +25,11 @@ class _CreatePasswordState extends State<CreatePassword> {
     passwordVisible = true;
   }
 
-  void savePassword(Map<String, dynamic> newPassword) {
-    data['passwords'][primaryKey] = newPassword;
-    FileIO.saveData(data);
-    GoRouter.of(context).pop();
+  void savePassword(Map<String, dynamic> newPassword) async {
+    setState(() {
+      data['passwords'][primaryKey] = newPassword;
+      FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+    });
   }
 
   @override

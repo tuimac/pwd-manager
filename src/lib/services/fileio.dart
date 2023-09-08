@@ -11,7 +11,11 @@ import 'package:permission_handler/permission_handler.dart';
 // File read/write service classs
 class FileIO {
   static Future<String> get _baseDirInfo async {
-    return (await getLibraryDirectory()).path;
+    if (Platform.isAndroid) {
+      return (await getApplicationDocumentsDirectory()).path;
+    } else {
+      return (await getLibraryDirectory()).path;
+    }
   }
 
   // Read the data file
@@ -21,6 +25,7 @@ class FileIO {
               '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
           .readAsString()));
     } catch (e) {
+      log('ReadFile: ' + e.toString());
       initData();
       return Config.dataTemplate;
     }
@@ -38,6 +43,7 @@ class FileIO {
       await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
           mode: FileMode.writeOnly);
     } catch (e) {
+      log(e.toString());
       rethrow;
     }
   }
@@ -50,6 +56,8 @@ class FileIO {
           await Directory('${await FileIO._baseDirInfo}${Config.dataDir}')
               .list()
               .toList();
+      log('InitData');
+      log(dataInfo.toString());
       if (dataInfo.isEmpty) {
         await saveData(Config.dataTemplate);
       } else {
@@ -57,7 +65,7 @@ class FileIO {
           await File(
                   '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
               .readAsString();
-        } on PathNotFoundException {
+        } catch (e) {
           saveData(Config.dataTemplate);
         }
       }
@@ -127,6 +135,7 @@ class FileIO {
               '${await FileIO._baseDirInfo}${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
           .delete();
     } catch (e) {
+      log(e.toString());
       rethrow;
     }
   }

@@ -42,6 +42,10 @@ class _RestoreState extends State<Restore> {
     });
   }
 
+  void refreshState() {
+    setState(() {});
+  }
+
   void sortData(String sortType) {
     setState(() {
       switch (sortType) {
@@ -169,7 +173,9 @@ class _RestoreState extends State<Restore> {
                                       return Dismissible(
                                           onDismissed: (DismissDirection
                                               dismissDirection) {
-                                            setState(() {});
+                                            setState(() {
+                                              restoreDataList.removeAt(index);
+                                            });
                                           },
                                           confirmDismiss: (direction) async {
                                             return await showDialog(
@@ -180,7 +186,11 @@ class _RestoreState extends State<Restore> {
                                                       restoreFileName:
                                                           restoreDataList[index]
                                                               ['name']);
-                                                });
+                                                }).then((value) {
+                                              setState(() {
+                                                restoreDataList.removeAt(index);
+                                              });
+                                            });
                                           },
                                           direction:
                                               DismissDirection.endToStart,
