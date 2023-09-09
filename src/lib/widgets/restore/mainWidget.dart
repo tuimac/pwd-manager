@@ -190,6 +190,7 @@ class _RestoreState extends State<Restore> {
                                               setState(() {
                                                 restoreDataList.removeAt(index);
                                               });
+                                              return null;
                                             });
                                           },
                                           direction:
