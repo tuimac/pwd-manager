@@ -1,10 +1,9 @@
-// ignore: file_names
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/fileio.dart';
+import 'package:src/services/fileio.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
@@ -16,8 +15,8 @@ class ListItems extends StatefulWidget {
 }
 
 class _ListItemsState extends State<ListItems> {
-  late Map<String, dynamic> data;
-  late List listData;
+  late Map<String, dynamic> data = {};
+  late List listData = [];
 
   @override
   void initState() {
@@ -32,6 +31,7 @@ class _ListItemsState extends State<ListItems> {
         listData = data['passwords'].keys.toList();
       });
     });
+    log(data.toString());
   }
 
   void filterList(String searchWord) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:developer';
+import 'package:src/utils/sanitizer.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 // File read/write service classs
 class FileIO {
-  static Future<String> get _baseDirInfo async {
+  static Future<String> get baseDirInfo async {
     if (Platform.isAndroid) {
       return (await getApplicationDocumentsDirectory()).path;
     } else {
@@ -22,74 +23,30 @@ class FileIO {
   static Future<Map<String, dynamic>> get getData async {
     try {
       return jsonDecode(Cipher.decryptString(await File(
-              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
+              '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
           .readAsString()));
-    } catch (e) {
-      log('ReadFile: ' + e.toString());
-      initData();
-      return Config.dataTemplate;
-    }
-  }
-
-  // Write the data file
-  static Future saveData(data) async {
-    final pwdPath =
-        '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}';
-    try {
-      if (data['settings']['auto_backup']) {
-        await File(pwdPath).copy(
-            '${await FileIO._baseDirInfo}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-      }
-      await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
-          mode: FileMode.writeOnly);
+    } on PathNotFoundException catch (e) {
+      log(e.toString());
+      return sanitizeData(Config.dataTemplate);
     } catch (e) {
       log(e.toString());
       rethrow;
     }
   }
 
-  // Create the folder and data file as initialization
-  static Future initData() async {
-    // If there is no data in data directory.
+  // Write the data file
+  static Future saveData(Map<String, dynamic> data) async {
+    final pwdPath =
+        '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}';
     try {
-      List<FileSystemEntity> dataInfo =
-          await Directory('${await FileIO._baseDirInfo}${Config.dataDir}')
-              .list()
-              .toList();
-      log('InitData');
-      log(dataInfo.toString());
-      if (dataInfo.isEmpty) {
-        await saveData(Config.dataTemplate);
-      } else {
-        try {
-          await File(
-                  '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
-              .readAsString();
-        } catch (e) {
-          saveData(Config.dataTemplate);
-        }
+      if (data['settings']['auto_backup']) {
+        await File(pwdPath).copy(
+            '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
       }
+      await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
+          mode: FileMode.writeOnly);
     } catch (e) {
-      await Directory('${await FileIO._baseDirInfo}${Config.dataDir}')
-          .create(recursive: true);
-    }
-    // If there is no back up directory.
-    try {
-      await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
-          .list()
-          .toList();
-    } catch (e) {
-      await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
-          .create(recursive: true);
-    }
-    // If there is no log directory.
-    try {
-      await Directory('${await FileIO._baseDirInfo}${Config.loggingDir}')
-          .list()
-          .toList();
-    } catch (e) {
-      await Directory('${await FileIO._baseDirInfo}${Config.loggingDir}')
-          .create(recursive: true);
+      rethrow;
     }
   }
 
@@ -97,7 +54,7 @@ class FileIO {
   static Future<List<Map<String, dynamic>>> getRestoreInfo() async {
     try {
       List<FileSystemEntity> backupFileList =
-          await Directory('${await FileIO._baseDirInfo}${Config.autoBackupDir}')
+          await Directory('${await FileIO.baseDirInfo}/${Config.autoBackupDir}')
               .list()
               .toList();
       List<Map<String, dynamic>> backupInfo = [];
@@ -117,12 +74,12 @@ class FileIO {
   static void restoreData(String targetFileName) async {
     try {
       await File(
-              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}')
+              '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
           .copy(
-              '${await FileIO._baseDirInfo}${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-      File('${await FileIO._baseDirInfo}${Config.autoBackupDir}/$targetFileName${Config.dataExtension}')
+              '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+      File('${await FileIO.baseDirInfo}/${Config.autoBackupDir}/$targetFileName${Config.dataExtension}')
           .copy(
-              '${await FileIO._baseDirInfo}${Config.dataDir}/${Config.latestData}');
+              '${await FileIO.baseDirInfo}${Config.dataDir}/${Config.latestData}');
     } catch (e) {
       rethrow;
     }
@@ -132,7 +89,7 @@ class FileIO {
   static void deleteRestoreData(String restoreFileName) async {
     try {
       await File(
-              '${await FileIO._baseDirInfo}${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
+              '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/$restoreFileName${Config.dataExtension}')
           .delete();
     } catch (e) {
       log(e.toString());
@@ -155,6 +112,17 @@ class FileIO {
       return downloadDirPath;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  void logging(String messages, String mode) async {
+    final String logFilePath =
+        '${await baseDirInfo}/${Config.loggingDir}/${Config.logFileName}';
+    if (await File(logFilePath).exists()) {
+      await File(logFilePath)
+          .writeAsString(messages, mode: FileMode.writeOnlyAppend);
+    } else {
+      await File(logFilePath).writeAsString(messages, mode: FileMode.writeOnly);
     }
   }
 }

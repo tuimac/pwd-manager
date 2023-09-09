@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:convert';
 
+// ignore: must_be_immutable
 class SubMenuDrawer extends StatefulWidget {
   final Map<String, dynamic> data;
   Function getData;
@@ -96,6 +97,21 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
                           .push('/importexport/$tmpData')
+                          .then((value) => widget.getData());
+                    },
+                  )),
+              const Divider(height: 1, color: Colors.black),
+              Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 134, 179, 185),
+                  ),
+                  child: ListTile(
+                    title: const Text('System Log'),
+                    onTap: () {
+                      String tmpData = jsonEncode(data);
+                      GoRouter.of(context).pop();
+                      GoRouter.of(context)
+                          .push('/logging/$tmpData')
                           .then((value) => widget.getData());
                     },
                   ))
