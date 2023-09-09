@@ -6,6 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/fileio.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
+import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
 class ListItems extends StatefulWidget {
   const ListItems({Key? key}) : super(key: key);
@@ -171,77 +172,6 @@ class _ListItemsState extends State<ListItems> {
                 .then((value) => getData());
           },
         ),
-        drawer: Theme(
-            data: Theme.of(context).copyWith(
-              canvasColor: const Color.fromARGB(255, 196, 228, 232),
-            ),
-            child: Drawer(
-                width: uiWidth * 0.6,
-                backgroundColor: const Color.fromARGB(255, 173, 218, 232),
-                child: ListView(padding: EdgeInsets.zero, children: [
-                  SizedBox(
-                    height: uiHeight * 0.12,
-                    child: const DrawerHeader(
-                      child: Center(
-                          child: Text('Sub Menu',
-                              style: TextStyle(
-                                  fontSize: 15, color: Colors.black))),
-                    ),
-                  ),
-                  Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 134, 179, 185),
-                      ),
-                      child: ListTile(
-                        title: const Text('Home'),
-                        onTap: () {
-                          GoRouter.of(context).pop();
-                        },
-                      )),
-                  const Divider(height: 1, color: Colors.black),
-                  Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 134, 179, 185),
-                      ),
-                      child: ListTile(
-                        title: const Text('Setting'),
-                        onTap: () {
-                          String tmpData = jsonEncode(data);
-                          GoRouter.of(context).pop();
-                          GoRouter.of(context)
-                              .push('/systemconfig/$tmpData')
-                              .then((value) => getData());
-                        },
-                      )),
-                  const Divider(height: 1, color: Colors.black),
-                  Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 134, 179, 185),
-                      ),
-                      child: ListTile(
-                        title: const Text('Restore'),
-                        onTap: () {
-                          GoRouter.of(context).pop();
-                          GoRouter.of(context)
-                              .push('/restore')
-                              .then((value) => getData());
-                        },
-                      )),
-                  const Divider(height: 1, color: Colors.black),
-                  Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 134, 179, 185),
-                      ),
-                      child: ListTile(
-                        title: const Text('Import/Export'),
-                        onTap: () {
-                          String tmpData = jsonEncode(data);
-                          GoRouter.of(context).pop();
-                          GoRouter.of(context)
-                              .push('/importexport/$tmpData')
-                              .then((value) => getData());
-                        },
-                      ))
-                ]))));
+        drawer: SubMenuDrawer(data: data, getData: getData));
   }
 }
