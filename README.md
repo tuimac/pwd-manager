@@ -1,3 +1,2 @@
-# Flutter development environment in container
-This docker container is for Flutter development on web. The reason of creating this environment is that some client don't have enough power to build the application so you need to develop and build the apps on the server is more efficient.
-
+# Password Manager
+I just want to manage my password list on my phone but I concerned about the security so I don't want to use any other password manager app on the each store. That is the reason for this project.
