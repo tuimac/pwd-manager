@@ -96,7 +96,11 @@ class _CreatePasswordState extends State<CreatePassword> {
                                             .containsKey(input)) {
                                           return '"$input" have already been registered.';
                                         } else {
-                                          return null;
+                                          if (input.contains('?')) {
+                                            return 'This field cannot contain "?".';
+                                          } else {
+                                            return null;
+                                          }
                                         }
                                       }
                                     },

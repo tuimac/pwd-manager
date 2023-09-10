@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:src/services/fileio.dart';
 
 class ConfirmEncryptDialog extends StatefulWidget {
-  final String data;
+  final Map<String, dynamic> data;
   const ConfirmEncryptDialog({
     Key? key,
     required this.data,
@@ -21,7 +23,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
   @override
   void initState() {
     super.initState();
-    data = widget.data;
+    data = jsonEncode(widget.data);
   }
 
   void exportData() async {

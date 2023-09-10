@@ -8,6 +8,7 @@ import 'package:src/widgets/editPassword/main.dart';
 import 'package:src/widgets/logging/main.dart';
 import 'package:src/widgets/restore/main.dart';
 import 'package:src/widgets/systemConfig/main.dart';
+import 'dart:developer';
 
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -18,23 +19,21 @@ class AppRouter {
             return const ListItems();
           }),
       GoRoute(
-          path: '/editpwd/:data/:primaryKey',
+          path: '/editpwd/:primaryKey',
           builder: (BuildContext context, GoRouterState state) {
             return EditPassword(
-                data: json.decode(state.pathParameters['data']!),
+                data: state.extra as Map<String, dynamic>,
                 primaryKey: state.pathParameters['primaryKey']!);
           }),
       GoRoute(
-          path: '/createpwd/:data',
+          path: '/createpwd',
           builder: (BuildContext context, GoRouterState state) {
-            return CreatePassword(
-                data: json.decode(state.pathParameters['data']!));
+            return CreatePassword(data: state.extra as Map<String, dynamic>);
           }),
       GoRoute(
-          path: '/systemconfig/:data',
+          path: '/systemconfig',
           builder: (BuildContext context, GoRouterState state) {
-            return SystemConfig(
-                data: json.decode(state.pathParameters['data']!));
+            return SystemConfig(data: state.extra as Map<String, dynamic>);
           }),
       GoRoute(
           path: '/restore',
@@ -42,14 +41,14 @@ class AppRouter {
             return const Restore();
           }),
       GoRoute(
-          path: '/importexport/:data',
+          path: '/importexport',
           builder: (BuildContext context, GoRouterState state) {
-            return ImportExport(data: state.pathParameters['data']!);
+            return ImportExport(data: state.extra as Map<String, dynamic>);
           }),
       GoRoute(
-          path: '/logging/:data',
+          path: '/logging',
           builder: (BuildContext context, GoRouterState state) {
-            return Logging(data: json.decode(state.pathParameters['data']!));
+            return Logging(data: state.extra as Map<String, dynamic>);
           }),
     ],
   );

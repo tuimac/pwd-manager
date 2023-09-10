@@ -10,7 +10,7 @@ import 'package:src/services/fileio.dart';
 import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
 
 class ImportExport extends StatefulWidget {
-  final String data;
+  final Map<String, dynamic> data;
   const ImportExport({Key? key, required this.data}) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class ImportExport extends StatefulWidget {
 }
 
 class _ImportExportState extends State<ImportExport> {
-  late String data;
+  late Map<String, dynamic> data;
   List<bool> isToggleSelected = <bool>[true, false];
   List<Widget> importExport = [
     const Text('Import', style: TextStyle(fontSize: 16)),
@@ -37,7 +37,7 @@ class _ImportExportState extends State<ImportExport> {
     'export': {
       'button': {
         'text': 'Export File',
-        'color': Color.fromARGB(255, 82, 218, 231)
+        'color': const Color.fromARGB(255, 82, 218, 231)
       }
     }
   };

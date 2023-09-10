@@ -64,10 +64,9 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                   child: ListTile(
                     title: const Text('Setting'),
                     onTap: () {
-                      String tmpData = jsonEncode(data);
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
-                          .push('/systemconfig/$tmpData')
+                          .push('/systemconfig', extra: data)
                           .then((value) => widget.getData());
                     },
                   )),
@@ -93,10 +92,8 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                   child: ListTile(
                     title: const Text('Import/Export'),
                     onTap: () {
-                      String tmpData = jsonEncode(data);
-                      GoRouter.of(context).pop();
                       GoRouter.of(context)
-                          .push('/importexport/$tmpData')
+                          .push('/importexport', extra: data)
                           .then((value) => widget.getData());
                     },
                   )),
@@ -108,10 +105,9 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                   child: ListTile(
                     title: const Text('System Log'),
                     onTap: () {
-                      String tmpData = jsonEncode(data);
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
-                          .push('/logging/$tmpData')
+                          .push('/logging', extra: data)
                           .then((value) => widget.getData());
                     },
                   ))

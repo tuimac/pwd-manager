@@ -39,9 +39,13 @@ class FileIO {
     final pwdPath =
         '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}';
     try {
-      if (data['settings']['auto_backup']) {
-        await File(pwdPath).copy(
-            '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+      if (data['settings'].containsKey('auto_backup')) {
+        if (data['settings']['auto_backup']) {
+          await File(pwdPath).copy(
+              '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+        }
+      } else {
+        data['settings']['auto_backup'] = false;
       }
       await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
           mode: FileMode.writeOnly);
