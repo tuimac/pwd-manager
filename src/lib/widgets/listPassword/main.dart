@@ -9,16 +9,16 @@ import 'package:src/services/fileio.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
-class ListItems extends StatefulWidget {
-  const ListItems({Key? key}) : super(key: key);
+class ListPasswords extends StatefulWidget {
+  const ListPasswords({Key? key}) : super(key: key);
 
   @override
-  State<ListItems> createState() => _ListItemsState();
+  State<ListPasswords> createState() => _ListPasswordsState();
 }
 
-class _ListItemsState extends State<ListItems> {
+class _ListPasswordsState extends State<ListPasswords> {
   late Map<String, dynamic> data = {};
-  late List restoreDataList = [];
+  late List dataList = [];
   late String filterWord = '';
   Map<String, dynamic> sortTypes = {'Name': false};
 
@@ -32,7 +32,7 @@ class _ListItemsState extends State<ListItems> {
     await FileIO.getData.then((value) {
       setState(() {
         data = value;
-        restoreDataList = data['passwords'].keys.toList();
+        dataList = data['passwords'].keys.toList();
       });
     });
     filterList();
@@ -40,8 +40,8 @@ class _ListItemsState extends State<ListItems> {
 
   void filterList() {
     setState(() {
-      List tmprestoreDataList = data['passwords'].keys.toList();
-      restoreDataList = tmprestoreDataList
+      List tmpdataList = data['passwords'].keys.toList();
+      dataList = tmpdataList
           .where(
               (item) => item.toLowerCase().contains(filterWord.toLowerCase()))
           .toList();
@@ -53,11 +53,11 @@ class _ListItemsState extends State<ListItems> {
       switch (sortType) {
         case 'Name':
           if (sortTypes[sortType]) {
-            restoreDataList.sort();
+            dataList.sort();
             sortTypes[sortType] = false;
           } else {
-            restoreDataList.sort();
-            restoreDataList = List.from(restoreDataList.reversed);
+            dataList.sort();
+            dataList = List.from(dataList.reversed);
             sortTypes[sortType] = true;
           }
           break;
@@ -174,7 +174,7 @@ class _ListItemsState extends State<ListItems> {
                                       shrinkWrap: true,
                                       padding:
                                           EdgeInsets.only(top: uiHeight * 0.03),
-                                      itemCount: restoreDataList.length,
+                                      itemCount: dataList.length,
                                       itemBuilder: (context, index) {
                                         return Card(
                                           color: const Color.fromARGB(
@@ -183,6 +183,7 @@ class _ListItemsState extends State<ListItems> {
                                               onDismissed: (DismissDirection
                                                   dismissDirection) {
                                                 setState(() {
+                                                  dataList.removeAt(index);
                                                   getData();
                                                 });
                                               },
@@ -195,8 +196,7 @@ class _ListItemsState extends State<ListItems> {
                                                       return DeleteDialog(
                                                           data: data,
                                                           primaryKey:
-                                                              restoreDataList[
-                                                                  index],
+                                                              dataList[index],
                                                           getData: getData);
                                                     });
                                               },
@@ -206,14 +206,13 @@ class _ListItemsState extends State<ListItems> {
                                                 color: Colors.red,
                                               ),
                                               key: ValueKey<String>(
-                                                  restoreDataList[index]),
+                                                  dataList[index]),
                                               child: ListTile(
-                                                  title: Text(
-                                                      restoreDataList[index]),
+                                                  title: Text(dataList[index]),
                                                   onTap: () {
                                                     GoRouter.of(context)
                                                         .push(
-                                                            '/editpwd/${restoreDataList[index]}',
+                                                            '/editpwd/${dataList[index]}',
                                                             extra: data)
                                                         .then((value) =>
                                                             getData());

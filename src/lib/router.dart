@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/widgets/auth/main.dart';
 import 'package:src/widgets/createPassword/main.dart';
 import 'package:src/widgets/importExport/main.dart';
 import 'package:src/widgets/listPassword/main.dart';
@@ -16,7 +17,12 @@ class AppRouter {
       GoRoute(
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
-            return const ListItems();
+            return const Authentication();
+          }),
+      GoRoute(
+          path: '/listpwd',
+          builder: (BuildContext context, GoRouterState state) {
+            return const ListPasswords();
           }),
       GoRoute(
           path: '/editpwd/:primaryKey',
