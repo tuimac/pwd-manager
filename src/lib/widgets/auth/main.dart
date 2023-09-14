@@ -2,6 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:src/widgets/auth/numberButton.dart';
 import 'package:src/services/fileio.dart';
+import 'package:src/utils/sanitizer.dart';
+import 'package:src/utils/compare.dart';
+import 'package:go_router/go_router.dart';
+import 'dart:developer';
 
 class Authentication extends StatefulWidget {
   const Authentication({Key? key}) : super(key: key);
@@ -12,9 +16,12 @@ class Authentication extends StatefulWidget {
 
 class _AuthenticationState extends State<Authentication> {
   late Map<String, dynamic> data;
+  late String authType;
+  String headLine = '';
   List<int> typedNumbers = [];
+  List<int> signinNumbers = [];
   List<Padding> typedDots = [];
-  double buttonSize = 80;
+  double buttonSize = 70;
   Map<String, double> numberPadding = {'vertical': 15, 'horizontal': 15};
   double dotsSize = 20;
   double dotsSizePadding = 20;
@@ -23,8 +30,17 @@ class _AuthenticationState extends State<Authentication> {
   @override
   void initState() {
     FileIO.getData.then((value) {
-      setState(() {
-        data = value;
+      sanitizeData(value).then((sanitizedData) {
+        setState(() {
+          data = sanitizedData;
+          if (data['pass_code'].isEmpty) {
+            authType = 'signin';
+            headLine = 'Register passcode';
+          } else {
+            authType = 'login';
+            headLine = 'Type passcode';
+          }
+        });
       });
     });
     super.initState();
@@ -40,7 +56,7 @@ class _AuthenticationState extends State<Authentication> {
             color: Colors.white,
             size: dotsSize,
           )));
-      if (typedNumbers.length > 0) {
+      if (typedNumbers.isNotEmpty) {
         dotsSizePadding = 0;
       }
     });
@@ -58,20 +74,19 @@ class _AuthenticationState extends State<Authentication> {
     });
   }
 
+  void tryLogin() {}
+
   @override
   Widget build(BuildContext context) {
-    Size uiSize = MediaQuery.of(context).size;
-    double uiHeight = uiSize.height;
-    double uiWidth = uiSize.width;
-
     return Scaffold(
         body: SafeArea(
             child: Center(
                 child: Column(children: [
+      Padding(padding: EdgeInsets.only(top: contentsPadding + dotsSizePadding)),
       Padding(
           padding: EdgeInsets.only(top: contentsPadding),
-          child: const Text('Type the passcode',
-              style: TextStyle(color: Colors.white, fontSize: 35))),
+          child: Text(headLine,
+              style: const TextStyle(color: Colors.white, fontSize: 30))),
       Padding(padding: EdgeInsets.only(top: contentsPadding + dotsSizePadding)),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: typedDots),
       Padding(padding: EdgeInsets.only(top: contentsPadding)),
@@ -206,7 +221,28 @@ class _AuthenticationState extends State<Authentication> {
                               width: buttonSize,
                               child: IconButton(
                                   onPressed: () {
-                                    setState(() {});
+                                    if (typedNumbers.length > 4 ||
+                                        typedNumbers.length < 8) {
+                                      if (authType == 'signin') {
+                                        setState(() {
+                                          signinNumbers = typedNumbers;
+                                          authType = 'confirm';
+                                          headLine = 'Retype passcode';
+                                          typedNumbers = [];
+                                          typedDots = [];
+                                        });
+                                      } else if (authType == 'confirm') {
+                                        if (Compare.list(
+                                            signinNumbers, typedNumbers)) {
+                                          GoRouter.of(context).go('/listpwd');
+                                        }
+                                      } else if (authType == 'login') {
+                                        if (Compare.list(
+                                            data['pass_code'], typedNumbers)) {
+                                          GoRouter.of(context).go('/listpwd');
+                                        }
+                                      }
+                                    }
                                   },
                                   icon: Icon(
                                     Icons.done,

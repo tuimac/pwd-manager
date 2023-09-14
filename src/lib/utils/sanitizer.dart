@@ -12,8 +12,8 @@ Map<String, dynamic> _checkData(Map<String, dynamic> data) {
     data['settings']['log_level'] = 'none';
   }
   // Pass Phrase check
-  if (!data.containsKey('pass_phrase')) {
-    data['pass_phrase'] = '';
+  if (!data.containsKey('pass_code')) {
+    data['pass_code'] = '';
   }
   return data;
 }
