@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:src/widgets/logging/main.dart';
 
 // File read/write service classs
 class FileIO {
@@ -35,17 +36,20 @@ class FileIO {
   }
 
   // Write the data file
-  static Future saveData(Map<String, dynamic> data) async {
+  static Future saveData(Map<String, dynamic> data,
+      {String mode = 'default'}) async {
     final pwdPath =
         '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}';
     try {
-      if (data['settings'].containsKey('auto_backup')) {
-        if (data['settings']['auto_backup']) {
-          await File(pwdPath).copy(
-              '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+      if (mode == 'default') {
+        if (data['settings'].containsKey('auto_backup')) {
+          if (data['settings']['auto_backup']) {
+            await File(pwdPath).copy(
+                '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+          }
+        } else {
+          data['settings']['auto_backup'] = false;
         }
-      } else {
-        data['settings']['auto_backup'] = false;
       }
       await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
           mode: FileMode.writeOnly);
@@ -119,7 +123,7 @@ class FileIO {
     }
   }
 
-  void logging(String messages, String mode) async {
+  void logging(String messages) async {
     final String logFilePath =
         '${await baseDirInfo}/${Config.loggingDir}/${Config.logFileName}';
     if (await File(logFilePath).exists()) {

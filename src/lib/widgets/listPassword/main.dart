@@ -10,20 +10,24 @@ import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
 class ListPasswords extends StatefulWidget {
-  const ListPasswords({Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const ListPasswords({Key? key, required this.data}) : super(key: key);
 
   @override
   State<ListPasswords> createState() => _ListPasswordsState();
 }
 
 class _ListPasswordsState extends State<ListPasswords> {
-  late Map<String, dynamic> data = {};
+  late Map<String, dynamic> data;
   late List dataList = [];
   late String filterWord = '';
   Map<String, dynamic> sortTypes = {'Name': false};
 
   @override
   void initState() {
+    setState(() {
+      data = widget.data;
+    });
     getData();
     super.initState();
   }

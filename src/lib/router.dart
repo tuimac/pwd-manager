@@ -22,7 +22,7 @@ class AppRouter {
       GoRoute(
           path: '/listpwd',
           builder: (BuildContext context, GoRouterState state) {
-            return const ListPasswords();
+            return ListPasswords(data: state.extra as Map<String, dynamic>);
           }),
       GoRoute(
           path: '/editpwd/:primaryKey',

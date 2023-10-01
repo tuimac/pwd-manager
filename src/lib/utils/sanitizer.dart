@@ -13,7 +13,7 @@ Map<String, dynamic> _checkData(Map<String, dynamic> data) {
   }
   // Pass Phrase check
   if (!data.containsKey('pass_code')) {
-    data['pass_code'] = '';
+    data['pass_code'] = [];
   }
   return data;
 }
@@ -42,7 +42,7 @@ Future<Map<String, dynamic>> sanitizeData(
     await Directory('${await FileIO.baseDirInfo}/${Config.autoBackupDir}')
         .create(recursive: true);
   }
-  // If there is no back up directory.
+  // If there is no log directory.
   if (!await File('${await FileIO.baseDirInfo}/${Config.loggingDir}')
       .exists()) {
     await Directory('${await FileIO.baseDirInfo}/${Config.loggingDir}')

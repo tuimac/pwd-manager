@@ -40,6 +40,8 @@ class _EditPasswordState extends State<EditPassword> {
     });
   }
 
+  void timeStamp() async {}
+
   void switchEdit() {
     if (editFlags['readOnly']) {
       setState(() {
@@ -111,21 +113,21 @@ class _EditPasswordState extends State<EditPassword> {
                                         horizontal: contentPadding['x']!,
                                       ),
                                       errorStyle:
-                                          TextStyle(color: Colors.white),
-                                      fillColor:
-                                          Color.fromARGB(255, 142, 164, 231),
-                                      enabledBorder: OutlineInputBorder(
+                                          const TextStyle(color: Colors.white),
+                                      fillColor: const Color.fromARGB(
+                                          255, 142, 164, 231),
+                                      enabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
-                                      focusedBorder: OutlineInputBorder(
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
-                                      border: OutlineInputBorder(
+                                      border: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'Password Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
@@ -163,21 +165,21 @@ class _EditPasswordState extends State<EditPassword> {
                                         horizontal: contentPadding['x']!,
                                       ),
                                       errorStyle:
-                                          TextStyle(color: Colors.white),
-                                      fillColor:
-                                          Color.fromARGB(255, 158, 158, 158),
-                                      enabledBorder: OutlineInputBorder(
+                                          const TextStyle(color: Colors.white),
+                                      fillColor: const Color.fromARGB(
+                                          255, 158, 158, 158),
+                                      enabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
-                                      focusedBorder: OutlineInputBorder(
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
-                                      border: OutlineInputBorder(
+                                      border: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'User Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
@@ -262,24 +264,24 @@ class _EditPasswordState extends State<EditPassword> {
                                           vertical: 10,
                                           horizontal: contentPadding['x']!,
                                         ),
-                                        fillColor:
-                                            Color.fromARGB(255, 113, 141, 157),
-                                        enabledBorder: OutlineInputBorder(
+                                        fillColor: const Color.fromARGB(
+                                            255, 113, 141, 157),
+                                        enabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors.white,
                                                 width: 2.0)),
-                                        focusedBorder: OutlineInputBorder(
+                                        focusedBorder: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors.white,
                                                 width: 2.0)),
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors.white,
                                                 width: 2.0)),
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
                                         labelText: 'Memo',
-                                        labelStyle: TextStyle(
+                                        labelStyle: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),
