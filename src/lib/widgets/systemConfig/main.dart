@@ -45,6 +45,20 @@ class _SystemConfigState extends State<SystemConfig> {
                   });
                   FileIO.saveData(data);
                 },
+              ),
+              SwitchListTile(
+                title: const Text('Biometrics Authentication',
+                    style: TextStyle(color: Colors.white)),
+                subtitle: const Text(
+                    'Authentication by FaceID or Finger Print and so on.',
+                    style: TextStyle(color: Colors.white, fontSize: 12)),
+                value: data['settings']['bio_auth']!,
+                onChanged: (value) {
+                  setState(() {
+                    data['settings']['bio_auth'] = value;
+                  });
+                  FileIO.saveData(data);
+                },
               )
             ]))));
   }
