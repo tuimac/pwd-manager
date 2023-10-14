@@ -29,7 +29,8 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
   void exportData() async {
     setState(() {
       if (isEncrypt) {
-        FileIO.exportDataFile(Cipher.encryptString(data));
+        FileIO.exportDataFile(
+            Cipher.encryptString(data, widget.data['pass_code']));
       } else {
         FileIO.exportDataFile(data);
       }

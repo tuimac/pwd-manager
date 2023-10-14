@@ -74,9 +74,8 @@ class _ImportExportState extends State<ImportExport> {
       FileIO.saveData(jsonDecode(switcher['import']['text']['content']));
     } on FormatException {
       try {
-        log(Cipher.decryptString(switcher['import']['text']['content']));
-        FileIO.saveData(jsonDecode(
-            Cipher.decryptString(switcher['import']['text']['content'])));
+        FileIO.saveData(jsonDecode(Cipher.decryptString(
+            switcher['import']['text']['content'], data['pass_code'])));
         GoRouter.of(context).pop();
       } catch (e) {
         log(e.toString());

@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/config/config.dart';
 import 'package:src/services/fileio.dart';
-import 'package:src/utils/sanitizer.dart';
+import 'package:src/utils/checkData.dart';
+import 'package:src/utils/cipher.dart';
 import 'package:src/utils/compare.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth_android/local_auth_android.dart';
@@ -17,11 +19,11 @@ class Authentication extends StatefulWidget {
 }
 
 class _AuthenticationState extends State<Authentication> {
-  late Map<String, dynamic> data = {};
-  late String headLine = '';
-  late String authType = '';
-  List<int> typedNumbers = [];
-  List<int> signinNumbers = [];
+  Map<String, dynamic> data = {};
+  String headLine = '';
+  String authType = '';
+  String typedNumbers = '';
+  String signinNumbers = '';
   List<Padding> typedDots = [];
   double buttonSize = 80;
   Map<String, double> numberPadding = {'vertical': 15, 'horizontal': 15};
@@ -40,25 +42,19 @@ class _AuthenticationState extends State<Authentication> {
 
   @override
   void initState() {
-    FileIO.getData.then((value) {
-      sanitizeData(value).then((sanitizedData) {
-        setState(() {
-          data = sanitizedData;
-          if (data['pass_code'].isEmpty) {
-            headLine = 'Register passcode.';
-            authType = 'signin';
-          } else {
-            if (data['settings']['bio_auth']) {
-              bioAuth();
-            } else {
-              headLine = 'Type passcode.';
-              authType = 'login';
-            }
-          }
-        });
+    super.initState();
+    CheckData.checkDataPath();
+    FileIO.isExist('datafile').then((isExist) {
+      setState(() {
+        if (isExist) {
+          authType = 'login';
+          headLine = 'Type in passcode.';
+        } else {
+          authType = 'signin';
+          headLine = 'Register passcode.';
+        }
       });
     });
-    super.initState();
   }
 
   Future<void> bioAuth() async {
@@ -87,25 +83,27 @@ class _AuthenticationState extends State<Authentication> {
   }
 
   void inputNumber(int number) {
-    setState(() {
-      typedNumbers.add(number);
-      typedDots.add(Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Icon(
-            Icons.circle,
-            color: Colors.white,
-            size: dotsSize,
-          )));
-      if (typedNumbers.isNotEmpty) {
-        dotsSizePadding = 0;
-      }
-    });
+    if (typedNumbers.length < 8) {
+      setState(() {
+        typedNumbers += number.toString();
+        typedDots.add(Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Icon(
+              Icons.circle,
+              color: Colors.white,
+              size: dotsSize,
+            )));
+        if (typedNumbers.isNotEmpty) {
+          dotsSizePadding = 0;
+        }
+      });
+    }
   }
 
   void deleteNumber() {
     setState(() {
       if (typedNumbers.isNotEmpty) {
-        typedNumbers.removeAt(typedNumbers.length - 1);
+        typedNumbers = typedNumbers.substring(0, typedNumbers.length - 1);
         typedDots.removeAt(typedDots.length - 1);
         if (typedNumbers.isEmpty) {
           dotsSizePadding = 20;
@@ -114,28 +112,52 @@ class _AuthenticationState extends State<Authentication> {
     });
   }
 
-  void tryLogin() {
-    if (typedNumbers.length > 4 || typedNumbers.length < 8) {
+  void tryLogin() async {
+    if (typedNumbers.length > 4 && typedNumbers.length < 8) {
       if (authType == 'signin') {
         setState(() {
           signinNumbers = typedNumbers;
           authType = 'confirm';
           headLine = 'Retype passcode';
-          typedNumbers = [];
+          typedNumbers = '';
           typedDots = [];
+          data = CheckData.checkDataContent(Config.dataTemplate);
         });
       } else if (authType == 'confirm') {
-        if (Compare.list(signinNumbers, typedNumbers)) {
+        log(signinNumbers);
+        log(typedNumbers);
+        if (signinNumbers == typedNumbers) {
+          data['pass_code'] = signinNumbers;
+          FileIO.saveData(data);
           GoRouter.of(context).go('/listpwd', extra: data);
         } else {
-          signinNumbers = [];
+          setState(() {
+            signinNumbers = '';
+            typedNumbers = '';
+            typedDots = [];
+            authType = 'signin';
+            headLine = 'Register passcode.';
+            data = {};
+          });
         }
       } else if (authType == 'login') {
-        if (Compare.list(data['pass_code'], typedNumbers)) {
-          GoRouter.of(context).go('/listpwd', extra: data);
+        try {
+          String encryptedData = await FileIO.getData('', decrypt: false);
+          Cipher.decryptString(encryptedData, typedNumbers);
+          GoRouter.of(context)
+              .go('/listpwd', extra: await FileIO.getData(typedNumbers));
+        } catch (e) {
+          setState(() {
+            signinNumbers = '';
+            typedNumbers = '';
+            typedDots = [];
+            authType = 'login';
+            headLine = 'Invalid passcode.';
+            data = {};
+          });
         }
       }
-    } else {}
+    }
   }
 
   @override
@@ -146,7 +168,7 @@ class _AuthenticationState extends State<Authentication> {
     return Scaffold(
         body: SafeArea(
             child: Center(
-                child: data.isEmpty
+                child: authType.isEmpty
                     ? LoadingAnimationWidget.discreteCircle(
                         color: Colors.white,
                         size: uiWidth * 0.2,

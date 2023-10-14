@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:developer';
-import 'package:src/utils/sanitizer.dart';
+import 'package:src/utils/checkData.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';
 import 'package:intl/intl.dart';
+import 'package:src/utils/checkData.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,15 +21,43 @@ class FileIO {
     }
   }
 
+  static Future<bool> isExist(String dataType) async {
+    switch (dataType) {
+      case 'datadir':
+        return await File('${await FileIO.baseDirInfo}/${Config.dataDir}')
+            .exists();
+      case 'datafile':
+        return await File(
+                '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
+            .exists();
+      case 'backup':
+        return await File('${await FileIO.baseDirInfo}/${Config.autoBackupDir}')
+            .exists();
+      case 'log':
+        return await File('${await FileIO.baseDirInfo}/${Config.loggingDir}')
+            .exists();
+      default:
+        throw Exception('Invalid data type.');
+    }
+  }
+
   // Read the data file
-  static Future<Map<String, dynamic>> get getData async {
+  static Future<dynamic> getData(String passCode, {bool decrypt = true}) async {
     try {
-      return jsonDecode(Cipher.decryptString(await File(
-              '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
-          .readAsString()));
+      if (decrypt) {
+        return jsonDecode(Cipher.decryptString(
+            await File(
+                    '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
+                .readAsString(),
+            passCode));
+      } else {
+        return await File(
+                '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
+            .readAsString();
+      }
     } on PathNotFoundException catch (e) {
       log(e.toString());
-      return sanitizeData(Config.dataTemplate);
+      return CheckData.checkDataContent(Config.dataTemplate);
     } catch (e) {
       log(e.toString());
       rethrow;
@@ -42,16 +71,13 @@ class FileIO {
         '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}';
     try {
       if (mode == 'default') {
-        if (data['settings'].containsKey('auto_backup')) {
-          if (data['settings']['auto_backup']) {
-            await File(pwdPath).copy(
-                '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-          }
-        } else {
-          data['settings']['auto_backup'] = false;
+        if (data['settings']['auto_backup']) {
+          await File(pwdPath).copy(
+              '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
         }
       }
-      await File(pwdPath).writeAsString(Cipher.encryptString(jsonEncode(data)),
+      await File(pwdPath).writeAsString(
+          Cipher.encryptString(jsonEncode(data), data['pass_code']),
           mode: FileMode.writeOnly);
     } catch (e) {
       rethrow;
