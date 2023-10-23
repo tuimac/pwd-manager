@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/fileio.dart';
+import 'package:src/utils/cipher.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
@@ -29,9 +30,9 @@ class _ListPasswordsState extends State<ListPasswords> {
   }
 
   void getData() async {
-    await FileIO.getData(data['pass_code']).then((value) {
+    await FileIO.getData().then((value) {
       setState(() {
-        data = value;
+        data = Cipher.decryptData(value, data['pass_code']);
         dataList = data['passwords'].keys.toList();
       });
     });

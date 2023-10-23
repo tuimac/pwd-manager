@@ -14,10 +14,6 @@ class CheckData {
     if (!data['settings'].containsKey('log_level')) {
       data['settings']['log_level'] = 'none';
     }
-    // Pass Phrase check
-    if (!data.containsKey('pass_code')) {
-      data['pass_code'] = [];
-    }
     // Biometrics Authentication
     if (!data['settings'].containsKey('bio_auth')) {
       data['settings']['bio_auth'] = false;

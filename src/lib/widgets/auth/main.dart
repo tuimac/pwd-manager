@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/config/config.dart';
 import 'package:src/services/fileio.dart';
 import 'package:src/utils/checkData.dart';
 import 'package:src/utils/cipher.dart';
-import 'package:src/utils/compare.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
@@ -19,7 +20,7 @@ class Authentication extends StatefulWidget {
 }
 
 class _AuthenticationState extends State<Authentication> {
-  Map<String, dynamic> data = {};
+  late Map<String, dynamic> data;
   String headLine = '';
   String authType = '';
   String typedNumbers = '';
@@ -38,7 +39,8 @@ class _AuthenticationState extends State<Authentication> {
   ];
   final LocalAuthentication auth = LocalAuthentication();
   late bool authState;
-  bool isBioAuth = false;
+  late bool isBioAuth;
+  int bioAuthFailCount = 0;
 
   @override
   void initState() {
@@ -52,6 +54,15 @@ class _AuthenticationState extends State<Authentication> {
         } else {
           authType = 'signin';
           headLine = 'Register passcode.';
+        }
+      });
+    });
+    FileIO.getData().then((result) {
+      setState(() {
+        data = CheckData.checkDataContent(result);
+        if (data['settings']['bio_auth']) {
+          authType = 'bio_auth';
+          bioAuth();
         }
       });
     });
@@ -74,8 +85,19 @@ class _AuthenticationState extends State<Authentication> {
             ),
           ]);
       if (authState) {
-        GoRouter.of(context).go('/listpwd', extra: data);
+        String passCode = await FileIO.getPasscode();
+        data['pass_code'] = passCode;
+        GoRouter.of(context)
+            .go('/listpwd', extra: Cipher.decryptData(data, passCode));
+      } else {
+        setState(() {
+          authType = 'login';
+        });
       }
+    } on PlatformException {
+      setState(() {
+        authType = 'login';
+      });
     } catch (e) {
       log(e.toString());
       return;
@@ -106,14 +128,14 @@ class _AuthenticationState extends State<Authentication> {
         typedNumbers = typedNumbers.substring(0, typedNumbers.length - 1);
         typedDots.removeAt(typedDots.length - 1);
         if (typedNumbers.isEmpty) {
-          dotsSizePadding = 20;
+          dotsSizePadding = dotsSize;
         }
       }
     });
   }
 
   void tryLogin() async {
-    if (typedNumbers.length > 4 && typedNumbers.length < 8) {
+    if (typedNumbers.length >= 4 && typedNumbers.length <= 8) {
       if (authType == 'signin') {
         setState(() {
           signinNumbers = typedNumbers;
@@ -121,15 +143,16 @@ class _AuthenticationState extends State<Authentication> {
           headLine = 'Retype passcode';
           typedNumbers = '';
           typedDots = [];
+          dotsSizePadding = dotsSize;
           data = CheckData.checkDataContent(Config.dataTemplate);
         });
       } else if (authType == 'confirm') {
-        log(signinNumbers);
-        log(typedNumbers);
         if (signinNumbers == typedNumbers) {
-          data['pass_code'] = signinNumbers;
+          data['pass_code'] = typedNumbers;
+          FileIO.registerPasscode(signinNumbers);
           FileIO.saveData(data);
-          GoRouter.of(context).go('/listpwd', extra: data);
+          GoRouter.of(context).go('/listpwd',
+              extra: Cipher.encryptData(data, data['pass_code']));
         } else {
           setState(() {
             signinNumbers = '';
@@ -137,15 +160,14 @@ class _AuthenticationState extends State<Authentication> {
             typedDots = [];
             authType = 'signin';
             headLine = 'Register passcode.';
-            data = {};
+            dotsSizePadding = dotsSize;
           });
         }
       } else if (authType == 'login') {
         try {
-          String encryptedData = await FileIO.getData('', decrypt: false);
-          Cipher.decryptString(encryptedData, typedNumbers);
+          data['pass_code'] = typedNumbers;
           GoRouter.of(context)
-              .go('/listpwd', extra: await FileIO.getData(typedNumbers));
+              .go('/listpwd', extra: Cipher.decryptData(data, typedNumbers));
         } catch (e) {
           setState(() {
             signinNumbers = '';
@@ -153,7 +175,7 @@ class _AuthenticationState extends State<Authentication> {
             typedDots = [];
             authType = 'login';
             headLine = 'Invalid passcode.';
-            data = {};
+            dotsSizePadding = dotsSize;
           });
         }
       }
@@ -173,7 +195,7 @@ class _AuthenticationState extends State<Authentication> {
                         color: Colors.white,
                         size: uiWidth * 0.2,
                       )
-                    : isBioAuth
+                    : authType == 'bio_auth'
                         ? Container()
                         : Column(children: [
                             Padding(
