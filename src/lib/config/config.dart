@@ -6,8 +6,5 @@ class Config {
   static const String latestData = 'latest.json';
   static const String logFileName = 'pwdm.log';
   static const String passcodeFileExtension = '.psc';
-  static const Map<String, dynamic> dataTemplate = {
-    'passwords': {},
-    'settings': {}
-  };
+  static Map<String, dynamic> dataTemplate = {'passwords': {}, 'settings': {}};
 }

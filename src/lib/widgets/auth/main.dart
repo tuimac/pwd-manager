@@ -45,25 +45,26 @@ class _AuthenticationState extends State<Authentication> {
   @override
   void initState() {
     super.initState();
-    CheckData.checkDataPath();
-    FileIO.isExist('datafile').then((isExist) {
-      setState(() {
-        if (isExist) {
-          authType = 'login';
-          headLine = 'Type in passcode.';
-        } else {
-          authType = 'signin';
-          headLine = 'Register passcode.';
-        }
+    CheckData.checkDataPath().then((value) {
+      FileIO.isExist('datafile').then((isExist) {
+        setState(() {
+          if (isExist) {
+            authType = 'login';
+            headLine = 'Type in passcode.';
+          } else {
+            authType = 'signin';
+            headLine = 'Register passcode.';
+          }
+        });
       });
-    });
-    FileIO.getData().then((result) {
-      setState(() {
-        data = CheckData.checkDataContent(result);
-        if (data['settings']['bio_auth']) {
-          authType = 'bio_auth';
-          bioAuth();
-        }
+      FileIO.getData().then((result) {
+        setState(() {
+          data = CheckData.checkDataContent(result);
+          if (data['settings']['bio_auth']) {
+            authType = 'bio_auth';
+            bioAuth();
+          }
+        });
       });
     });
   }
@@ -87,6 +88,7 @@ class _AuthenticationState extends State<Authentication> {
       if (authState) {
         String passCode = await FileIO.getPasscode();
         data['pass_code'] = passCode;
+        // ignore: use_build_context_synchronously
         GoRouter.of(context)
             .go('/listpwd', extra: Cipher.decryptData(data, passCode));
       } else {

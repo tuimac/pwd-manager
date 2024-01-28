@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:src/config/config.dart';
 import 'package:src/services/fileio.dart';
 import 'dart:io';
@@ -8,6 +7,7 @@ class CheckData {
   static Map<String, dynamic> checkDataContent(Map<String, dynamic> data) {
     // Data key check
     if (!data['settings'].containsKey('auto_backup')) {
+      log(data.toString());
       data['settings']['auto_backup'] = false;
     }
     // System log level
@@ -21,7 +21,7 @@ class CheckData {
     return data;
   }
 
-  static void checkDataPath() async {
+  static Future checkDataPath() async {
     // Check data directory
     if (!await FileIO.isExist('datadir')) {
       await Directory('${await FileIO.baseDirInfo}/${Config.dataDir}')
