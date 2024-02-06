@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 
 class DeleteDialog extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -31,7 +31,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
 
   void deletePassword() {
     data['passwords'].remove(primaryKey);
-    FileIO.saveData(data);
+    DataFileIO.saveData(data);
   }
 
   @override

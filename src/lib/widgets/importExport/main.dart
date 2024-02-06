@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:flutter/material.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
 
 class ImportExport extends StatefulWidget {
@@ -71,10 +71,10 @@ class _ImportExportState extends State<ImportExport> {
 
   void importData() {
     try {
-      FileIO.saveData(jsonDecode(switcher['import']['text']['content']));
+      DataFileIO.saveData(jsonDecode(switcher['import']['text']['content']));
     } on FormatException {
       try {
-        FileIO.saveData(jsonDecode(Cipher.decryptString(
+        DataFileIO.saveData(jsonDecode(Cipher.decryptString(
             switcher['import']['text']['content'], data['pass_code'])));
         GoRouter.of(context).pop();
       } catch (e) {

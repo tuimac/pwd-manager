@@ -5,10 +5,8 @@ import 'package:src/widgets/createPassword/main.dart';
 import 'package:src/widgets/importExport/main.dart';
 import 'package:src/widgets/listPassword/main.dart';
 import 'package:src/widgets/editPassword/main.dart';
-import 'package:src/widgets/logging/main.dart';
 import 'package:src/widgets/restore/main.dart';
 import 'package:src/widgets/systemConfig/main.dart';
-import 'dart:developer';
 
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -49,11 +47,6 @@ class AppRouter {
           path: '/importexport',
           builder: (BuildContext context, GoRouterState state) {
             return ImportExport(data: state.extra as Map<String, dynamic>);
-          }),
-      GoRoute(
-          path: '/logging',
-          builder: (BuildContext context, GoRouterState state) {
-            return Logging(data: state.extra as Map<String, dynamic>);
           }),
     ],
   );

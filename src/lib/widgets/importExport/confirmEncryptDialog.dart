@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/utils/cipher.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 
 class ConfirmEncryptDialog extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -29,10 +29,10 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
   void exportData() async {
     setState(() {
       if (isEncrypt) {
-        FileIO.exportDataFile(
+        DataFileIO.exportDataFile(
             Cipher.encryptString(data, widget.data['pass_code']));
       } else {
-        FileIO.exportDataFile(data);
+        DataFileIO.exportDataFile(data);
       }
     });
   }

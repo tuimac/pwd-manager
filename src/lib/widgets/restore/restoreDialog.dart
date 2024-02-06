@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/utils/dateFormat.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 
 class RestoreDialog extends StatefulWidget {
   final String restoreTarget;
@@ -38,7 +38,8 @@ class _RestoreDialogState extends State<RestoreDialog> {
               backgroundColor: Colors.blue,
             ),
             onPressed: (() {
-              FileIO.restoreData(DateConverter.dateForFileName(restoreTarget));
+              DataFileIO.restoreData(
+                  DateConverter.dateForFileName(restoreTarget));
               GoRouter.of(context).pop();
               GoRouter.of(context).pop();
             })),

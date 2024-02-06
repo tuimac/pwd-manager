@@ -1,7 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:src/services/fileio.dart';
-import 'dart:developer';
+import 'package:src/services/dataFileIO.dart';
 
 class SystemConfig extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -44,7 +43,7 @@ class _SystemConfigState extends State<SystemConfig> {
                   setState(() {
                     data['settings']['auto_backup'] = value;
                   });
-                  FileIO.saveData(data);
+                  DataFileIO.saveData(data);
                 },
               ),
               SwitchListTile(
@@ -58,7 +57,7 @@ class _SystemConfigState extends State<SystemConfig> {
                   setState(() {
                     data['settings']['bio_auth'] = value;
                   });
-                  FileIO.saveData(data);
+                  DataFileIO.saveData(data);
                 },
               )
             ]))));

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 import 'package:src/utils/dateFormat.dart';
 
 class DeleteDialog extends StatefulWidget {
@@ -81,7 +81,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
             onPressed: deleteConfirm == true
                 ? () {
                     setState(() {
-                      FileIO.deleteRestoreData(restoreFileName);
+                      DataFileIO.deleteRestoreData(restoreFileName);
                     });
                     GoRouter.of(context).pop();
                   }

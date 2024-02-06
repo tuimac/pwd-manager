@@ -1,8 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/services/fileio.dart';
-import 'dart:developer';
+import 'package:src/services/dataFileIO.dart';
 
 class EditPassword extends StatefulWidget {
   final String primaryKey;
@@ -36,7 +35,7 @@ class _EditPasswordState extends State<EditPassword> {
   void savePassword(Map<String, dynamic> editedPassword) {
     setState(() {
       data['passwords'][primaryKey] = editedPassword;
-      FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+      DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
 
