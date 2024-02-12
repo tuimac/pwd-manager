@@ -34,7 +34,7 @@ class _EditPasswordState extends State<EditPassword> {
 
   void savePassword(Map<String, dynamic> editedPassword) {
     setState(() {
-      data['passwords'][primaryKey] = editedPassword;
+      data[primaryKey] = editedPassword;
       DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
@@ -133,8 +133,7 @@ class _EditPasswordState extends State<EditPassword> {
                                       if (input!.isEmpty) {
                                         return '"User Name" is empty.';
                                       } else {
-                                        if (data['passwords']
-                                                .containsKey(input) &&
+                                        if (data.containsKey(input) &&
                                             input != primaryKey) {
                                           return '"$input" have already been registered.';
                                         } else {
@@ -144,7 +143,7 @@ class _EditPasswordState extends State<EditPassword> {
                                     },
                                     onSaved: (String? value) {
                                       if (primaryKey != value) {
-                                        data['passwords'].remove(primaryKey);
+                                        data.remove(primaryKey);
                                         primaryKey = value!;
                                       }
                                     },
@@ -154,8 +153,7 @@ class _EditPasswordState extends State<EditPassword> {
                                   child: TextFormField(
                                     readOnly: editFlags['readOnly']!,
                                     style: TextStyle(fontSize: textSize),
-                                    initialValue: data['passwords'][primaryKey]
-                                        ['username'],
+                                    initialValue: data[primaryKey]['username'],
                                     textInputAction: TextInputAction.next,
                                     decoration: InputDecoration(
                                       filled: true,
@@ -197,8 +195,8 @@ class _EditPasswordState extends State<EditPassword> {
                                   child: TextFormField(
                                       readOnly: editFlags['readOnly']!,
                                       style: TextStyle(fontSize: textSize),
-                                      initialValue: data['passwords']
-                                          [primaryKey]['password'],
+                                      initialValue: data[primaryKey]
+                                          ['password'],
                                       textInputAction: TextInputAction.next,
                                       obscureText: passwordVisible,
                                       decoration: InputDecoration(
@@ -255,8 +253,7 @@ class _EditPasswordState extends State<EditPassword> {
                                   child: TextFormField(
                                       readOnly: editFlags['readOnly']!,
                                       style: TextStyle(fontSize: textSize),
-                                      initialValue: data['passwords']
-                                          [primaryKey]['memo'],
+                                      initialValue: data[primaryKey]['memo'],
                                       decoration: InputDecoration(
                                         filled: true,
                                         contentPadding: EdgeInsets.symmetric(

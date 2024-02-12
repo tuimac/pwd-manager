@@ -36,7 +36,7 @@ class AppRouter {
       GoRoute(
           path: '/systemconfig',
           builder: (BuildContext context, GoRouterState state) {
-            return SystemConfig(data: state.extra as Map<String, dynamic>);
+            return const SystemConfig();
           }),
       GoRoute(
           path: '/restore',

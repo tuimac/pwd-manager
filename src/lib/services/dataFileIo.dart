@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:developer';
+import 'package:src/services/configFileIo.dart';
 import 'package:src/services/logFileIo.dart';
 import 'package:src/utils/validation.dart';
 import 'package:src/utils/cipher.dart';
@@ -14,9 +16,12 @@ class DataFileIO {
   // Read the data file
   static Future<Map<String, dynamic>> getData() async {
     try {
-      return jsonDecode(await File(await Config.getDataPath).readAsString());
+      return jsonDecode(await Cipher.decryptData(
+          await File(await Config.getDataPath).readAsString()));
     } on PathNotFoundException {
-      return Validation.checkDataContent(Config.dataTemplate);
+      log('test');
+      return Future<Map<String, dynamic>>.value(
+          Validation.checkDataContent(Config.dataTemplate));
     } catch (e) {
       LogFileIO.logging(e.toString());
       rethrow;
@@ -24,20 +29,18 @@ class DataFileIO {
   }
 
   // Write the data file
-  static Future saveData(Map<String, dynamic> data,
-      {String mode = 'default'}) async {
+  static Future saveData(Map<String, dynamic> data) async {
     try {
-      if (mode == 'default') {
-        if (data['settings']['auto_backup']) {
-          await File(await Config.getDataPath).copy(
+      await ConfigFileIO.getConfig().then((config) async {
+        if (config['auto_backup']) {
+          File(await Config.getDataPath).copy(
               '${await Config.getBackupDir}${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
+        } else {
+          await File(await Config.getDataPath).writeAsString(
+              await Cipher.encryptData(jsonEncode(data)),
+              mode: FileMode.writeOnly);
         }
-      }
-      String passCode = data['pass_code'];
-      data.remove('pass_code');
-      await File(await Config.getDataPath).writeAsString(
-          jsonEncode(Cipher.encryptData(data, passCode)),
-          mode: FileMode.writeOnly);
+      });
     } catch (e) {
       LogFileIO.logging(e.toString());
       rethrow;
@@ -88,10 +91,15 @@ class DataFileIO {
     }
   }
 
-  static Future<String> exportDataFile(String data) async {
+  static Future<String> exportDataFile(String data, bool isEncrypt) async {
     try {
       await [Permission.storage].request();
       String downloadDirPath = '';
+      // If need to encrypt or not
+      if (isEncrypt) {
+        data = await Cipher.encryptData(jsonEncode(data));
+      }
+      // Platform confirmation
       if (Platform.isAndroid) {
         downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
             ExternalPath.DIRECTORY_DOWNLOADS);

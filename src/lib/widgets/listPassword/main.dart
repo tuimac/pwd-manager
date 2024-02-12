@@ -1,9 +1,8 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/dataFileIO.dart';
-import 'package:src/utils/cipher.dart';
+import 'package:src/services/logFileIo.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
@@ -26,23 +25,24 @@ class _ListPasswordsState extends State<ListPasswords> {
     super.initState();
     setState(() {
       data = widget.data;
+      dataList = data.keys.toList();
+      filterList();
     });
   }
 
   void getData() {
-    DataFileIO.getData().then((value) {
+    DataFileIO.getData().then((result) {
       setState(() {
-        data = Cipher.decryptData(value, data['pass_code']);
-        log(data.toString());
-        dataList = data['passwords'].keys.toList();
+        data = result;
+        dataList = data.keys.toList();
+        filterList();
       });
-      filterList();
     });
   }
 
   void filterList() {
     setState(() {
-      List tmpdataList = data['passwords'].keys.toList();
+      List tmpdataList = data.keys.toList();
       dataList = tmpdataList
           .where(
               (item) => item.toLowerCase().contains(filterWord.toLowerCase()))
@@ -72,6 +72,7 @@ class _ListPasswordsState extends State<ListPasswords> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
+    LogFileIO.logging(data.toString());
 
     return GestureDetector(
         onTap: () {
@@ -115,7 +116,8 @@ class _ListPasswordsState extends State<ListPasswords> {
                         },
                       ))
                 ]),
-            body: data.isEmpty
+            // ignore: unnecessary_null_comparison
+            body: data == null
                 ? Center(
                     child: LoadingAnimationWidget.discreteCircle(
                     color: Colors.white,

@@ -26,7 +26,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   void savePassword(Map<String, dynamic> newPassword) async {
     setState(() {
-      data['passwords'][primaryKey] = newPassword;
+      data[primaryKey] = newPassword;
       DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
@@ -91,8 +91,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       if (input!.isEmpty) {
                                         return '"User Name" is empty.';
                                       } else {
-                                        if (data['passwords']
-                                            .containsKey(input)) {
+                                        if (data.containsKey(input)) {
                                           return '"$input" have already been registered.';
                                         } else {
                                           if (input.contains('?')) {

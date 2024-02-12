@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/utils/cipher.dart';
 import 'package:src/services/dataFileIO.dart';
 
 class ConfirmEncryptDialog extends StatefulWidget {
@@ -18,7 +16,6 @@ class ConfirmEncryptDialog extends StatefulWidget {
 
 class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
   late String data;
-  late bool isEncrypt;
 
   @override
   void initState() {
@@ -26,15 +23,8 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
     data = jsonEncode(widget.data);
   }
 
-  void exportData() async {
-    setState(() {
-      if (isEncrypt) {
-        DataFileIO.exportDataFile(
-            Cipher.encryptString(data, widget.data['pass_code']));
-      } else {
-        DataFileIO.exportDataFile(data);
-      }
-    });
+  void exportData(bool isEncrypt) {
+    DataFileIO.exportDataFile(data, isEncrypt);
   }
 
   @override
@@ -46,20 +36,18 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
           TextButton(
             onPressed: () {
               setState(() {
-                isEncrypt = true;
+                exportData(true);
+                GoRouter.of(context).pop();
               });
-              exportData();
-              GoRouter.of(context).pop();
             },
             child: const Text('Yes'),
           ),
           TextButton(
             onPressed: () {
               setState(() {
-                isEncrypt = false;
+                exportData(false);
+                GoRouter.of(context).pop();
               });
-              exportData();
-              GoRouter.of(context).pop();
             },
             child: const Text('No'),
           ),

@@ -3,8 +3,8 @@ import 'package:path_provider/path_provider.dart';
 
 class Config {
   static const String dataExtension = '.json';
-  static Map<String, dynamic> dataTemplate = {'passwords': {}};
-  static Map<String, dynamic> configTemplate = {'config': {}};
+  static Map<String, dynamic> dataTemplate = {};
+  static Map<String, dynamic> configTemplate = {};
 
   static Future<String> get getBaseDir async {
     if (Platform.isAndroid) {

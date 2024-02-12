@@ -65,7 +65,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                     onTap: () {
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
-                          .push('/systemconfig', extra: data)
+                          .push('/systemconfig')
                           .then((value) => widget.getData());
                     },
                   )),

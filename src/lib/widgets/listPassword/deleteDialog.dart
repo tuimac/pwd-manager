@@ -30,7 +30,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
   }
 
   void deletePassword() {
-    data['passwords'].remove(primaryKey);
+    data.remove(primaryKey);
     DataFileIO.saveData(data);
   }
 

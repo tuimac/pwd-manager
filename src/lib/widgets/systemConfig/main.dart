@@ -1,22 +1,22 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:src/services/dataFileIO.dart';
+import 'package:src/services/configFileIo.dart';
 
 class SystemConfig extends StatefulWidget {
-  final Map<String, dynamic> data;
-  const SystemConfig({Key? key, required this.data}) : super(key: key);
+  const SystemConfig({Key? key}) : super(key: key);
 
   @override
   State<SystemConfig> createState() => _SystemConfigState();
 }
 
 class _SystemConfigState extends State<SystemConfig> {
-  late Map<String, dynamic> data;
+  late Map<String, dynamic> config;
 
   @override
   void initState() {
     super.initState();
-    data = widget.data;
+    ConfigFileIO.getConfig().then((result) => setState(() {
+          config = result;
+        }));
   }
 
   @override
@@ -38,12 +38,12 @@ class _SystemConfigState extends State<SystemConfig> {
                 subtitle: const Text(
                     'Backup the data when change the password status.',
                     style: TextStyle(color: Colors.white, fontSize: 12)),
-                value: data['settings']['auto_backup']!,
+                value: config['auto_backup']!,
                 onChanged: (value) {
                   setState(() {
-                    data['settings']['auto_backup'] = value;
+                    config['auto_backup'] = value;
                   });
-                  DataFileIO.saveData(data);
+                  ConfigFileIO.saveConfig(config);
                 },
               ),
               SwitchListTile(
@@ -52,12 +52,12 @@ class _SystemConfigState extends State<SystemConfig> {
                 subtitle: const Text(
                     'Authentication by FaceID or Finger Print and so on.',
                     style: TextStyle(color: Colors.white, fontSize: 12)),
-                value: data['settings']['bio_auth']!,
+                value: config['bio_auth']!,
                 onChanged: (value) {
                   setState(() {
-                    data['settings']['bio_auth'] = value;
+                    config['bio_auth'] = value;
                   });
-                  DataFileIO.saveData(data);
+                  ConfigFileIO.saveConfig(config);
                 },
               )
             ]))));

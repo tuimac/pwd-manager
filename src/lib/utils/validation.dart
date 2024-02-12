@@ -1,5 +1,8 @@
-import 'dart:convert';
 import 'package:src/config/config.dart';
+import 'package:src/services/configFileIo.dart';
+import 'package:src/services/dataFileIo.dart';
+import 'package:src/services/logFileIo.dart';
+import 'package:src/services/passcodeFileIo.dart';
 import 'dart:io';
 
 class Validation {
@@ -24,19 +27,19 @@ class Validation {
   }
 
   static Future checkFilePath() async {
+    // Check passcode file
+    if (!await File(await Config.getPasscodePath).exists()) {
+      await PasscodeIO.registerPasscode();
+    }
     // Check data file
     if (!await File(await Config.getDataPath).exists()) {
       await Directory(await Config.getDataDir).create(recursive: true);
-      File(await Config.getDataPath).writeAsString(
-          jsonEncode(Validation.checkDataContent(Config.dataTemplate)),
-          mode: FileMode.writeOnly);
+      await DataFileIO.saveData(Config.dataTemplate);
     }
     // Check config file
     if (!await File(await Config.getConfigPath).exists()) {
       await Directory(await Config.getConfigDir).create(recursive: true);
-      File(await Config.getConfigPath).writeAsString(
-          jsonEncode(Validation.checkConfigContent(Config.configTemplate)),
-          mode: FileMode.writeOnly);
+      await ConfigFileIO.saveConfig(Config.configTemplate);
     }
     // Check backup directory
     if (!await File(await Config.getBackupDir).exists()) {
@@ -45,7 +48,7 @@ class Validation {
     // Check log file
     if (!await File(await Config.getLogPath).exists()) {
       await Directory(await Config.getLogDir).create(recursive: true);
-      File(await Config.getLogPath).writeAsString('', mode: FileMode.writeOnly);
+      await LogFileIO.logging('');
     }
   }
 }

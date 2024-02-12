@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:src/services/configFileIo.dart';
@@ -20,8 +18,6 @@ class Authentication extends StatefulWidget {
 
 class _AuthenticationState extends State<Authentication> {
   final LocalAuthentication auth = LocalAuthentication();
-  late bool authState;
-  late bool isBioAuth;
   int bioAuthFailCount = 0;
 
   @override
@@ -32,7 +28,6 @@ class _AuthenticationState extends State<Authentication> {
         if (config['bio_auth']) {
           bioAuth();
         } else {
-          bioAuth();
           goNext();
         }
       });
@@ -47,7 +42,7 @@ class _AuthenticationState extends State<Authentication> {
 
   Future<void> bioAuth() async {
     try {
-      authState = await auth.authenticate(
+      bool authState = await auth.authenticate(
           localizedReason: 'Authenticate to show password list',
           options: const AuthenticationOptions(
             stickyAuth: false,

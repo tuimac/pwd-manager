@@ -1,12 +1,11 @@
 // ignore: file_names
 import 'dart:io';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:src/utils/cipher.dart';
 import 'package:flutter/material.dart';
 import 'package:src/services/dataFileIO.dart';
+import 'package:src/services/logFileIo.dart';
 import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
 
 class ImportExport extends StatefulWidget {
@@ -65,7 +64,8 @@ class _ImportExportState extends State<ImportExport> {
         });
       }
     } catch (e) {
-      log(e.toString());
+      LogFileIO.logging(e.toString());
+      rethrow;
     }
   }
 
@@ -74,11 +74,11 @@ class _ImportExportState extends State<ImportExport> {
       DataFileIO.saveData(jsonDecode(switcher['import']['text']['content']));
     } on FormatException {
       try {
-        DataFileIO.saveData(jsonDecode(Cipher.decryptString(
-            switcher['import']['text']['content'], data['pass_code'])));
+        DataFileIO.saveData(switcher['import']['text']['content']);
         GoRouter.of(context).pop();
       } catch (e) {
-        log(e.toString());
+        LogFileIO.logging(e.toString());
+        rethrow;
       }
     }
   }
