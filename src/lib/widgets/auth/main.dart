@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:src/services/configFileIo.dart';
-import 'package:src/services/dataFileIO.dart';
 import 'package:src/services/logFileIo.dart';
 import 'package:src/utils/validation.dart';
 import 'package:go_router/go_router.dart';
@@ -28,15 +27,9 @@ class _AuthenticationState extends State<Authentication> {
         if (config['bio_auth']) {
           bioAuth();
         } else {
-          goNext();
+          GoRouter.of(context).go('/listpwd');
         }
       });
-    });
-  }
-
-  void goNext() {
-    DataFileIO.getData().then((data) {
-      GoRouter.of(context).go('/listpwd', extra: data);
     });
   }
 
@@ -57,11 +50,11 @@ class _AuthenticationState extends State<Authentication> {
             ),
           ]);
       if (authState) {
-        goNext();
+        GoRouter.of(context).go('/listpwd');
       }
     } on PlatformException {
       LogFileIO.logging('Bio authentication PlatformException');
-      goNext();
+      GoRouter.of(context).go('/listpwd');
     } catch (e) {
       LogFileIO.logging(e.toString());
       return;

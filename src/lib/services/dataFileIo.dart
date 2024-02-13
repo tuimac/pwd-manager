@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:developer';
 import 'package:src/services/configFileIo.dart';
 import 'package:src/services/logFileIo.dart';
 import 'package:src/utils/validation.dart';
@@ -19,7 +18,6 @@ class DataFileIO {
       return jsonDecode(await Cipher.decryptData(
           await File(await Config.getDataPath).readAsString()));
     } on PathNotFoundException {
-      log('test');
       return Future<Map<String, dynamic>>.value(
           Validation.checkDataContent(Config.dataTemplate));
     } catch (e) {

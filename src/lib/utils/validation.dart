@@ -19,6 +19,10 @@ class Validation {
     if (!config.containsKey('bio_auth')) {
       config['bio_auth'] = false;
     }
+    // Sort Type
+    if (!config.containsKey('sort_type')) {
+      config['sort_type'] = 'Date';
+    }
     return config;
   }
 

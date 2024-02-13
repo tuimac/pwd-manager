@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/services/configFileIO.dart';
 import 'package:src/services/dataFileIO.dart';
-import 'package:src/services/logFileIo.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
 class ListPasswords extends StatefulWidget {
-  final Map<String, dynamic> data;
-  const ListPasswords({Key? key, required this.data}) : super(key: key);
+  const ListPasswords({Key? key}) : super(key: key);
 
   @override
   State<ListPasswords> createState() => _ListPasswordsState();
 }
 
 class _ListPasswordsState extends State<ListPasswords> {
-  late Map<String, dynamic> data;
+  Map<String, dynamic> data = {};
+  Map<String, dynamic> config = {};
   late List dataList = [];
   late String filterWord = '';
   Map<String, dynamic> sortTypes = {'Name': false};
@@ -23,19 +23,17 @@ class _ListPasswordsState extends State<ListPasswords> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      data = widget.data;
-      dataList = data.keys.toList();
-      filterList();
-    });
+    getData();
   }
 
   void getData() {
-    DataFileIO.getData().then((result) {
-      setState(() {
-        data = result;
-        dataList = data.keys.toList();
-        filterList();
+    DataFileIO.getData().then((dataResult) {
+      ConfigFileIO.getConfig().then((configResult) {
+        setState(() {
+          data = dataResult;
+          config = configResult;
+          filterList();
+        });
       });
     });
   }
@@ -72,7 +70,6 @@ class _ListPasswordsState extends State<ListPasswords> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
-    LogFileIO.logging(data.toString());
 
     return GestureDetector(
         onTap: () {

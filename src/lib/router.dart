@@ -19,7 +19,7 @@ class AppRouter {
       GoRoute(
           path: '/listpwd',
           builder: (BuildContext context, GoRouterState state) {
-            return ListPasswords(data: state.extra as Map<String, dynamic>);
+            return const ListPasswords();
           }),
       GoRoute(
           path: '/editpwd/:primaryKey',
