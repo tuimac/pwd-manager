@@ -15,8 +15,8 @@ class DataFileIO {
   // Read the data file
   static Future<Map<String, dynamic>> getData() async {
     try {
-      return jsonDecode(await Cipher.decryptData(
-          await File(await Config.getDataPath).readAsString()));
+      return Validation.checkDataContent(jsonDecode(await Cipher.decryptData(
+          await File(await Config.getDataPath).readAsString())));
     } on PathNotFoundException {
       return Future<Map<String, dynamic>>.value(
           Validation.checkDataContent(Config.dataTemplate));
@@ -33,11 +33,10 @@ class DataFileIO {
         if (config['auto_backup']) {
           File(await Config.getDataPath).copy(
               '${await Config.getBackupDir}${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-        } else {
-          await File(await Config.getDataPath).writeAsString(
-              await Cipher.encryptData(jsonEncode(data)),
-              mode: FileMode.writeOnly);
         }
+        await File(await Config.getDataPath).writeAsString(
+            await Cipher.encryptData(jsonEncode(data)),
+            mode: FileMode.writeOnly);
       });
     } catch (e) {
       LogFileIO.logging(e.toString());

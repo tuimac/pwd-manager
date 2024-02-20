@@ -1,24 +1,26 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/config/config.dart';
 import 'package:src/services/configFileIO.dart';
 import 'package:src/services/dataFileIO.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
 class ListPasswords extends StatefulWidget {
-  const ListPasswords({Key? key}) : super(key: key);
+  const ListPasswords({super.key});
 
   @override
   State<ListPasswords> createState() => _ListPasswordsState();
 }
 
 class _ListPasswordsState extends State<ListPasswords> {
-  Map<String, dynamic> data = {};
-  Map<String, dynamic> config = {};
+  late Map<String, dynamic> data = {};
+  late bool dataIsEmpty = true;
+  late Map<String, dynamic> config = {};
   late List dataList = [];
   late String filterWord = '';
-  Map<String, dynamic> sortTypes = {'Name': false};
 
   @override
   void initState() {
@@ -31,8 +33,10 @@ class _ListPasswordsState extends State<ListPasswords> {
       ConfigFileIO.getConfig().then((configResult) {
         setState(() {
           data = dataResult;
+          dataIsEmpty = false;
           config = configResult;
           filterList();
+          sortData();
         });
       });
     });
@@ -48,17 +52,27 @@ class _ListPasswordsState extends State<ListPasswords> {
     });
   }
 
-  void sortData(String sortType) {
+  void sortData() {
     setState(() {
-      switch (sortType) {
+      switch (config['sort_type']['type']) {
         case 'Name':
-          if (sortTypes[sortType]) {
-            dataList.sort();
-            sortTypes[sortType] = false;
+          if (config['sort_type']['state']) {
+            SplayTreeMap<String, dynamic>.from(data, (a, b) => a.compareTo(b));
           } else {
-            dataList.sort();
-            dataList = List.from(dataList.reversed);
-            sortTypes[sortType] = true;
+            SplayTreeMap<String, dynamic>.from(data, (a, b) => b.compareTo(a));
+          }
+          break;
+        case 'Modify Timestamp':
+          if (config['sort_type']['state']) {
+            SplayTreeMap<String, dynamic>.from(
+                data,
+                (a, b) => data[a]['modify_timestamp']
+                    .compareTo(data[b]['modify_timestamp']));
+          } else {
+            SplayTreeMap<String, dynamic>.from(
+                data,
+                (a, b) => data[b]['modify_timestamp']
+                    .compareTo(data[a]['modify_timestamp']));
           }
           break;
       }
@@ -94,27 +108,39 @@ class _ListPasswordsState extends State<ListPasswords> {
                           icon: const Icon(Icons.sort),
                         );
                       },
-                      menuChildren: List<MenuItemButton>.generate(
-                        sortTypes.length,
-                        (int index) {
-                          String sortTypeKey = sortTypes.keys.elementAt(index);
-                          return MenuItemButton(
-                            onPressed: () => setState(() {
-                              sortData(sortTypeKey);
-                            }),
-                            child: Row(children: [
-                              Text(sortTypeKey),
-                              if (sortTypes[sortTypeKey])
-                                const Icon(Icons.arrow_downward, size: 14)
-                              else
-                                const Icon(Icons.arrow_upward, size: 14)
-                            ]),
-                          );
-                        },
-                      ))
+                      menuChildren: config.isEmpty
+                          ? List.empty()
+                          : List<MenuItemButton>.generate(
+                              Config.sortTypeList.length,
+                              (int index) {
+                                String sortTypeKey = Config.sortTypeList[index];
+                                return MenuItemButton(
+                                  onPressed: () => setState(() {
+                                    if (config['sort_type']['type'] ==
+                                        Config.sortTypeList[index]) {
+                                      config['sort_type']['state'] =
+                                          !config['sort_type']['state'];
+                                    } else {
+                                      config['sort_type']['type'] =
+                                          Config.sortTypeList[index];
+                                      config['sort_type']['state'] = false;
+                                    }
+                                  }),
+                                  child: Row(children: <Widget>[
+                                    Text(sortTypeKey),
+                                    if (config['sort_type']['state'] ==
+                                        Config.sortTypeList[index])
+                                      if (config['sort_type']['state'])
+                                        const Icon(Icons.arrow_downward,
+                                            size: 14)
+                                      else
+                                        const Icon(Icons.arrow_upward, size: 14)
+                                  ]),
+                                );
+                              },
+                            ))
                 ]),
-            // ignore: unnecessary_null_comparison
-            body: data == null
+            body: dataIsEmpty || config.isEmpty
                 ? Center(
                     child: LoadingAnimationWidget.discreteCircle(
                     color: Colors.white,
@@ -198,7 +224,12 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                     .push(
                                                         '/editpwd/${dataList[index]}',
                                                         extra: data)
-                                                    .then((value) => getData());
+                                                    .then((value) {
+                                                  DataFileIO.saveData(data)
+                                                      .then((value) {
+                                                    getData();
+                                                  });
+                                                });
                                               })),
                                     );
                                   }),

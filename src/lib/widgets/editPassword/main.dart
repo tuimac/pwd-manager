@@ -6,8 +6,7 @@ import 'package:src/services/dataFileIO.dart';
 class EditPassword extends StatefulWidget {
   final String primaryKey;
   final Map<String, dynamic> data;
-  const EditPassword({Key? key, required this.primaryKey, required this.data})
-      : super(key: key);
+  const EditPassword({super.key, required this.primaryKey, required this.data});
 
   @override
   State<EditPassword> createState() => _EditPasswordState();
@@ -34,12 +33,11 @@ class _EditPasswordState extends State<EditPassword> {
 
   void savePassword(Map<String, dynamic> editedPassword) {
     setState(() {
+      editedPassword['modify_timestamp'] = DateTime.now().toIso8601String();
       data[primaryKey] = editedPassword;
       DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
-
-  void timeStamp() async {}
 
   void switchEdit() {
     if (editFlags['readOnly']) {
@@ -234,6 +232,10 @@ class _EditPasswordState extends State<EditPassword> {
                                               setState(() {
                                                 passwordVisible =
                                                     !passwordVisible;
+                                                data[primaryKey]
+                                                        ['watch_timestamp'] =
+                                                    DateTime.now()
+                                                        .toIso8601String();
                                               });
                                             },
                                           )),

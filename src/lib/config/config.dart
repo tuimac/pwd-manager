@@ -5,6 +5,7 @@ class Config {
   static const String dataExtension = '.json';
   static Map<String, dynamic> dataTemplate = {};
   static Map<String, dynamic> configTemplate = {};
+  static List<String> sortTypeList = ['Name', 'Modify Timestamp'];
 
   static Future<String> get getBaseDir async {
     if (Platform.isAndroid) {
@@ -43,6 +44,6 @@ class Config {
   }
 
   static Future<String> get getPasscodePath async {
-    return '${await getBaseDir}/passcode.json';
+    return '${await getBaseDir}/passcode';
   }
 }

@@ -22,7 +22,7 @@ class PasscodeIO {
           '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
       final random = Random.secure();
       final key =
-          List.generate(16, (_) => charset[random.nextInt(charset.length)])
+          List.generate(32, (_) => charset[random.nextInt(charset.length)])
               .join();
       await File(await Config.getPasscodePath)
           .writeAsString(key, mode: FileMode.writeOnly);

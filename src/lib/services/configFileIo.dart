@@ -9,7 +9,8 @@ class ConfigFileIO {
   // Read the data file
   static Future<Map<String, dynamic>> getConfig() async {
     try {
-      return jsonDecode(await File(await Config.getConfigPath).readAsString());
+      return Validation.checkConfigContent(
+          jsonDecode(await File(await Config.getConfigPath).readAsString()));
     } on PathNotFoundException {
       return Validation.checkConfigContent(Config.configTemplate);
     } catch (e) {

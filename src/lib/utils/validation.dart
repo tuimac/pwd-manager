@@ -8,6 +8,7 @@ import 'dart:io';
 class Validation {
   static Map<String, dynamic> checkConfigContent(Map<String, dynamic> config) {
     // Data key check
+
     if (!config.containsKey('auto_backup')) {
       config['auto_backup'] = false;
     }
@@ -21,12 +22,23 @@ class Validation {
     }
     // Sort Type
     if (!config.containsKey('sort_type')) {
-      config['sort_type'] = 'Date';
+      config['sort_type'] = {'type': 'Modify Timestamp', 'state': false};
     }
     return config;
   }
 
   static Map<String, dynamic> checkDataContent(Map<String, dynamic> data) {
+    for (String primaryKey in data.keys.toList()) {
+      if (!data[primaryKey].containsKey('create_timestamp')) {
+        data[primaryKey]['create_timestamp'] = DateTime.now().toIso8601String();
+      }
+      if (!data[primaryKey].containsKey('watch_timestamp')) {
+        data[primaryKey]['watch_timestamp'] = DateTime.now().toIso8601String();
+      }
+      if (!data[primaryKey].containsKey('modify_timestamp')) {
+        data[primaryKey]['modify_timestamp'] = DateTime.now().toIso8601String();
+      }
+    }
     return data;
   }
 

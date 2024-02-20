@@ -6,10 +6,9 @@ class Cipher {
   static Future<String> encryptData(String data) async {
     try {
       return await PasscodeIO.getPasscode.then((passCode) {
-        final key = Key.fromUtf8(passCode);
-        final iv = IV.fromLength(8);
-        final encrypter = Encrypter(Salsa20(key));
-        return encrypter.encrypt(data, iv: iv).base64;
+        final encrypter =
+            Encrypter(AES(Key.fromUtf8(passCode), mode: AESMode.ecb));
+        return encrypter.encrypt(data).base64;
       });
     } catch (e) {
       LogFileIO.logging(e.toString());
@@ -20,10 +19,9 @@ class Cipher {
   static Future<String> decryptData(String data) async {
     try {
       return await PasscodeIO.getPasscode.then((passCode) {
-        final key = Key.fromUtf8(passCode);
-        final iv = IV.fromLength(8);
-        final encrypter = Encrypter(Salsa20(key));
-        return encrypter.decrypt(Encrypted.fromBase64(data), iv: iv);
+        final encrypter =
+            Encrypter(AES(Key.fromUtf8(passCode), mode: AESMode.ecb));
+        return encrypter.decrypt(Encrypted.fromBase64(data));
       });
     } catch (e) {
       LogFileIO.logging(e.toString());
