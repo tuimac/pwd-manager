@@ -28,6 +28,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
+    FocusScope.of(context).unfocus();
 
     return Theme(
         data: Theme.of(context).copyWith(
@@ -91,6 +92,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                   child: ListTile(
                     title: const Text('Import/Export'),
                     onTap: () {
+                      GoRouter.of(context).pop();
                       GoRouter.of(context)
                           .push('/importexport', extra: data)
                           .then((value) => widget.getData());

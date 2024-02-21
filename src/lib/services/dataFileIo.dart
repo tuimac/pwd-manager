@@ -88,13 +88,17 @@ class DataFileIO {
     }
   }
 
-  static Future<String> exportDataFile(String data, bool isEncrypt) async {
+  static Future<String> exportDataFile(
+      Map<String, dynamic> data, bool isEncrypt) async {
+    late String exportData;
     try {
       await [Permission.storage].request();
       String downloadDirPath = '';
       // If need to encrypt or not
       if (isEncrypt) {
-        data = await Cipher.encryptData(jsonEncode(data));
+        exportData = await Cipher.encryptData(jsonEncode(data));
+      } else {
+        exportData = jsonEncode(data);
       }
       // Platform confirmation
       if (Platform.isAndroid) {
@@ -104,7 +108,7 @@ class DataFileIO {
         downloadDirPath = (await getApplicationDocumentsDirectory()).path;
       }
       File('$downloadDirPath/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}_password${Config.dataExtension}')
-          .writeAsString(data, mode: FileMode.writeOnly);
+          .writeAsString(exportData, mode: FileMode.writeOnly);
       return downloadDirPath;
     } catch (e) {
       LogFileIO.logging(e.toString());

@@ -5,7 +5,11 @@ class Config {
   static const String dataExtension = '.json';
   static Map<String, dynamic> dataTemplate = {};
   static Map<String, dynamic> configTemplate = {};
-  static List<String> sortTypeList = ['Name', 'Modify Timestamp'];
+  static List<String> sortTypeList = [
+    'Name',
+    'Modify Timestamp',
+    'Watch Timestamp'
+  ];
 
   static Future<String> get getBaseDir async {
     if (Platform.isAndroid) {

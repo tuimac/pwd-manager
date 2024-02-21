@@ -64,7 +64,7 @@ class Validation {
     // Check log file
     if (!await File(await Config.getLogPath).exists()) {
       await Directory(await Config.getLogDir).create(recursive: true);
-      await LogFileIO.logging('');
+      await LogFileIO.logging('Initialization.');
     }
   }
 }

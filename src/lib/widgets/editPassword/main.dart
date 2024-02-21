@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/dataFileIO.dart';
 
@@ -93,6 +94,7 @@ class _EditPasswordState extends State<EditPassword> {
                             key: formKey,
                             child: SingleChildScrollView(
                                 child: Column(children: <Widget>[
+                              // Password Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
@@ -146,9 +148,19 @@ class _EditPasswordState extends State<EditPassword> {
                                       }
                                     },
                                   )),
+                              // User Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
+                                    onTap: () {
+                                      if (editFlags['readOnly']!) {
+                                        Clipboard.setData(
+                                          ClipboardData(
+                                              text: data[primaryKey]
+                                                  ['username']),
+                                        );
+                                      }
+                                    },
                                     readOnly: editFlags['readOnly']!,
                                     style: TextStyle(fontSize: textSize),
                                     initialValue: data[primaryKey]['username'],
@@ -188,9 +200,19 @@ class _EditPasswordState extends State<EditPassword> {
                                       editedPassword['username'] = value;
                                     },
                                   )),
+                              // Password section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
+                                      onTap: () {
+                                        if (editFlags['readOnly']!) {
+                                          Clipboard.setData(
+                                            ClipboardData(
+                                                text: data[primaryKey]
+                                                    ['password']),
+                                          );
+                                        }
+                                      },
                                       readOnly: editFlags['readOnly']!,
                                       style: TextStyle(fontSize: textSize),
                                       initialValue: data[primaryKey]
@@ -250,6 +272,7 @@ class _EditPasswordState extends State<EditPassword> {
                                       onSaved: (String? value) {
                                         editedPassword['password'] = value;
                                       })),
+                              // Memo section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
@@ -289,6 +312,7 @@ class _EditPasswordState extends State<EditPassword> {
                                       onSaved: (String? value) {
                                         editedPassword['memo'] = value;
                                       })),
+                              // Edit button section
                               editFlags['readOnly']
                                   ? Container()
                                   : Padding(

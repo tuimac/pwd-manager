@@ -122,6 +122,7 @@ class _ImportExportState extends State<ImportExport> {
                   children: importExport,
                 ))),
             isToggleSelected[0]
+                // Import data section
                 ? Column(children: [
                     Padding(
                         padding: EdgeInsets.symmetric(
@@ -177,6 +178,7 @@ class _ImportExportState extends State<ImportExport> {
                                 cursorColor: Colors.black)
                             : Container())
                   ])
+                // Export data section
                 : Padding(
                     padding: EdgeInsets.only(top: uiHeight * 0.015),
                     child: ElevatedButton(

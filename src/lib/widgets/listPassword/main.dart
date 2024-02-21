@@ -54,7 +54,6 @@ class _ListPasswordsState extends State<ListPasswords> {
 
   void sortData() {
     try {
-      LogFileIO.logging(data.toString());
       setState(() {
         switch (config['sort_type']['type']) {
           case 'Name':
@@ -73,9 +72,17 @@ class _ListPasswordsState extends State<ListPasswords> {
                   .compareTo(data[a]['modify_timestamp']));
             }
             break;
+          case 'Watch Timestamp':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => data[a]['watch_timestamp']
+                  .compareTo(data[b]['watch_timestamp']));
+            } else {
+              dataList.sort((a, b) => data[b]['watch_timestamp']
+                  .compareTo(data[a]['watch_timestamp']));
+            }
+            break;
         }
       });
-      LogFileIO.logging(data.toString());
     } catch (e) {
       LogFileIO.logging(e.toString());
     }
@@ -101,6 +108,7 @@ class _ListPasswordsState extends State<ListPasswords> {
                           Widget? child) {
                         return IconButton(
                           onPressed: () {
+                            FocusScope.of(context).unfocus();
                             if (controller.isOpen) {
                               controller.close();
                             } else {
