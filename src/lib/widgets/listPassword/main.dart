@@ -1,10 +1,10 @@
-import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/config/config.dart';
 import 'package:src/services/configFileIO.dart';
 import 'package:src/services/dataFileIO.dart';
+import 'package:src/services/logFileIo.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
@@ -53,30 +53,32 @@ class _ListPasswordsState extends State<ListPasswords> {
   }
 
   void sortData() {
-    setState(() {
-      switch (config['sort_type']['type']) {
-        case 'Name':
-          if (config['sort_type']['state']) {
-            SplayTreeMap<String, dynamic>.from(data, (a, b) => a.compareTo(b));
-          } else {
-            SplayTreeMap<String, dynamic>.from(data, (a, b) => b.compareTo(a));
-          }
-          break;
-        case 'Modify Timestamp':
-          if (config['sort_type']['state']) {
-            SplayTreeMap<String, dynamic>.from(
-                data,
-                (a, b) => data[a]['modify_timestamp']
-                    .compareTo(data[b]['modify_timestamp']));
-          } else {
-            SplayTreeMap<String, dynamic>.from(
-                data,
-                (a, b) => data[b]['modify_timestamp']
-                    .compareTo(data[a]['modify_timestamp']));
-          }
-          break;
-      }
-    });
+    try {
+      LogFileIO.logging(data.toString());
+      setState(() {
+        switch (config['sort_type']['type']) {
+          case 'Name':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => a.compareTo(b));
+            } else {
+              dataList.sort((a, b) => b.compareTo(a));
+            }
+            break;
+          case 'Modify Timestamp':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => data[a]['modify_timestamp']
+                  .compareTo(data[b]['modify_timestamp']));
+            } else {
+              dataList.sort((a, b) => data[b]['modify_timestamp']
+                  .compareTo(data[a]['modify_timestamp']));
+            }
+            break;
+        }
+      });
+      LogFileIO.logging(data.toString());
+    } catch (e) {
+      LogFileIO.logging(e.toString());
+    }
   }
 
   @override
@@ -115,20 +117,24 @@ class _ListPasswordsState extends State<ListPasswords> {
                               (int index) {
                                 String sortTypeKey = Config.sortTypeList[index];
                                 return MenuItemButton(
-                                  onPressed: () => setState(() {
-                                    if (config['sort_type']['type'] ==
-                                        Config.sortTypeList[index]) {
-                                      config['sort_type']['state'] =
-                                          !config['sort_type']['state'];
-                                    } else {
-                                      config['sort_type']['type'] =
-                                          Config.sortTypeList[index];
-                                      config['sort_type']['state'] = false;
-                                    }
-                                  }),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (config['sort_type']['type'] ==
+                                          Config.sortTypeList[index]) {
+                                        config['sort_type']['state'] =
+                                            !config['sort_type']['state'];
+                                      } else {
+                                        config['sort_type']['type'] =
+                                            Config.sortTypeList[index];
+                                        config['sort_type']['state'] = false;
+                                      }
+                                      sortData();
+                                      ConfigFileIO.saveConfig(config);
+                                    });
+                                  },
                                   child: Row(children: <Widget>[
                                     Text(sortTypeKey),
-                                    if (config['sort_type']['state'] ==
+                                    if (config['sort_type']['type'] ==
                                         Config.sortTypeList[index])
                                       if (config['sort_type']['state'])
                                         const Icon(Icons.arrow_downward,

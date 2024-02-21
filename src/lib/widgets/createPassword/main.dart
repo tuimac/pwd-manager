@@ -5,7 +5,7 @@ import 'package:src/services/dataFileIO.dart';
 
 class CreatePassword extends StatefulWidget {
   final Map<String, dynamic> data;
-  const CreatePassword({Key? key, required this.data}) : super(key: key);
+  const CreatePassword({super.key, required this.data});
 
   @override
   State<CreatePassword> createState() => _CreatePasswordState();
@@ -27,6 +27,10 @@ class _CreatePasswordState extends State<CreatePassword> {
   void savePassword(Map<String, dynamic> newPassword) async {
     setState(() {
       data[primaryKey] = newPassword;
+      String now = DateTime.now().toIso8601String();
+      data[primaryKey]['create_timestamp'] = now;
+      data[primaryKey]['modify_timestamp'] = now;
+      data[primaryKey]['watch_timestamp'] = now;
       DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
@@ -84,7 +88,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'Password Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
@@ -118,9 +122,9 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         horizontal: contentPadding['x']!,
                                       ),
                                       errorStyle:
-                                          TextStyle(color: Colors.white),
-                                      fillColor:
-                                          Color.fromARGB(255, 158, 158, 158),
+                                          const TextStyle(color: Colors.white),
+                                      fillColor: const Color.fromARGB(
+                                          255, 158, 158, 158),
                                       enabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
@@ -132,7 +136,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'User Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
@@ -211,8 +215,8 @@ class _CreatePasswordState extends State<CreatePassword> {
                                           vertical: 10,
                                           horizontal: contentPadding['x']!,
                                         ),
-                                        fillColor:
-                                            Color.fromARGB(255, 113, 141, 157),
+                                        fillColor: const Color.fromARGB(
+                                            255, 113, 141, 157),
                                         enabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors.white,
@@ -228,7 +232,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
                                         labelText: 'Memo',
-                                        labelStyle: TextStyle(
+                                        labelStyle: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),
