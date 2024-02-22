@@ -11,6 +11,10 @@ class Cipher {
               Encrypter(AES(Key.fromUtf8(passCode), mode: AESMode.ecb));
           return encrypter.encrypt(data).base64;
         } else {
+          while (password.length < 32) {
+            password += password;
+          }
+          LogFileIO.logging(password);
           final encrypter =
               Encrypter(AES(Key.fromUtf8(password), mode: AESMode.ecb));
           return encrypter.encrypt(data).base64;
@@ -30,6 +34,9 @@ class Cipher {
               Encrypter(AES(Key.fromUtf8(passCode), mode: AESMode.ecb));
           return encrypter.decrypt(Encrypted.fromBase64(data));
         } else {
+          while (password.length < 32) {
+            password += password;
+          }
           final encrypter =
               Encrypter(AES(Key.fromUtf8(password), mode: AESMode.ecb));
           return encrypter.decrypt(Encrypted.fromBase64(data));

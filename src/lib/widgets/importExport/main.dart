@@ -1,11 +1,11 @@
 // ignore: file_names
+import 'dart:convert';
 import 'dart:io';
-import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:src/services/dataFileIO.dart';
 import 'package:src/services/logFileIo.dart';
-import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
+import 'package:src/widgets/importExport/confirmImport.dart';
+import 'package:src/widgets/importExport/confirmExport.dart';
 
 class ImportExport extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -69,18 +69,6 @@ class _ImportExportState extends State<ImportExport> {
     }
   }
 
-  void importData() async {
-    try {
-      DataFileIO.importDataFile(switcher['import']['text']['content'])
-          .then((value) {
-        GoRouter.of(context).pop();
-      });
-    } catch (e) {
-      LogFileIO.logging(e.toString());
-      rethrow;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Size uiSize = MediaQuery.of(context).size;
@@ -135,14 +123,18 @@ class _ImportExportState extends State<ImportExport> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              if (switcher['import']['button']['import']) {
-                                importData();
-                              } else {
-                                chooseFile();
-                              }
-                            });
+                          onPressed: () async {
+                            if (switcher['import']['button']['import']) {
+                              return await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ConfirmImport(
+                                        data: jsonDecode(switcher['import']
+                                            ['text']['content']));
+                                  });
+                            } else {
+                              chooseFile();
+                            }
                           },
                           child: Text(switcher['import']['button']['text']),
                         )),
@@ -191,7 +183,7 @@ class _ImportExportState extends State<ImportExport> {
                         return await showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return ConfirmEncryptDialog(data: data);
+                              return ConfirmExport(data: data);
                             });
                       },
                       child: Text(switcher['export']['button']['text']),

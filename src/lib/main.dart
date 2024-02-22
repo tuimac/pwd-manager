@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:src/services/logFileIo.dart';
 import 'router.dart';
 
 void main() {
-  runApp(const MainApp());
+  try {
+    runApp(const MainApp());
+  } catch (e) {
+    LogFileIO.logging(e.toString());
+  }
 }
 
 class MainApp extends StatelessWidget {

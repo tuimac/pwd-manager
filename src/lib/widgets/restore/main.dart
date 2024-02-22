@@ -9,7 +9,7 @@ import 'package:sticky_headers/sticky_headers.dart';
 import 'package:flutter/cupertino.dart';
 
 class Restore extends StatefulWidget {
-  const Restore({Key? key}) : super(key: key);
+  const Restore({super.key});
 
   @override
   State<Restore> createState() => _RestoreState();

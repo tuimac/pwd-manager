@@ -88,19 +88,22 @@ class DataFileIO {
     }
   }
 
-  static Future<void> importDataFile(String data,
+  static Future<void> importDataFile(Map<String, dynamic> data,
       {String password = ''}) async {
     try {
-      Map<String, dynamic> importData = {};
       if (password == '') {
-        importData = jsonDecode(data);
+        await DataFileIO.saveData(data['passwords']);
+        await ConfigFileIO.saveConfig(data['config']);
       } else {
-        Cipher.decryptData(data, password: password).then((decodedData) {
-          importData = jsonDecode(decodedData);
+        Map<String, dynamic> importData = data;
+        Cipher.decryptData(data['passwords'], password: password)
+            .then((decodedData) async {
+          importData['passwords'] = jsonDecode(decodedData);
+          LogFileIO.logging(importData.toString());
+          await DataFileIO.saveData(importData['passwords']);
+          await ConfigFileIO.saveConfig(importData['config']);
         });
       }
-      await DataFileIO.saveData(importData['passwords']);
-      await ConfigFileIO.saveConfig(importData['config']);
     } catch (e) {
       LogFileIO.logging(e.toString());
       rethrow;
@@ -118,8 +121,10 @@ class DataFileIO {
         exportData['passwords'] = data;
         exportData['encryption'] = false;
       } else {
-        exportData['passwords'] =
-            await Cipher.encryptData(jsonEncode(data), password: password);
+        await Cipher.encryptData(jsonEncode(data), password: password)
+            .then((encryptedData) {
+          exportData['passwords'] = encryptedData;
+        });
         exportData['encryption'] = true;
       }
       // Add config

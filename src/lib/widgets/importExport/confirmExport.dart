@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/config/config.dart';
 import 'package:src/services/dataFileIO.dart';
+import 'package:src/services/logFileIo.dart';
 
-class ConfirmEncryptDialog extends StatefulWidget {
+class ConfirmExport extends StatefulWidget {
   final Map<String, dynamic> data;
-  const ConfirmEncryptDialog({
+  const ConfirmExport({
     super.key,
     required this.data,
   });
 
   @override
-  State<ConfirmEncryptDialog> createState() => _ConfirmEncryptDialogState();
+  State<ConfirmExport> createState() => _ConfirmExportState();
 }
 
-class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
+class _ConfirmExportState extends State<ConfirmExport> {
   late Map<String, dynamic> data;
   late bool isEncrypt = false;
   late bool passwordVisible;
@@ -30,6 +31,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
 
   void exportData() {
     if (isEncrypt) {
+      LogFileIO.logging(isEncrypt.toString());
       DataFileIO.exportDataFile(data, password: password).then((value) async {
         FilePicker.platform.pickFiles(
             initialDirectory: await Config.getDownloadDir,
@@ -60,7 +62,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
         content: isEncrypt
             ? SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFormField(
+                child: TextField(
                     obscureText: passwordVisible,
                     style: TextStyle(fontSize: textSize),
                     decoration: InputDecoration(
@@ -95,8 +97,10 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
                           },
                         )),
                     cursorColor: Colors.black,
-                    onSaved: (String? value) {
-                      password = value!;
+                    onChanged: (input) {
+                      setState(() {
+                        password = input;
+                      });
                     }))
             : SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
@@ -126,11 +130,10 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
                       isEncrypt = true;
                     });
                   },
-                  child: const Text('Yes'),
+                  child: const Text('yes'),
                 ),
                 TextButton(
                   onPressed: () {
-                    exportData();
                     GoRouter.of(context).pop();
                   },
                   child: const Text('No'),

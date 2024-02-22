@@ -17,7 +17,7 @@ class LogFileIO {
   // Write the log messages
   static Future logging(String message) async {
     try {
-      message = '[${DateTime.now().toIso8601String()}] - $message';
+      message = '[${DateTime.now().toIso8601String()}] - $message\n';
       log(message);
       await File(await Config.getLogPath)
           .writeAsString(message, mode: FileMode.append);

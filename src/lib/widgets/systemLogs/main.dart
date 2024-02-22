@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/logFileIo.dart';
 
@@ -41,31 +42,34 @@ class _SystemLogsState extends State<SystemLogs> {
                 child: SizedBox(
                     height: uiHeight,
                     child: TextField(
-                        readOnly: false,
-                        controller: TextEditingController(text: log),
-                        style: const TextStyle(fontSize: 14),
-                        decoration: const InputDecoration(
-                          filled: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
-                          fillColor: Color.fromARGB(255, 113, 141, 157),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 2.0)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 2.0)),
-                          border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 2.0)),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          labelStyle: TextStyle(
-                            color: Colors.white,
-                          ),
+                      readOnly: true,
+                      controller: TextEditingController(text: log),
+                      style: const TextStyle(fontSize: 14),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(1),
+                      ],
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10,
                         ),
-                        minLines: 20,
-                        maxLines: 20))));
+                        fillColor: Color.fromARGB(255, 113, 141, 157),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2.0)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2.0)),
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2.0)),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ))));
   }
 }
