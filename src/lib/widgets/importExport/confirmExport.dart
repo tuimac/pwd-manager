@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/config/config.dart';
 import 'package:src/services/dataFileIO.dart';
-import 'package:src/services/logFileIo.dart';
 
 class ConfirmExport extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -31,7 +30,6 @@ class _ConfirmExportState extends State<ConfirmExport> {
 
   void exportData() {
     if (isEncrypt) {
-      LogFileIO.logging(isEncrypt.toString());
       DataFileIO.exportDataFile(data, password: password).then((value) async {
         FilePicker.platform.pickFiles(
             initialDirectory: await Config.getDownloadDir,
@@ -134,6 +132,7 @@ class _ConfirmExportState extends State<ConfirmExport> {
                 ),
                 TextButton(
                   onPressed: () {
+                    exportData();
                     GoRouter.of(context).pop();
                   },
                   child: const Text('No'),

@@ -28,7 +28,7 @@ class _ConfirmImportState extends State<ConfirmImport> {
 
   void importData() async {
     try {
-      if (data['encryption']) {
+      if (data['encryption'] || data.containsKey('encryption')) {
         DataFileIO.importDataFile(data, password: password).then((value) {
           GoRouter.of(context).pop();
           GoRouter.of(context).pop();
