@@ -19,6 +19,10 @@ class Config {
     }
   }
 
+  static Future<String> get getDownloadDir async {
+    return (await getDownloadsDirectory())!.path;
+  }
+
   static Future<String> get getDataPath async {
     return '${await getBaseDir}/data/latest.json';
   }

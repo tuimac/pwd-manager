@@ -208,7 +208,6 @@ class _ListPasswordsState extends State<ListPasswords> {
                                           onDismissed: (DismissDirection
                                               dismissDirection) {
                                             setState(() {
-                                              dataList.removeAt(index);
                                               getData();
                                             });
                                           },
@@ -220,9 +219,13 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                   return DeleteDialog(
                                                       data: data,
                                                       primaryKey:
-                                                          dataList[index],
-                                                      getData: getData);
-                                                });
+                                                          dataList[index]);
+                                                }).then((value) {
+                                              setState(() {
+                                                getData();
+                                              });
+                                              return null;
+                                            });
                                           },
                                           direction:
                                               DismissDirection.endToStart,

@@ -1,6 +1,5 @@
 // ignore: file_names
 import 'dart:io';
-import 'dart:convert';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
 
 class ImportExport extends StatefulWidget {
   final Map<String, dynamic> data;
-  const ImportExport({Key? key, required this.data}) : super(key: key);
+  const ImportExport({super.key, required this.data});
 
   @override
   State<ImportExport> createState() => _ImportExportState();
@@ -47,39 +46,38 @@ class _ImportExportState extends State<ImportExport> {
     data = widget.data;
   }
 
-  void get chooseFile async {
+  void chooseFile() {
     try {
-      FilePickerResult? importFile = await FilePicker.platform
-          .pickFiles(type: FileType.custom, allowedExtensions: ['json']);
-
-      if (importFile != null) {
-        String tmpContent =
-            await File(importFile.files.single.path!).readAsString();
-        setState(() {
-          switcher['import']['text']['content'] = tmpContent;
-          switcher['import']['text']['switch'] = true;
-          switcher['import']['button']['import'] = true;
-          switcher['import']['button']['text'] = 'Import Data';
-          switcher['import']['button']['color'] = Colors.green;
-        });
-      }
+      FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json']).then((importFile) {
+        if (importFile != null) {
+          File(importFile.files.single.path!).readAsString().then((data) {
+            setState(() {
+              switcher['import']['text']['content'] = data;
+              switcher['import']['text']['switch'] = true;
+              switcher['import']['button']['import'] = true;
+              switcher['import']['button']['text'] = 'Import Data';
+              switcher['import']['button']['color'] = Colors.green;
+            });
+          });
+        }
+      });
     } catch (e) {
       LogFileIO.logging(e.toString());
       rethrow;
     }
   }
 
-  void importData() {
+  void importData() async {
     try {
-      DataFileIO.saveData(jsonDecode(switcher['import']['text']['content']));
-    } on FormatException {
-      try {
-        DataFileIO.saveData(switcher['import']['text']['content']);
+      DataFileIO.importDataFile(switcher['import']['text']['content'])
+          .then((value) {
         GoRouter.of(context).pop();
-      } catch (e) {
-        LogFileIO.logging(e.toString());
-        rethrow;
-      }
+      });
+    } catch (e) {
+      LogFileIO.logging(e.toString());
+      rethrow;
     }
   }
 
@@ -142,7 +140,7 @@ class _ImportExportState extends State<ImportExport> {
                               if (switcher['import']['button']['import']) {
                                 importData();
                               } else {
-                                chooseFile;
+                                chooseFile();
                               }
                             });
                           },

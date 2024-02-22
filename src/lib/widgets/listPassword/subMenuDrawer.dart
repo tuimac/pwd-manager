@@ -95,7 +95,9 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
                           .push('/importexport', extra: data)
-                          .then((value) => widget.getData());
+                          .then((value) {
+                        widget.getData();
+                      });
                     },
                   )),
               const Divider(height: 1, color: Colors.black),
@@ -107,9 +109,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                     title: const Text('System Log'),
                     onTap: () {
                       GoRouter.of(context).pop();
-                      GoRouter.of(context)
-                          .push('/logging', extra: data)
-                          .then((value) => widget.getData());
+                      GoRouter.of(context).push('/systemlogs');
                     },
                   ))
             ])));

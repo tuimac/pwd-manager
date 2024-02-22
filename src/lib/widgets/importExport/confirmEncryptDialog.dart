@@ -1,5 +1,7 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/config/config.dart';
 import 'package:src/services/dataFileIO.dart';
 
 class ConfirmEncryptDialog extends StatefulWidget {
@@ -17,6 +19,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
   late Map<String, dynamic> data;
   late bool isEncrypt = false;
   late bool passwordVisible;
+  late String password = '';
 
   @override
   void initState() {
@@ -25,8 +28,22 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
     passwordVisible = true;
   }
 
-  void exportData(bool isEncrypt) {
-    DataFileIO.exportDataFile(data, isEncrypt);
+  void exportData() {
+    if (isEncrypt) {
+      DataFileIO.exportDataFile(data, password: password).then((value) async {
+        FilePicker.platform.pickFiles(
+            initialDirectory: await Config.getDownloadDir,
+            type: FileType.custom,
+            allowedExtensions: ['json']);
+      });
+    } else {
+      DataFileIO.exportDataFile(data).then((value) async {
+        FilePicker.platform.pickFiles(
+            initialDirectory: await Config.getDownloadDir,
+            type: FileType.custom,
+            allowedExtensions: ['json']);
+      });
+    }
   }
 
   @override
@@ -78,7 +95,9 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
                           },
                         )),
                     cursorColor: Colors.black,
-                    onSaved: (String? value) {}))
+                    onSaved: (String? value) {
+                      password = value!;
+                    }))
             : SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
                 width: MediaQuery.of(context).size.width * 0.8),
@@ -86,7 +105,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
             ? <Widget>[
                 TextButton(
                   onPressed: () {
-                    exportData(true);
+                    exportData();
                     GoRouter.of(context).pop();
                   },
                   child: const Text('Export'),
@@ -111,7 +130,7 @@ class _ConfirmEncryptDialogState extends State<ConfirmEncryptDialog> {
                 ),
                 TextButton(
                   onPressed: () {
-                    exportData(false);
+                    exportData();
                     GoRouter.of(context).pop();
                   },
                   child: const Text('No'),

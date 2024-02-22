@@ -5,13 +5,7 @@ import 'package:src/services/dataFileIO.dart';
 class DeleteDialog extends StatefulWidget {
   final Map<String, dynamic> data;
   final String primaryKey;
-  final Function getData;
-  const DeleteDialog(
-      {Key? key,
-      required this.data,
-      required this.primaryKey,
-      required this.getData})
-      : super(key: key);
+  const DeleteDialog({super.key, required this.data, required this.primaryKey});
 
   @override
   State<DeleteDialog> createState() => _DeleteDialogState();
@@ -29,9 +23,11 @@ class _DeleteDialogState extends State<DeleteDialog> {
     primaryKey = widget.primaryKey;
   }
 
-  void deletePassword() {
+  void deletePassword(BuildContext context) {
     data.remove(primaryKey);
-    DataFileIO.saveData(data);
+    DataFileIO.saveData(data).then((value) {
+      GoRouter.of(context).pop();
+    });
   }
 
   @override
@@ -91,9 +87,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
             ),
             onPressed: deleteConfirm == true
                 ? () {
-                    deletePassword();
-                    GoRouter.of(context).pop();
-                    widget.getData();
+                    deletePassword(context);
                   }
                 : null)
       ],

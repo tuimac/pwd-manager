@@ -88,18 +88,44 @@ class DataFileIO {
     }
   }
 
-  static Future<String> exportDataFile(
-      Map<String, dynamic> data, bool isEncrypt) async {
-    late String exportData;
+  static Future<void> importDataFile(String data,
+      {String password = ''}) async {
+    try {
+      Map<String, dynamic> importData = {};
+      if (password == '') {
+        importData = jsonDecode(data);
+      } else {
+        Cipher.decryptData(data, password: password).then((decodedData) {
+          importData = jsonDecode(decodedData);
+        });
+      }
+      await DataFileIO.saveData(importData['passwords']);
+      await ConfigFileIO.saveConfig(importData['config']);
+    } catch (e) {
+      LogFileIO.logging(e.toString());
+      rethrow;
+    }
+  }
+
+  static Future<String> exportDataFile(Map<String, dynamic> data,
+      {String password = ''}) async {
+    Map<String, dynamic> exportData = {};
     try {
       await [Permission.storage].request();
       String downloadDirPath = '';
       // If need to encrypt or not
-      if (isEncrypt) {
-        exportData = await Cipher.encryptData(jsonEncode(data));
+      if (password == '') {
+        exportData['passwords'] = data;
+        exportData['encryption'] = false;
       } else {
-        exportData = jsonEncode(data);
+        exportData['passwords'] =
+            await Cipher.encryptData(jsonEncode(data), password: password);
+        exportData['encryption'] = true;
       }
+      // Add config
+      await ConfigFileIO.getConfig().then((config) {
+        exportData['config'] = config;
+      });
       // Platform confirmation
       if (Platform.isAndroid) {
         downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
@@ -108,7 +134,7 @@ class DataFileIO {
         downloadDirPath = (await getApplicationDocumentsDirectory()).path;
       }
       File('$downloadDirPath/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}_password${Config.dataExtension}')
-          .writeAsString(exportData, mode: FileMode.writeOnly);
+          .writeAsString(jsonEncode(exportData), mode: FileMode.writeOnly);
       return downloadDirPath;
     } catch (e) {
       LogFileIO.logging(e.toString());
