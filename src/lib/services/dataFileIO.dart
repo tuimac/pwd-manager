@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:src/services/configFileIo.dart';
+import 'package:src/services/configFileIO.dart';
 import 'package:src/services/logFileIo.dart';
 import 'package:src/utils/validation.dart';
 import 'package:src/utils/cipher.dart';
@@ -134,7 +134,7 @@ class DataFileIO {
       // Platform confirmation
       if (Platform.isAndroid) {
         downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
-            ExternalPath.DIRECTORY_DOWNLOADS);
+            ExternalPath.DIRECTORY_DOWNLOAD);
       } else if (Platform.isIOS) {
         downloadDirPath = (await getApplicationDocumentsDirectory()).path;
       }

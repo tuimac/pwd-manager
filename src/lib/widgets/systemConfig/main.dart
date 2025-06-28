@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:src/services/configFileIo.dart';
+import 'package:src/services/configFileIO.dart';
 import 'package:src/services/logFileIo.dart';
 
 class SystemConfig extends StatefulWidget {

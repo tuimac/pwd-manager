@@ -2,6 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // This configuration emurate the command below
+            // flutter run --debug
+            "name": "startApplication",
+            "program": "src/lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug"
+        },
+        {
             "name": "startOnWeb",
             "program": "src/lib/main.dart",
             "request": "launch",
@@ -12,12 +21,6 @@
                 "--web-hostname=0.0.0.0",
                 "--web-port=8080"
             ]
-        },
-        {
-            "name": "startOnLocal",
-            "program": "src/lib/main.dart",
-            "request": "launch",
-            "type": "dart"
         }
     ]
 }

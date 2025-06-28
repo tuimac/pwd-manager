@@ -40,8 +40,6 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   google_sign_in: ^6.1.4
   intl: ^0.18.1
-  external_path: ^1.0.3
-  file_picker: ^6.1.1
   flutter_launcher_icons: ^0.13.1
   sticky_headers: ^0.3.0+2
   permission_handler: ^11.3.0
@@ -49,6 +47,8 @@ dependencies:
   local_auth_android: ^1.0.34
   local_auth_ios: ^1.1.4
   encrypt: ^5.0.3
+  file_picker: ^10.2.0
+  external_path: ^2.2.0
 
 dev_dependencies:
   flutter_test:
