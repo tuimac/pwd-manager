@@ -207,72 +207,72 @@ class _RestoreState extends State<Restore> {
                                               ),
                                               key: Key(index.toString()),
                                               child: Row(children: [
-                                                Container(
-                                                    width: uiWidth * 0.6,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                            color: Colors.grey),
-                                                      ),
-                                                    ),
-                                                    child: ListTile(
-                                                        title: Text(
-                                                            DateConverter
-                                                                .dateForDisplay(
+                                                SizedBox(
+                                                    child: Container(
+                                                        width: uiWidth * 0.6,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          border: Border(
+                                                            bottom: BorderSide(
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ),
+                                                        child: ListTile(
+                                                            title: Text(
+                                                                DateConverter.dateForDisplay(
                                                                     restoreDataList[
                                                                             index]
                                                                         [
                                                                         'name']),
-                                                            style:
-                                                                const TextStyle(
+                                                                style: const TextStyle(
                                                                     color: Colors
                                                                         .white)),
-                                                        onTap: () async {
-                                                          return await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return RestoreDialog(
-                                                                    restoreTarget:
-                                                                        restoreDataList[index]
-                                                                            [
-                                                                            'name']);
-                                                              });
-                                                        })),
-                                                Container(
-                                                    width: uiWidth * 0.4,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                            color: Colors.grey),
-                                                      ),
-                                                    ),
-                                                    child: ListTile(
-                                                        title: Text(
-                                                            UnitConvert.fileSizeConvert(
-                                                                restoreDataList[
-                                                                        index]
-                                                                    ['size']),
-                                                            style:
-                                                                const TextStyle(
+                                                            onTap: () async {
+                                                              return await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return RestoreDialog(
+                                                                        restoreTarget:
+                                                                            restoreDataList[index]['name']);
+                                                                  });
+                                                            }))),
+                                                SizedBox(
+                                                    child: Container(
+                                                        width: uiWidth * 0.4,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          border: Border(
+                                                            bottom: BorderSide(
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ),
+                                                        child: ListTile(
+                                                            title: Text(
+                                                                UnitConvert.fileSizeConvert(
+                                                                    restoreDataList[
+                                                                            index]
+                                                                        [
+                                                                        'size']),
+                                                                style: const TextStyle(
                                                                     color: Colors
                                                                         .white)),
-                                                        onTap: () async {
-                                                          return await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return RestoreDialog(
-                                                                    restoreTarget:
-                                                                        restoreDataList[index]
-                                                                            [
-                                                                            'name']);
-                                                              });
-                                                        }))
+                                                            onTap: () async {
+                                                              return await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return RestoreDialog(
+                                                                        restoreTarget:
+                                                                            restoreDataList[index]['name']);
+                                                                  });
+                                                            })))
                                               ]));
                                         }))
                               ],

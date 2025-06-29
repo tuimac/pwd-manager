@@ -163,8 +163,8 @@ class _ImportExportState extends State<ImportExport> {
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.always,
                                 ),
-                                maxLines: 20,
-                                minLines: 20,
+                                maxLines: 14,
+                                minLines: 14,
                                 cursorColor: Colors.black)
                             : Container())
                   ])

@@ -34,7 +34,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
           // ignore: prefer_interpolation_to_compose_strings
           'Delete ' + DateConverter.dateForDisplay(restoreFileName) + ' ?'),
       content: SizedBox(
-          height: uiHeight * 0.13,
+          height: uiHeight * 0.18,
           child: Column(children: [
             const Text('Please type "delete" in the box below.',
                 style: TextStyle(fontSize: 14)),

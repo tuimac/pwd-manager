@@ -50,8 +50,9 @@ class _SystemConfigState extends State<SystemConfig> {
                   'Biometric authentication not configured on this device.');
         }
       });
+
       setState(() {
-        config['bio_auth'] = true;
+        config['bio_auth'] = !config['bio_auth'];
       });
       await ConfigFileIO.saveConfig(config);
     } on PlatformException catch (e) {

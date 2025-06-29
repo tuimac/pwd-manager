@@ -68,7 +68,7 @@ class DataFileIO {
     try {
       await File(await Config.getDataPath).copy(
           '${await Config.getBackupDir}${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
-      File('${await Config.getBackupDir}/$targetFileName${Config.dataExtension}')
+      File('${await Config.getBackupDir}$targetFileName${Config.dataExtension}')
           .copy(await Config.getBackupDir);
     } catch (e) {
       LogFileIO.logging(e.toString());

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:src/utils/validation.dart';
 import 'package:src/services/logFileIo.dart';
@@ -22,6 +23,7 @@ class ConfigFileIO {
   // Write the data file
   static Future saveConfig(Map<String, dynamic> config) async {
     try {
+      log(config.toString());
       await File(await Config.getConfigPath)
           .writeAsString(jsonEncode(config), mode: FileMode.writeOnly);
     } catch (e) {
