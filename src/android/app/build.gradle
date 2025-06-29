@@ -53,6 +53,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationVariants.all { variant ->
+                println("Variant: ${variant.name}, BuildType: ${variant.buildType.name}, Version: ${variant.versionName}")
+                variant.outputs.all { output ->
+                    def appName = "pwdmanager"
+                    def buildType = variant.buildType.name
+                    def versionName = variant.versionName
+                    def versionCode = variant.versionCode
+                    outputFileName = "${appName}-${buildType}-v${versionName}+${versionCode}.apk"
+                }
+            }
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
