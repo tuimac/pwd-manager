@@ -4,6 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/dataFileIO.dart';
 
+class CustomClipboard {
+  static const _channel = MethodChannel('custom_clipboard');
+
+  static Future<void> setData(String text) async {
+    await _channel.invokeMethod('setClipboard', {'text': text});
+  }
+}
+
 class EditPassword extends StatefulWidget {
   final String primaryKey;
   final Map<String, dynamic> data;
@@ -38,6 +46,10 @@ class _EditPasswordState extends State<EditPassword> {
       data[primaryKey] = editedPassword;
       DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
+  }
+
+  void copyToClipboard(String clipboardText) {
+    CustomClipboard.setData(clipboardText);
   }
 
   void switchEdit() {
@@ -154,11 +166,8 @@ class _EditPasswordState extends State<EditPassword> {
                                   child: TextFormField(
                                     onTap: () {
                                       if (editFlags['readOnly']!) {
-                                        Clipboard.setData(
-                                          ClipboardData(
-                                              text: data[primaryKey]
-                                                  ['username']),
-                                        );
+                                        copyToClipboard(
+                                            data[primaryKey]['username']);
                                       }
                                     },
                                     readOnly: editFlags['readOnly']!,
@@ -206,11 +215,8 @@ class _EditPasswordState extends State<EditPassword> {
                                   child: TextFormField(
                                       onTap: () {
                                         if (editFlags['readOnly']!) {
-                                          Clipboard.setData(
-                                            ClipboardData(
-                                                text: data[primaryKey]
-                                                    ['password']),
-                                          );
+                                          copyToClipboard(
+                                              data[primaryKey]['password']);
                                         }
                                       },
                                       readOnly: editFlags['readOnly']!,

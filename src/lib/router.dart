@@ -7,6 +7,7 @@ import 'package:src/widgets/listPassword/main.dart';
 import 'package:src/widgets/editPassword/main.dart';
 import 'package:src/widgets/restore/main.dart';
 import 'package:src/widgets/systemConfig/main.dart';
+import 'package:src/widgets/systemConfig/testPage.dart';
 import 'package:src/widgets/systemLogs/main.dart';
 
 class AppRouter {
@@ -38,6 +39,11 @@ class AppRouter {
           path: '/systemconfig',
           builder: (BuildContext context, GoRouterState state) {
             return const SystemConfig();
+          }),
+      GoRoute(
+          path: '/systemconfig/test',
+          builder: (BuildContext context, GoRouterState state) {
+            return const TestPage();
           }),
       GoRoute(
           path: '/restore',
