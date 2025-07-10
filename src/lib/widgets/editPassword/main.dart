@@ -4,14 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/dataFileIO.dart';
 
-class CustomClipboard {
-  static const _channel = MethodChannel('custom_clipboard');
-
-  static Future<void> setData(String text) async {
-    await _channel.invokeMethod('setClipboard', {'text': text});
-  }
-}
-
 class EditPassword extends StatefulWidget {
   final String primaryKey;
   final Map<String, dynamic> data;
@@ -49,7 +41,7 @@ class _EditPasswordState extends State<EditPassword> {
   }
 
   void copyToClipboard(String clipboardText) {
-    CustomClipboard.setData(clipboardText);
+    Clipboard.setData(ClipboardData(text: clipboardText));
   }
 
   void switchEdit() {
