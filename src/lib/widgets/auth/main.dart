@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/services.dart';
@@ -85,10 +86,7 @@ class _AuthenticationState extends State<Authentication> {
             ),
           ]);
       if (authState) {
-        String passCode = await FileIO.getPasscode();
-        data['pass_code'] = passCode;
-        GoRouter.of(context)
-            .go('/listpwd', extra: Cipher.decryptData(data, passCode));
+        GoRouter.of(context).go('/listpwd', extra: await FileIO.getData());
       } else {
         setState(() {
           authType = 'login';
@@ -144,15 +142,12 @@ class _AuthenticationState extends State<Authentication> {
           typedNumbers = '';
           typedDots = [];
           dotsSizePadding = dotsSize;
-          data = CheckData.checkDataContent(Config.dataTemplate);
         });
       } else if (authType == 'confirm') {
         if (signinNumbers == typedNumbers) {
-          data['pass_code'] = typedNumbers;
-          FileIO.registerPasscode(signinNumbers);
-          FileIO.saveData(data);
-          GoRouter.of(context).go('/listpwd',
-              extra: Cipher.encryptData(data, data['pass_code']));
+          await FileIO.registerPasscode(signinNumbers);
+          await FileIO.saveData(data);
+          GoRouter.of(context).go('/listpwd', extra: await FileIO.getData());
         } else {
           setState(() {
             signinNumbers = '';
@@ -164,11 +159,9 @@ class _AuthenticationState extends State<Authentication> {
           });
         }
       } else if (authType == 'login') {
-        try {
-          data['pass_code'] = typedNumbers;
-          GoRouter.of(context)
-              .go('/listpwd', extra: Cipher.decryptData(data, typedNumbers));
-        } catch (e) {
+        if (await FileIO.getPasscode() == typedNumbers) {
+          GoRouter.of(context).go('/listpwd', extra: data);
+        } else {
           setState(() {
             signinNumbers = '';
             typedNumbers = '';

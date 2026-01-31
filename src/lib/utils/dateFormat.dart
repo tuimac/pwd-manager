@@ -16,4 +16,8 @@ class DateConverter {
     dateData = dateData.replaceFirst(':', '-');
     return dateData;
   }
+
+  static int getNow() {
+    return (DateTime.now().millisecondsSinceEpoch / 1000).floor();
+  }
 }

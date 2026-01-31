@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:src/utils/cipher.dart';
+import 'package:src/utils/checkData.dart';
 import 'package:flutter/material.dart';
 import 'package:src/services/fileio.dart';
 import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
@@ -45,7 +45,9 @@ class _ImportExportState extends State<ImportExport> {
   @override
   void initState() {
     super.initState();
-    data = widget.data;
+    setState(() {
+      data = widget.data;
+    });
   }
 
   void get chooseFile async {
@@ -69,17 +71,13 @@ class _ImportExportState extends State<ImportExport> {
     }
   }
 
-  void importData() {
+  void importData() async {
     try {
-      FileIO.saveData(jsonDecode(switcher['import']['text']['content']));
-    } on FormatException {
-      try {
-        FileIO.saveData(jsonDecode(Cipher.decryptString(
-            switcher['import']['text']['content'], data['pass_code'])));
-        GoRouter.of(context).pop();
-      } catch (e) {
-        log(e.toString());
-      }
+      await FileIO.saveData(CheckData.checkDataContent(
+          jsonDecode(switcher['import']['text']['content'])));
+      GoRouter.of(context).pop();
+    } catch (e) {
+      log('[ImportData]: ${e.toString()}');
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
 import 'dart:developer' as log;
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:src/utils/checkData.dart';
 import 'package:src/utils/cipher.dart';
@@ -45,9 +46,11 @@ class FileIO {
   // Read the data file
   static Future<Map<String, dynamic>> getData() async {
     try {
-      return jsonDecode(await File(
-              '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
-          .readAsString());
+      return CheckData.checkDataContent(Cipher.decryptData(
+          jsonDecode(await File(
+                  '${await FileIO.baseDirInfo}/${Config.dataDir}/${Config.latestData}')
+              .readAsString()),
+          await FileIO.getPasscode()));
     } on PathNotFoundException {
       CheckData.checkDataPath();
       return CheckData.checkDataContent(Config.dataTemplate);
@@ -68,12 +71,9 @@ class FileIO {
               '${await FileIO.baseDirInfo}/${Config.autoBackupDir}/${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}${Config.dataExtension}');
         }
       }
-      String passCode = data['pass_code'];
-      data.remove('pass_code');
       await File(pwdPath).writeAsString(
-          jsonEncode(Cipher.encryptData(data, passCode)),
+          jsonEncode(Cipher.encryptData(data, await FileIO.getPasscode())),
           mode: FileMode.writeOnly);
-      data['pass_code'] = passCode;
     } catch (e) {
       rethrow;
     }
@@ -157,7 +157,6 @@ class FileIO {
           break;
         }
       }
-      log.log(await File(passcodeFileName).readAsString());
       return Cipher.decryptString(await File(passcodeFileName).readAsString(),
           basename(passcodeFileName));
     } on PathNotFoundException catch (e) {

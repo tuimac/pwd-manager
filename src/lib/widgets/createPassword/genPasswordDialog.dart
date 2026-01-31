@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/fileio.dart';
 
-class DeleteDialog extends StatefulWidget {
+class GenPasswordDialog extends StatefulWidget {
   final Map<String, dynamic> data;
   final String primaryKey;
   final Function getData;
-  const DeleteDialog(
+  const GenPasswordDialog(
       {Key? key,
       required this.data,
       required this.primaryKey,
@@ -14,10 +14,10 @@ class DeleteDialog extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<DeleteDialog> createState() => _DeleteDialogState();
+  State<GenPasswordDialog> createState() => _GenPasswordDialogState();
 }
 
-class _DeleteDialogState extends State<DeleteDialog> {
+class _GenPasswordDialogState extends State<GenPasswordDialog> {
   late Map<String, dynamic> data;
   late String primaryKey;
   late bool deleteConfirm = false;
@@ -30,9 +30,7 @@ class _DeleteDialogState extends State<DeleteDialog> {
   }
 
   void deletePassword() {
-    setState(() {
-      data['passwords'].remove(primaryKey);
-    });
+    data['passwords'].remove(primaryKey);
     FileIO.saveData(data);
   }
 
@@ -93,7 +91,9 @@ class _DeleteDialogState extends State<DeleteDialog> {
             ),
             onPressed: deleteConfirm == true
                 ? () {
-                    GoRouter.of(context).pop(true);
+                    deletePassword();
+                    GoRouter.of(context).pop();
+                    widget.getData();
                   }
                 : null)
       ],

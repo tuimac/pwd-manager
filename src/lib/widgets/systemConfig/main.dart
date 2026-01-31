@@ -1,6 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:src/services/fileio.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:developer';
 
 class SystemConfig extends StatefulWidget {
@@ -44,7 +44,6 @@ class _SystemConfigState extends State<SystemConfig> {
                   setState(() {
                     data['settings']['auto_backup'] = value;
                   });
-                  FileIO.saveData(data);
                 },
               ),
               SwitchListTile(
@@ -58,7 +57,6 @@ class _SystemConfigState extends State<SystemConfig> {
                   setState(() {
                     data['settings']['bio_auth'] = value;
                   });
-                  FileIO.saveData(data);
                 },
               )
             ]))));

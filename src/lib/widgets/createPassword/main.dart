@@ -1,6 +1,8 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/utils/dateFormat.dart';
+import 'package:src/utils/passwordGen.dart';
 import 'package:src/services/fileio.dart';
 import 'dart:developer';
 
@@ -17,6 +19,7 @@ class _CreatePasswordState extends State<CreatePassword> {
   late bool passwordVisible;
   late String primaryKey;
   final formKey = GlobalKey<FormState>();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +31,9 @@ class _CreatePasswordState extends State<CreatePassword> {
   void savePassword(Map<String, dynamic> newPassword) async {
     setState(() {
       data['passwords'][primaryKey] = newPassword;
+      data['passwords'][primaryKey]['watch_time'] = DateConverter.getNow();
+      data['passwords'][primaryKey]['created_time'] = DateConverter.getNow();
+      data['passwords'][primaryKey]['mod_time'] = DateConverter.getNow();
       FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
@@ -90,7 +96,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                     cursorColor: Colors.white,
                                     validator: (input) {
                                       if (input!.isEmpty) {
-                                        return '"User Name" is empty.';
+                                        return '"Password Name" is empty.';
                                       } else {
                                         if (data['passwords']
                                             .containsKey(input)) {
@@ -154,6 +160,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       style: TextStyle(fontSize: textSize),
                                       obscureText: passwordVisible,
                                       textInputAction: TextInputAction.next,
+                                      controller: passwordController,
                                       decoration: InputDecoration(
                                           filled: true,
                                           contentPadding: EdgeInsets.symmetric(
@@ -195,7 +202,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       cursorColor: Colors.white,
                                       validator: (input) {
                                         if (input!.isEmpty) {
-                                          return '"User Name" is empty.';
+                                          return '"Password" is empty.';
                                         } else {
                                           return null;
                                         }
@@ -204,7 +211,41 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         newPassword['password'] = value;
                                       })),
                               Padding(
-                                  padding: EdgeInsets.only(top: paddingTop),
+                                  padding: const EdgeInsets.only(top: 0),
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        SizedBox(
+                                            height: 30,
+                                            width: 120,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                foregroundColor: Colors.black,
+                                                backgroundColor:
+                                                    Colors.blue[300],
+                                              ),
+                                              onPressed: () {
+                                                log(data['settings']
+                                                    .toString());
+                                                setState(() {
+                                                  passwordController.text =
+                                                      PasswordGen.genPassword(data[
+                                                              'settings'][
+                                                          'auto_pwd_gen_rule']);
+                                                });
+                                              },
+                                              child: const Text('GenPassword'),
+                                            )),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(
+                                            Icons.settings,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      ])),
+                              Padding(
+                                  padding: EdgeInsets.only(top: 0),
                                   child: TextFormField(
                                       style: TextStyle(fontSize: textSize),
                                       decoration: InputDecoration(

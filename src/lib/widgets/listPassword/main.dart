@@ -19,47 +19,64 @@ class _ListPasswordsState extends State<ListPasswords> {
   late Map<String, dynamic> data;
   late List dataList = [];
   late String filterWord = '';
-  Map<String, dynamic> sortTypes = {'Name': false};
+  Map<String, bool> sortInfo = {'Name': true, 'Recent Access': true};
 
   @override
   void initState() {
     super.initState();
     setState(() {
       data = widget.data;
+      dataList = data['passwords'].keys.toList();
+      sortData(data['settings']['sort_type']);
     });
   }
 
   void getData() async {
     await FileIO.getData().then((value) {
       setState(() {
-        data = Cipher.decryptData(value, data['pass_code']);
-        dataList = data['passwords'].keys.toList();
+        data = value;
+        dataList = value['passwords'].keys.toList();
+        sortData(data['settings']['sort_type']);
+        filterList();
       });
     });
-    filterList();
   }
 
   void filterList() {
-    setState(() {
-      List tmpdataList = data['passwords'].keys.toList();
-      dataList = tmpdataList
-          .where(
-              (item) => item.toLowerCase().contains(filterWord.toLowerCase()))
-          .toList();
-    });
+    if (filterWord.isNotEmpty) {
+      setState(() {
+        List tmpdataList = data['passwords'].keys.toList();
+        dataList = tmpdataList
+            .where(
+                (item) => item.toLowerCase().contains(filterWord.toLowerCase()))
+            .toList();
+      });
+    } else {
+      setState(() {
+        dataList = data['passwords'].keys.toList();
+        sortData(data['settings']['sort_type']);
+      });
+    }
   }
 
   void sortData(String sortType) {
     setState(() {
       switch (sortType) {
         case 'Name':
-          if (sortTypes[sortType]) {
+          if (sortInfo[sortType]!) {
             dataList.sort();
-            sortTypes[sortType] = false;
           } else {
             dataList.sort();
             dataList = List.from(dataList.reversed);
-            sortTypes[sortType] = true;
+          }
+          break;
+        case 'Recent Access':
+          if (sortInfo[sortType]!) {
+            dataList.sort(((b, a) => data['passwords'][a]['watch_time']
+                .compareTo(data['passwords'][b]['watch_time'])));
+          } else {
+            dataList.sort(((a, b) => data['passwords'][a]['watch_time']
+                .compareTo(data['passwords'][b]['watch_time'])));
           }
           break;
       }
@@ -96,19 +113,25 @@ class _ListPasswordsState extends State<ListPasswords> {
                         );
                       },
                       menuChildren: List<MenuItemButton>.generate(
-                        sortTypes.length,
+                        sortInfo.length,
                         (int index) {
-                          String sortTypeKey = sortTypes.keys.elementAt(index);
+                          String sortTypeKey = sortInfo.keys.elementAt(index);
                           return MenuItemButton(
                             onPressed: () => setState(() {
+                              setState(() {
+                                data['settings']['sort_type'] = sortTypeKey;
+                                sortInfo[sortTypeKey] = !sortInfo[sortTypeKey]!;
+                              });
                               sortData(sortTypeKey);
                             }),
                             child: Row(children: [
                               Text(sortTypeKey),
-                              if (sortTypes[sortTypeKey])
-                                const Icon(Icons.arrow_downward, size: 14)
-                              else
-                                const Icon(Icons.arrow_upward, size: 14)
+                              sortTypeKey == data['settings']['sort_type']
+                                  ? sortInfo[sortTypeKey]!
+                                      ? const Icon(Icons.arrow_downward,
+                                          size: 14)
+                                      : const Icon(Icons.arrow_upward, size: 14)
+                                  : Container()
                             ]),
                           );
                         },
@@ -127,11 +150,12 @@ class _ListPasswordsState extends State<ListPasswords> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextField(
+                          autofocus: false,
                           onChanged: (input) {
                             setState(() {
                               filterWord = input;
+                              filterList();
                             });
-                            filterList();
                           },
                           style: const TextStyle(
                               color: Color.fromARGB(255, 216, 212, 243)),
@@ -167,9 +191,21 @@ class _ListPasswordsState extends State<ListPasswords> {
                                       child: Dismissible(
                                           onDismissed: (DismissDirection
                                               dismissDirection) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      '${dataList[index]} deleted.')),
+                                            );
                                             setState(() {
+                                              data['passwords']
+                                                  .remove(dataList[index]);
                                               dataList.removeAt(index);
-                                              getData();
+                                              FileIO.saveData(data).then(
+                                                (value) {
+                                                  getData();
+                                                },
+                                              );
                                             });
                                           },
                                           confirmDismiss: (direction) async {
@@ -198,7 +234,14 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                     .push(
                                                         '/editpwd/${dataList[index]}',
                                                         extra: data)
-                                                    .then((value) => getData());
+                                                    .then((value) {
+                                                  setState(() {
+                                                    FileIO.saveData(data)
+                                                        .then((value) {
+                                                      getData();
+                                                    });
+                                                  });
+                                                });
                                               })),
                                     );
                                   }),

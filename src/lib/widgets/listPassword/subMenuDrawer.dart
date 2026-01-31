@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:src/services/fileio.dart';
 import 'dart:convert';
 
 // ignore: must_be_immutable
@@ -67,7 +68,9 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
                           .push('/systemconfig', extra: data)
-                          .then((value) => widget.getData());
+                          .then((value) {
+                        FileIO.saveData(data).then((value) => widget.getData());
+                      });
                     },
                   )),
               const Divider(height: 1, color: Colors.black),
@@ -94,7 +97,10 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                     onTap: () {
                       GoRouter.of(context)
                           .push('/importexport', extra: data)
-                          .then((value) => widget.getData());
+                          .then((value) {
+                        widget.getData();
+                        GoRouter.of(context).pop();
+                      });
                     },
                   )),
               const Divider(height: 1, color: Colors.black),

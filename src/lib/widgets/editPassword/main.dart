@@ -1,7 +1,9 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/fileio.dart';
+import 'package:src/utils/dateFormat.dart';
 import 'dart:developer';
 
 class EditPassword extends StatefulWidget {
@@ -36,11 +38,10 @@ class _EditPasswordState extends State<EditPassword> {
   void savePassword(Map<String, dynamic> editedPassword) {
     setState(() {
       data['passwords'][primaryKey] = editedPassword;
+      data['passwords'][primaryKey]['mod_time'] = DateTime.now();
       FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
     });
   }
-
-  void timeStamp() async {}
 
   void switchEdit() {
     if (editFlags['readOnly']) {
@@ -132,7 +133,7 @@ class _EditPasswordState extends State<EditPassword> {
                                     cursorColor: Colors.white,
                                     validator: (input) {
                                       if (input!.isEmpty) {
-                                        return '"User Name" is empty.';
+                                        return '"Password Name" is empty.';
                                       } else {
                                         if (data['passwords']
                                                 .containsKey(input) &&
@@ -237,19 +238,29 @@ class _EditPasswordState extends State<EditPassword> {
                                               setState(() {
                                                 passwordVisible =
                                                     !passwordVisible;
+                                                data['passwords'][primaryKey]
+                                                        ['watch_time'] =
+                                                    DateConverter.getNow();
                                               });
                                             },
                                           )),
                                       cursorColor: Colors.white,
                                       validator: (input) {
                                         if (input!.isEmpty) {
-                                          return '"User Name" is empty.';
+                                          return '"Password" is empty.';
                                         } else {
                                           return null;
                                         }
                                       },
                                       onSaved: (String? value) {
                                         editedPassword['password'] = value;
+                                      },
+                                      onTap: () {
+                                        if (editFlags['readOnly']) {
+                                          Clipboard.setData(ClipboardData(
+                                              text: data['passwords']
+                                                  [primaryKey]['password']));
+                                        }
                                       })),
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
@@ -294,7 +305,8 @@ class _EditPasswordState extends State<EditPassword> {
                               editFlags['readOnly']
                                   ? Container()
                                   : Padding(
-                                      padding: EdgeInsets.only(top: paddingTop),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: paddingTop),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           foregroundColor: Colors.black,
