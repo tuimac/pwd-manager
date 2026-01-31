@@ -1,17 +1,19 @@
 // ignore: file_names
-import 'dart:io';
 import 'dart:convert';
-import 'dart:developer';
-import 'package:go_router/go_router.dart';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+<<<<<<< HEAD
 import 'package:src/utils/checkData.dart';
+=======
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 import 'package:flutter/material.dart';
-import 'package:src/services/fileio.dart';
-import 'package:src/widgets/importExport/confirmEncryptDialog.dart';
+import 'package:src/services/logFileIo.dart';
+import 'package:src/widgets/importExport/confirmImport.dart';
+import 'package:src/widgets/importExport/confirmExport.dart';
 
 class ImportExport extends StatefulWidget {
   final Map<String, dynamic> data;
-  const ImportExport({Key? key, required this.data}) : super(key: key);
+  const ImportExport({super.key, required this.data});
 
   @override
   State<ImportExport> createState() => _ImportExportState();
@@ -50,23 +52,25 @@ class _ImportExportState extends State<ImportExport> {
     });
   }
 
-  void get chooseFile async {
+  void chooseFile() {
     try {
-      FilePickerResult? importFile = await FilePicker.platform
-          .pickFiles(type: FileType.custom, allowedExtensions: ['json']);
-
-      if (importFile != null) {
-        String tmpContent =
-            await File(importFile.files.single.path!).readAsString();
-        setState(() {
-          switcher['import']['text']['content'] = tmpContent;
-          switcher['import']['text']['switch'] = true;
-          switcher['import']['button']['import'] = true;
-          switcher['import']['button']['text'] = 'Import Data';
-          switcher['import']['button']['color'] = Colors.green;
-        });
-      }
+      FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json']).then((importFile) {
+        if (importFile != null) {
+          File(importFile.files.single.path!).readAsString().then((data) {
+            setState(() {
+              switcher['import']['text']['content'] = data;
+              switcher['import']['text']['switch'] = true;
+              switcher['import']['button']['import'] = true;
+              switcher['import']['button']['text'] = 'Import Data';
+              switcher['import']['button']['color'] = Colors.green;
+            });
+          });
+        }
+      });
     } catch (e) {
+<<<<<<< HEAD
       log(e.toString());
     }
   }
@@ -78,6 +82,10 @@ class _ImportExportState extends State<ImportExport> {
       GoRouter.of(context).pop();
     } catch (e) {
       log('[ImportData]: ${e.toString()}');
+=======
+      LogFileIO.logging(e.toString());
+      rethrow;
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
     }
   }
 
@@ -120,6 +128,7 @@ class _ImportExportState extends State<ImportExport> {
                   children: importExport,
                 ))),
             isToggleSelected[0]
+                // Import data section
                 ? Column(children: [
                     Padding(
                         padding: EdgeInsets.symmetric(
@@ -134,14 +143,18 @@ class _ImportExportState extends State<ImportExport> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              if (switcher['import']['button']['import']) {
-                                importData();
-                              } else {
-                                chooseFile;
-                              }
-                            });
+                          onPressed: () async {
+                            if (switcher['import']['button']['import']) {
+                              return await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ConfirmImport(
+                                        data: jsonDecode(switcher['import']
+                                            ['text']['content']));
+                                  });
+                            } else {
+                              chooseFile();
+                            }
                           },
                           child: Text(switcher['import']['button']['text']),
                         )),
@@ -175,6 +188,7 @@ class _ImportExportState extends State<ImportExport> {
                                 cursorColor: Colors.black)
                             : Container())
                   ])
+                // Export data section
                 : Padding(
                     padding: EdgeInsets.only(top: uiHeight * 0.015),
                     child: ElevatedButton(
@@ -189,7 +203,7 @@ class _ImportExportState extends State<ImportExport> {
                         return await showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return ConfirmEncryptDialog(data: data);
+                              return ConfirmExport(data: data);
                             });
                       },
                       child: Text(switcher['export']['button']['text']),

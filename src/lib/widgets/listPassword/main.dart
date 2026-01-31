@@ -1,29 +1,35 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/services/fileio.dart';
-import 'package:src/utils/cipher.dart';
+import 'package:src/config/config.dart';
+import 'package:src/services/configFileIO.dart';
+import 'package:src/services/dataFileIO.dart';
+import 'package:src/services/logFileIo.dart';
 import 'package:src/widgets/listPassword/deleteDialog.dart';
 import 'package:src/widgets/listPassword/subMenuDrawer.dart';
 
 class ListPasswords extends StatefulWidget {
-  final Map<String, dynamic> data;
-  const ListPasswords({Key? key, required this.data}) : super(key: key);
+  const ListPasswords({super.key});
 
   @override
   State<ListPasswords> createState() => _ListPasswordsState();
 }
 
 class _ListPasswordsState extends State<ListPasswords> {
-  late Map<String, dynamic> data;
+  late Map<String, dynamic> data = {};
+  late bool dataIsEmpty = true;
+  late Map<String, dynamic> config = {};
   late List dataList = [];
   late String filterWord = '';
+<<<<<<< HEAD
   Map<String, bool> sortInfo = {'Name': true, 'Recent Access': true};
+=======
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
     setState(() {
       data = widget.data;
       dataList = data['passwords'].keys.toList();
@@ -38,11 +44,27 @@ class _ListPasswordsState extends State<ListPasswords> {
         dataList = value['passwords'].keys.toList();
         sortData(data['settings']['sort_type']);
         filterList();
+=======
+    getData();
+  }
+
+  void getData() {
+    DataFileIO.getData().then((dataResult) {
+      ConfigFileIO.getConfig().then((configResult) {
+        setState(() {
+          data = dataResult;
+          dataIsEmpty = false;
+          config = configResult;
+          filterList();
+          sortData();
+        });
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
       });
     });
   }
 
   void filterList() {
+<<<<<<< HEAD
     if (filterWord.isNotEmpty) {
       setState(() {
         List tmpdataList = data['passwords'].keys.toList();
@@ -81,6 +103,51 @@ class _ListPasswordsState extends State<ListPasswords> {
           break;
       }
     });
+=======
+    setState(() {
+      List tmpdataList = data.keys.toList();
+      dataList = tmpdataList
+          .where(
+              (item) => item.toLowerCase().contains(filterWord.toLowerCase()))
+          .toList();
+    });
+  }
+
+  void sortData() {
+    try {
+      setState(() {
+        switch (config['sort_type']['type']) {
+          case 'Name':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => a.compareTo(b));
+            } else {
+              dataList.sort((a, b) => b.compareTo(a));
+            }
+            break;
+          case 'Modify Timestamp':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => data[a]['modify_timestamp']
+                  .compareTo(data[b]['modify_timestamp']));
+            } else {
+              dataList.sort((a, b) => data[b]['modify_timestamp']
+                  .compareTo(data[a]['modify_timestamp']));
+            }
+            break;
+          case 'Watch Timestamp':
+            if (config['sort_type']['state']) {
+              dataList.sort((a, b) => data[a]['watch_timestamp']
+                  .compareTo(data[b]['watch_timestamp']));
+            } else {
+              dataList.sort((a, b) => data[b]['watch_timestamp']
+                  .compareTo(data[a]['watch_timestamp']));
+            }
+            break;
+        }
+      });
+    } catch (e) {
+      LogFileIO.logging(e.toString());
+    }
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
   }
 
   @override
@@ -103,6 +170,7 @@ class _ListPasswordsState extends State<ListPasswords> {
                           Widget? child) {
                         return IconButton(
                           onPressed: () {
+                            FocusScope.of(context).unfocus();
                             if (controller.isOpen) {
                               controller.close();
                             } else {
@@ -112,6 +180,7 @@ class _ListPasswordsState extends State<ListPasswords> {
                           icon: const Icon(Icons.sort),
                         );
                       },
+<<<<<<< HEAD
                       menuChildren: List<MenuItemButton>.generate(
                         sortInfo.length,
                         (int index) {
@@ -136,8 +205,45 @@ class _ListPasswordsState extends State<ListPasswords> {
                           );
                         },
                       ))
+=======
+                      menuChildren: config.isEmpty
+                          ? List.empty()
+                          : List<MenuItemButton>.generate(
+                              Config.sortTypeList.length,
+                              (int index) {
+                                String sortTypeKey = Config.sortTypeList[index];
+                                return MenuItemButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (config['sort_type']['type'] ==
+                                          Config.sortTypeList[index]) {
+                                        config['sort_type']['state'] =
+                                            !config['sort_type']['state'];
+                                      } else {
+                                        config['sort_type']['type'] =
+                                            Config.sortTypeList[index];
+                                        config['sort_type']['state'] = false;
+                                      }
+                                      sortData();
+                                      ConfigFileIO.saveConfig(config);
+                                    });
+                                  },
+                                  child: Row(children: <Widget>[
+                                    Text(sortTypeKey),
+                                    if (config['sort_type']['type'] ==
+                                        Config.sortTypeList[index])
+                                      if (config['sort_type']['state'])
+                                        const Icon(Icons.arrow_downward,
+                                            size: 14)
+                                      else
+                                        const Icon(Icons.arrow_upward, size: 14)
+                                  ]),
+                                );
+                              },
+                            ))
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                 ]),
-            body: data.isEmpty
+            body: dataIsEmpty || config.isEmpty
                 ? Center(
                     child: LoadingAnimationWidget.discreteCircle(
                     color: Colors.white,
@@ -198,6 +304,7 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                       '${dataList[index]} deleted.')),
                                             );
                                             setState(() {
+<<<<<<< HEAD
                                               data['passwords']
                                                   .remove(dataList[index]);
                                               dataList.removeAt(index);
@@ -206,6 +313,9 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                   getData();
                                                 },
                                               );
+=======
+                                              getData();
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                                             });
                                           },
                                           confirmDismiss: (direction) async {
@@ -216,9 +326,13 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                   return DeleteDialog(
                                                       data: data,
                                                       primaryKey:
-                                                          dataList[index],
-                                                      getData: getData);
-                                                });
+                                                          dataList[index]);
+                                                }).then((value) {
+                                              setState(() {
+                                                getData();
+                                              });
+                                              return null;
+                                            });
                                           },
                                           direction:
                                               DismissDirection.endToStart,
@@ -235,11 +349,17 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                         '/editpwd/${dataList[index]}',
                                                         extra: data)
                                                     .then((value) {
+<<<<<<< HEAD
                                                   setState(() {
                                                     FileIO.saveData(data)
                                                         .then((value) {
                                                       getData();
                                                     });
+=======
+                                                  DataFileIO.saveData(data)
+                                                      .then((value) {
+                                                    getData();
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                                                   });
                                                 });
                                               })),

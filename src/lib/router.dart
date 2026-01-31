@@ -5,10 +5,9 @@ import 'package:src/widgets/createPassword/main.dart';
 import 'package:src/widgets/importExport/main.dart';
 import 'package:src/widgets/listPassword/main.dart';
 import 'package:src/widgets/editPassword/main.dart';
-import 'package:src/widgets/logging/main.dart';
 import 'package:src/widgets/restore/main.dart';
 import 'package:src/widgets/systemConfig/main.dart';
-import 'dart:developer';
+import 'package:src/widgets/systemLogs/main.dart';
 
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -21,7 +20,7 @@ class AppRouter {
       GoRoute(
           path: '/listpwd',
           builder: (BuildContext context, GoRouterState state) {
-            return ListPasswords(data: state.extra as Map<String, dynamic>);
+            return const ListPasswords();
           }),
       GoRoute(
           path: '/editpwd/:primaryKey',
@@ -38,7 +37,7 @@ class AppRouter {
       GoRoute(
           path: '/systemconfig',
           builder: (BuildContext context, GoRouterState state) {
-            return SystemConfig(data: state.extra as Map<String, dynamic>);
+            return const SystemConfig();
           }),
       GoRoute(
           path: '/restore',
@@ -51,9 +50,9 @@ class AppRouter {
             return ImportExport(data: state.extra as Map<String, dynamic>);
           }),
       GoRoute(
-          path: '/logging',
+          path: '/systemlogs',
           builder: (BuildContext context, GoRouterState state) {
-            return Logging(data: state.extra as Map<String, dynamic>);
+            return const SystemLogs();
           }),
     ],
   );

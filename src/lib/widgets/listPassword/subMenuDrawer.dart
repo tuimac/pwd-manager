@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+<<<<<<< HEAD
 import 'package:src/services/fileio.dart';
 import 'dart:convert';
+=======
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 
 // ignore: must_be_immutable
 class SubMenuDrawer extends StatefulWidget {
@@ -30,6 +33,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
     Size uiSize = MediaQuery.of(context).size;
     double uiHeight = uiSize.height;
     double uiWidth = uiSize.width;
+    FocusScope.of(context).unfocus();
 
     return Theme(
         data: Theme.of(context).copyWith(
@@ -67,10 +71,15 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                     onTap: () {
                       GoRouter.of(context).pop();
                       GoRouter.of(context)
+<<<<<<< HEAD
                           .push('/systemconfig', extra: data)
                           .then((value) {
                         FileIO.saveData(data).then((value) => widget.getData());
                       });
+=======
+                          .push('/systemconfig')
+                          .then((value) => widget.getData());
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                     },
                   )),
               const Divider(height: 1, color: Colors.black),
@@ -95,11 +104,15 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                   child: ListTile(
                     title: const Text('Import/Export'),
                     onTap: () {
+                      GoRouter.of(context).pop();
                       GoRouter.of(context)
                           .push('/importexport', extra: data)
                           .then((value) {
                         widget.getData();
+<<<<<<< HEAD
                         GoRouter.of(context).pop();
+=======
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                       });
                     },
                   )),
@@ -112,9 +125,7 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                     title: const Text('System Log'),
                     onTap: () {
                       GoRouter.of(context).pop();
-                      GoRouter.of(context)
-                          .push('/logging', extra: data)
-                          .then((value) => widget.getData());
+                      GoRouter.of(context).push('/systemlogs');
                     },
                   ))
             ])));

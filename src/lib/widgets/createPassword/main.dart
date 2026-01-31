@@ -1,14 +1,18 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+<<<<<<< HEAD
 import 'package:src/utils/dateFormat.dart';
 import 'package:src/utils/passwordGen.dart';
 import 'package:src/services/fileio.dart';
 import 'dart:developer';
+=======
+import 'package:src/services/dataFileIO.dart';
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 
 class CreatePassword extends StatefulWidget {
   final Map<String, dynamic> data;
-  const CreatePassword({Key? key, required this.data}) : super(key: key);
+  const CreatePassword({super.key, required this.data});
 
   @override
   State<CreatePassword> createState() => _CreatePasswordState();
@@ -30,11 +34,20 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   void savePassword(Map<String, dynamic> newPassword) async {
     setState(() {
+<<<<<<< HEAD
       data['passwords'][primaryKey] = newPassword;
       data['passwords'][primaryKey]['watch_time'] = DateConverter.getNow();
       data['passwords'][primaryKey]['created_time'] = DateConverter.getNow();
       data['passwords'][primaryKey]['mod_time'] = DateConverter.getNow();
       FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+=======
+      data[primaryKey] = newPassword;
+      String now = DateTime.now().toIso8601String();
+      data[primaryKey]['create_timestamp'] = now;
+      data[primaryKey]['modify_timestamp'] = now;
+      data[primaryKey]['watch_timestamp'] = now;
+      DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
     });
   }
 
@@ -91,15 +104,14 @@ class _CreatePasswordState extends State<CreatePassword> {
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'Password Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
                                       if (input!.isEmpty) {
                                         return '"Password Name" is empty.';
                                       } else {
-                                        if (data['passwords']
-                                            .containsKey(input)) {
+                                        if (data.containsKey(input)) {
                                           return '"$input" have already been registered.';
                                         } else {
                                           if (input.contains('?')) {
@@ -126,9 +138,9 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         horizontal: contentPadding['x']!,
                                       ),
                                       errorStyle:
-                                          TextStyle(color: Colors.white),
-                                      fillColor:
-                                          Color.fromARGB(255, 158, 158, 158),
+                                          const TextStyle(color: Colors.white),
+                                      fillColor: const Color.fromARGB(
+                                          255, 158, 158, 158),
                                       enabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.white, width: 2.0)),
@@ -140,7 +152,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                               color: Colors.white, width: 2.0)),
                                       labelText: 'User Name',
                                       labelStyle:
-                                          TextStyle(color: Colors.white),
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     cursorColor: Colors.white,
                                     validator: (input) {
@@ -254,8 +266,8 @@ class _CreatePasswordState extends State<CreatePassword> {
                                           vertical: 10,
                                           horizontal: contentPadding['x']!,
                                         ),
-                                        fillColor:
-                                            Color.fromARGB(255, 113, 141, 157),
+                                        fillColor: const Color.fromARGB(
+                                            255, 113, 141, 157),
                                         enabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors.white,
@@ -271,7 +283,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.always,
                                         labelText: 'Memo',
-                                        labelStyle: TextStyle(
+                                        labelStyle: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),

@@ -1,10 +1,64 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 class Config {
-  static const String dataDir = 'data';
-  static const String autoBackupDir = 'backup';
-  static const String loggingDir = 'logs';
   static const String dataExtension = '.json';
+<<<<<<< HEAD
   static const String latestData = 'latest.json';
   static const String logFileName = 'pwdm.log';
   static const String passcodeFileExtension = '.psc';
   static Map<String, dynamic> dataTemplate = {'passwords': {}, 'settings': {}};
+=======
+  static Map<String, dynamic> dataTemplate = {};
+  static Map<String, dynamic> configTemplate = {};
+  static List<String> sortTypeList = [
+    'Name',
+    'Modify Timestamp',
+    'Watch Timestamp'
+  ];
+
+  static Future<String> get getBaseDir async {
+    if (Platform.isAndroid) {
+      return (await getApplicationDocumentsDirectory()).path;
+    } else {
+      return (await getLibraryDirectory()).path;
+    }
+  }
+
+  static Future<String> get getDownloadDir async {
+    return (await getDownloadsDirectory())!.path;
+  }
+
+  static Future<String> get getDataPath async {
+    return '${await getBaseDir}/data/latest.json';
+  }
+
+  static Future<String> get getDataDir async {
+    return '${await getBaseDir}/data/';
+  }
+
+  static Future<String> get getConfigPath async {
+    return '${await getBaseDir}/config/config.json';
+  }
+
+  static Future<String> get getConfigDir async {
+    return '${await getBaseDir}/config/';
+  }
+
+  static Future<String> get getLogPath async {
+    return '${await getBaseDir}/log/latest.log';
+  }
+
+  static Future<String> get getLogDir async {
+    return '${await getBaseDir}/log/';
+  }
+
+  static Future<String> get getBackupDir async {
+    return '${await getBaseDir}/backup/';
+  }
+
+  static Future<String> get getPasscodePath async {
+    return '${await getBaseDir}/passcode';
+  }
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 }

@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/services/fileio.dart';
+import 'package:src/services/dataFileIO.dart';
 
 class DeleteDialog extends StatefulWidget {
   final Map<String, dynamic> data;
   final String primaryKey;
-  final Function getData;
-  const DeleteDialog(
-      {Key? key,
-      required this.data,
-      required this.primaryKey,
-      required this.getData})
-      : super(key: key);
+  const DeleteDialog({super.key, required this.data, required this.primaryKey});
 
   @override
   State<DeleteDialog> createState() => _DeleteDialogState();
@@ -29,11 +23,19 @@ class _DeleteDialogState extends State<DeleteDialog> {
     primaryKey = widget.primaryKey;
   }
 
+<<<<<<< HEAD
   void deletePassword() {
     setState(() {
       data['passwords'].remove(primaryKey);
     });
     FileIO.saveData(data);
+=======
+  void deletePassword(BuildContext context) {
+    data.remove(primaryKey);
+    DataFileIO.saveData(data).then((value) {
+      GoRouter.of(context).pop();
+    });
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
   }
 
   @override
@@ -93,7 +95,11 @@ class _DeleteDialogState extends State<DeleteDialog> {
             ),
             onPressed: deleteConfirm == true
                 ? () {
+<<<<<<< HEAD
                     GoRouter.of(context).pop(true);
+=======
+                    deletePassword(context);
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                   }
                 : null)
       ],

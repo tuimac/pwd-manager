@@ -2,15 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+<<<<<<< HEAD
 import 'package:src/services/fileio.dart';
 import 'package:src/utils/dateFormat.dart';
 import 'dart:developer';
+=======
+import 'package:src/services/dataFileIO.dart';
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
 
 class EditPassword extends StatefulWidget {
   final String primaryKey;
   final Map<String, dynamic> data;
-  const EditPassword({Key? key, required this.primaryKey, required this.data})
-      : super(key: key);
+  const EditPassword({super.key, required this.primaryKey, required this.data});
 
   @override
   State<EditPassword> createState() => _EditPasswordState();
@@ -37,9 +40,15 @@ class _EditPasswordState extends State<EditPassword> {
 
   void savePassword(Map<String, dynamic> editedPassword) {
     setState(() {
+<<<<<<< HEAD
       data['passwords'][primaryKey] = editedPassword;
       data['passwords'][primaryKey]['mod_time'] = DateTime.now();
       FileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+=======
+      editedPassword['modify_timestamp'] = DateTime.now().toIso8601String();
+      data[primaryKey] = editedPassword;
+      DataFileIO.saveData(data).then((value) => GoRouter.of(context).pop());
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
     });
   }
 
@@ -97,6 +106,7 @@ class _EditPasswordState extends State<EditPassword> {
                             key: formKey,
                             child: SingleChildScrollView(
                                 child: Column(children: <Widget>[
+                              // Password Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
@@ -135,8 +145,7 @@ class _EditPasswordState extends State<EditPassword> {
                                       if (input!.isEmpty) {
                                         return '"Password Name" is empty.';
                                       } else {
-                                        if (data['passwords']
-                                                .containsKey(input) &&
+                                        if (data.containsKey(input) &&
                                             input != primaryKey) {
                                           return '"$input" have already been registered.';
                                         } else {
@@ -146,18 +155,27 @@ class _EditPasswordState extends State<EditPassword> {
                                     },
                                     onSaved: (String? value) {
                                       if (primaryKey != value) {
-                                        data['passwords'].remove(primaryKey);
+                                        data.remove(primaryKey);
                                         primaryKey = value!;
                                       }
                                     },
                                   )),
+                              // User Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
+                                    onTap: () {
+                                      if (editFlags['readOnly']!) {
+                                        Clipboard.setData(
+                                          ClipboardData(
+                                              text: data[primaryKey]
+                                                  ['username']),
+                                        );
+                                      }
+                                    },
                                     readOnly: editFlags['readOnly']!,
                                     style: TextStyle(fontSize: textSize),
-                                    initialValue: data['passwords'][primaryKey]
-                                        ['username'],
+                                    initialValue: data[primaryKey]['username'],
                                     textInputAction: TextInputAction.next,
                                     decoration: InputDecoration(
                                       filled: true,
@@ -194,13 +212,23 @@ class _EditPasswordState extends State<EditPassword> {
                                       editedPassword['username'] = value;
                                     },
                                   )),
+                              // Password section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
+                                      onTap: () {
+                                        if (editFlags['readOnly']!) {
+                                          Clipboard.setData(
+                                            ClipboardData(
+                                                text: data[primaryKey]
+                                                    ['password']),
+                                          );
+                                        }
+                                      },
                                       readOnly: editFlags['readOnly']!,
                                       style: TextStyle(fontSize: textSize),
-                                      initialValue: data['passwords']
-                                          [primaryKey]['password'],
+                                      initialValue: data[primaryKey]
+                                          ['password'],
                                       textInputAction: TextInputAction.next,
                                       obscureText: passwordVisible,
                                       decoration: InputDecoration(
@@ -238,9 +266,16 @@ class _EditPasswordState extends State<EditPassword> {
                                               setState(() {
                                                 passwordVisible =
                                                     !passwordVisible;
+<<<<<<< HEAD
                                                 data['passwords'][primaryKey]
                                                         ['watch_time'] =
                                                     DateConverter.getNow();
+=======
+                                                data[primaryKey]
+                                                        ['watch_timestamp'] =
+                                                    DateTime.now()
+                                                        .toIso8601String();
+>>>>>>> ad876582df9d66bfeda6f37c78853e6862b2b3d5
                                               });
                                             },
                                           )),
@@ -262,13 +297,13 @@ class _EditPasswordState extends State<EditPassword> {
                                                   [primaryKey]['password']));
                                         }
                                       })),
+                              // Memo section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
                                       readOnly: editFlags['readOnly']!,
                                       style: TextStyle(fontSize: textSize),
-                                      initialValue: data['passwords']
-                                          [primaryKey]['memo'],
+                                      initialValue: data[primaryKey]['memo'],
                                       decoration: InputDecoration(
                                         filled: true,
                                         contentPadding: EdgeInsets.symmetric(
@@ -302,6 +337,7 @@ class _EditPasswordState extends State<EditPassword> {
                                       onSaved: (String? value) {
                                         editedPassword['memo'] = value;
                                       })),
+                              // Edit button section
                               editFlags['readOnly']
                                   ? Container()
                                   : Padding(
