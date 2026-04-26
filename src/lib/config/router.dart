@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/widgets/auth/main.dart';
-import 'package:src/widgets/createPassword/main.dart';
-import 'package:src/widgets/importExport/main.dart';
-import 'package:src/widgets/listPassword/main.dart';
-import 'package:src/widgets/editPassword/main.dart';
-import 'package:src/widgets/restore/main.dart';
-import 'package:src/widgets/systemConfig/main.dart';
-import 'package:src/widgets/systemConfig/testPage.dart';
-import 'package:src/widgets/systemLogs/main.dart';
+import 'package:src/widgets/auth/mainPage.dart';
+import 'package:src/widgets/createPassword/mainPage.dart';
+import 'package:src/widgets/importExport/mainPage.dart';
+import 'package:src/widgets/listPassword/mainPage.dart';
+import 'package:src/widgets/editPassword/mainPage.dart';
+import 'package:src/widgets/restore/mainPage.dart';
+import 'package:src/widgets/systemConfig/mainPage.dart';
+import 'package:src/widgets/systemLogs/mainPage.dart';
 
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -39,11 +38,6 @@ class AppRouter {
           path: '/systemconfig',
           builder: (BuildContext context, GoRouterState state) {
             return const SystemConfig();
-          }),
-      GoRoute(
-          path: '/systemconfig/test',
-          builder: (BuildContext context, GoRouterState state) {
-            return const TestPage();
           }),
       GoRoute(
           path: '/restore',

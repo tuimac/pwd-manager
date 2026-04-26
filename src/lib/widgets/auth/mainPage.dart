@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:src/services/configFileIO.dart';
-import 'package:src/services/logFileIo.dart';
+import 'package:src/services/config_file_io.dart';
+import 'package:src/services/log_file_io.dart';
 import 'package:src/utils/validation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth_android/local_auth_android.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:src/services/configFileIO.dart';
-import 'package:src/services/logFileIo.dart';
+import 'package:src/services/config_file_io.dart';
+import 'package:src/services/log_file_io.dart';
 import 'package:src/utils/validation.dart';
 import 'package:src/utils/cipher.dart';
 import 'package:src/config/config.dart';

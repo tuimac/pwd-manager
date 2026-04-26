@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:src/services/logFileIo.dart';
-import 'router.dart';
+import 'package:src/services/log_file_io.dart';
+import 'config/router.dart';
 
 void main() {
   try {

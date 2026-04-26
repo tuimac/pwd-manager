@@ -20,7 +20,11 @@ class Config {
   }
 
   static Future<String> get getDownloadDir async {
-    return (await getDownloadsDirectory())!.path;
+    if (Platform.isAndroid) {
+      return (await getDownloadsDirectory())!.path;
+    } else {
+      return (await getLibraryDirectory()).path;
+    }
   }
 
   static Future<String> get getDataPath async {

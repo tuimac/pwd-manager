@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:src/services/configFileIO.dart';
-import 'package:src/services/logFileIo.dart';
+import 'package:src/services/config_file_io.dart';
+import 'package:src/services/log_file_io.dart';
 
 class SystemConfig extends StatefulWidget {
   const SystemConfig({super.key});

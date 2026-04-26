@@ -1,6 +1,6 @@
 import 'package:encrypt/encrypt.dart';
-import 'package:src/services/logFileIo.dart';
-import 'package:src/services/passcodeFileIo.dart';
+import 'package:src/services/log_file_io.dart';
+import 'package:src/services/passcode_file_io.dart';
 
 class Cipher {
   static Future<String> encryptData(String data, {String password = ''}) async {

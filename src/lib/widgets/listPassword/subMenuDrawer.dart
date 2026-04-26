@@ -111,18 +111,6 @@ class _SubMenuDrawerState extends State<SubMenuDrawer> {
                       GoRouter.of(context).pop();
                       GoRouter.of(context).push('/systemlogs');
                     },
-                  )),
-              const Divider(height: 1, color: Colors.black),
-              Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 134, 179, 185),
-                  ),
-                  child: ListTile(
-                    title: const Text('Test Page'),
-                    onTap: () {
-                      GoRouter.of(context).pop();
-                      GoRouter.of(context).push('/systemconfig/test');
-                    },
                   ))
             ])));
   }
