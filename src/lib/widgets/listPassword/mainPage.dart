@@ -99,61 +99,57 @@ class _ListPasswordsState extends State<ListPasswords> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-            appBar: AppBar(
-                title: const Text('Password Manager'),
-                backgroundColor: const Color.fromARGB(255, 56, 168, 224),
-                actions: [
-                  MenuAnchor(
-                      builder: (BuildContext context, MenuController controller,
-                          Widget? child) {
-                        return IconButton(
-                          onPressed: () {
-                            FocusScope.of(context).unfocus();
-                            if (controller.isOpen) {
-                              controller.close();
-                            } else {
-                              controller.open();
-                            }
-                          },
-                          icon: const Icon(Icons.sort),
-                        );
+            appBar: AppBar(title: const Text('Password Manager'), actions: [
+              MenuAnchor(
+                  builder: (BuildContext context, MenuController controller,
+                      Widget? child) {
+                    return IconButton(
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
                       },
-                      menuChildren: config.isEmpty
-                          ? List.empty()
-                          : List<MenuItemButton>.generate(
-                              Config.sortTypeList.length,
-                              (int index) {
-                                String sortTypeKey = Config.sortTypeList[index];
-                                return MenuItemButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (config['sort_type']['type'] ==
-                                          Config.sortTypeList[index]) {
-                                        config['sort_type']['state'] =
-                                            !config['sort_type']['state'];
-                                      } else {
-                                        config['sort_type']['type'] =
-                                            Config.sortTypeList[index];
-                                        config['sort_type']['state'] = false;
-                                      }
-                                      sortData();
-                                      ConfigFileIO.saveConfig(config);
-                                    });
-                                  },
-                                  child: Row(children: <Widget>[
-                                    Text(sortTypeKey),
-                                    if (config['sort_type']['type'] ==
-                                        Config.sortTypeList[index])
-                                      if (config['sort_type']['state'])
-                                        const Icon(Icons.arrow_downward,
-                                            size: 14)
-                                      else
-                                        const Icon(Icons.arrow_upward, size: 14)
-                                  ]),
-                                );
+                      icon: const Icon(Icons.sort),
+                    );
+                  },
+                  menuChildren: config.isEmpty
+                      ? List.empty()
+                      : List<MenuItemButton>.generate(
+                          Config.sortTypeList.length,
+                          (int index) {
+                            String sortTypeKey = Config.sortTypeList[index];
+                            return MenuItemButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (config['sort_type']['type'] ==
+                                      Config.sortTypeList[index]) {
+                                    config['sort_type']['state'] =
+                                        !config['sort_type']['state'];
+                                  } else {
+                                    config['sort_type']['type'] =
+                                        Config.sortTypeList[index];
+                                    config['sort_type']['state'] = false;
+                                  }
+                                  sortData();
+                                  ConfigFileIO.saveConfig(config);
+                                });
                               },
-                            ))
-                ]),
+                              child: Row(children: <Widget>[
+                                Text(sortTypeKey),
+                                if (config['sort_type']['type'] ==
+                                    Config.sortTypeList[index])
+                                  if (config['sort_type']['state'])
+                                    const Icon(Icons.arrow_downward, size: 14)
+                                  else
+                                    const Icon(Icons.arrow_upward, size: 14)
+                              ]),
+                            );
+                          },
+                        ))
+            ]),
             body: dataIsEmpty || config.isEmpty
                 ? Center(
                     child: LoadingAnimationWidget.discreteCircle(
@@ -173,15 +169,10 @@ class _ListPasswordsState extends State<ListPasswords> {
                             });
                             filterList();
                           },
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 216, 212, 243)),
+                          style: Theme.of(context).textTheme.bodyMedium,
                           decoration: const InputDecoration(
                               labelText: 'Search',
-                              labelStyle: TextStyle(
-                                  color: Color.fromARGB(255, 216, 212, 243)),
                               hintText: 'Search',
-                              hintStyle: TextStyle(
-                                  color: Color.fromARGB(255, 159, 156, 179)),
                               prefixIcon: Icon(Icons.search),
                               prefixIconColor: Colors.white),
                         ),
@@ -202,8 +193,6 @@ class _ListPasswordsState extends State<ListPasswords> {
                                   itemCount: dataList.length,
                                   itemBuilder: (context, index) {
                                     return Card(
-                                      color: const Color.fromARGB(
-                                          255, 196, 228, 232),
                                       child: Dismissible(
                                           onDismissed: (DismissDirection
                                               dismissDirection) {
@@ -225,7 +214,6 @@ class _ListPasswordsState extends State<ListPasswords> {
                                                 getData();
                                               });
                                               return null;
-                            
                                             });
                                           },
                                           direction:

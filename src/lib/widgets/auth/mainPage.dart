@@ -18,6 +18,7 @@ class Authentication extends StatefulWidget {
 class _AuthenticationState extends State<Authentication> {
   final LocalAuthentication auth = LocalAuthentication();
   int bioAuthFailCount = 0;
+  bool authActionStatus = false;
 
   @override
   void initState() {
@@ -35,6 +36,9 @@ class _AuthenticationState extends State<Authentication> {
 
   Future<void> bioAuth() async {
     try {
+      setState(() {
+        authActionStatus = true;
+      });
       bool authState = await auth.authenticate(
           localizedReason: 'Authenticate to show password list',
           options: const AuthenticationOptions(
@@ -51,6 +55,10 @@ class _AuthenticationState extends State<Authentication> {
           ]);
       if (authState) {
         GoRouter.of(context).go('/listpwd');
+      } else {
+        setState(() {
+          authActionStatus = false;
+        });
       }
     } on PlatformException {
       LogFileIO.logging('Bio authentication PlatformException');
@@ -63,6 +71,39 @@ class _AuthenticationState extends State<Authentication> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+        body: Center(
+            child: AnimatedOpacity(
+                opacity: authActionStatus ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 5000),
+                curve: Curves.easeInOut,
+                child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        gradient: const LinearGradient(colors: [
+                          Colors.blue,
+                          Colors.white,
+                        ])),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.zero,
+                        ),
+                        onPressed: () {
+                          Validation.checkFilePath().then((result) {
+                            ConfigFileIO.getConfig().then((config) {
+                              if (config['bio_auth']) {
+                                bioAuth();
+                              } else {
+                                GoRouter.of(context).go('/listpwd');
+                              }
+                            });
+                          });
+                        },
+                        child: Text('Login again',
+                            style: Theme.of(context).textTheme.bodyLarge))))));
   }
 }
