@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:src/services/logFileIo.dart';
+import 'package:src/services/log_file_io.dart';
 import 'package:src/config/config.dart';
 
 // File read/write service classs

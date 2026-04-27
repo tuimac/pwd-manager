@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:src/services/logFileIo.dart';
-import 'router.dart';
+import 'package:src/config/theme.dart';
+import 'package:src/services/log_file_io.dart';
+import 'config/router.dart';
 
 void main() {
   try {
@@ -16,14 +17,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routeInformationProvider: AppRouter.router.routeInformationProvider,
-      routeInformationParser: AppRouter.router.routeInformationParser,
-      routerDelegate: AppRouter.router.routerDelegate,
-      title: 'PWD Manager',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: const Color.fromARGB(255, 53, 80, 91)),
-    );
+        routeInformationProvider: AppRouter.router.routeInformationProvider,
+        routeInformationParser: AppRouter.router.routeInformationParser,
+        routerDelegate: AppRouter.router.routerDelegate,
+        title: 'PWD Manager',
+        debugShowCheckedModeBanner: false,
+        theme: CustomTheme.getDefault);
   }
 }

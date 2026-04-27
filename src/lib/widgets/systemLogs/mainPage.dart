@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:src/services/logFileIo.dart';
+import 'package:src/services/log_file_io.dart';
 
 class SystemLogs extends StatefulWidget {
   const SystemLogs({super.key});
