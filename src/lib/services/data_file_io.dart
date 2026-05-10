@@ -4,7 +4,7 @@ import 'package:src/services/config_file_io.dart';
 import 'package:src/services/log_file_io.dart';
 import 'package:src/utils/validation.dart';
 import 'package:src/utils/cipher.dart';
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';

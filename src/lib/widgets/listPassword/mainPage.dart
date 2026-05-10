@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 import 'package:src/services/config_file_io.dart';
 import 'package:src/services/data_file_io.dart';
 import 'package:src/services/log_file_io.dart';
