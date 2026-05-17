@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:src/config/theme.dart';
+import 'package:src/common/theme.dart';
 import 'package:src/services/log_file_io.dart';
-import 'config/router.dart';
+import 'common/router.dart';
 
 void main() {
   try {

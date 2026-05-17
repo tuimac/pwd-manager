@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:src/utils/validation.dart';
 import 'package:src/services/log_file_io.dart';
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 
 // File read/write service classs
 class ConfigFileIO {

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 import 'dart:developer';
 
 // File read/write service classs

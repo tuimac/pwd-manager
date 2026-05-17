@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:src/services/log_file_io.dart';
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 
 // File read/write service classs
 class PasscodeIO {

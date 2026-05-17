@@ -19,91 +19,101 @@ class _AuthenticationState extends State<Authentication> {
   final LocalAuthentication auth = LocalAuthentication();
   int bioAuthFailCount = 0;
   bool authActionStatus = false;
+  late Map<String, dynamic> config = {};
 
   @override
   void initState() {
     super.initState();
-    Validation.checkFilePath().then((result) {
-      ConfigFileIO.getConfig().then((config) {
-        if (config['bio_auth']) {
-          bioAuth();
-        } else {
-          GoRouter.of(context).go('/listpwd');
-        }
+    Validation.checkFilePath().then((checkFileResult) {
+      ConfigFileIO.getConfig().then((configResult) {
+        setState(() {
+          config = configResult;
+        });
+        bioAuth();
       });
     });
   }
 
   Future<void> bioAuth() async {
     try {
-      setState(() {
-        authActionStatus = true;
-      });
-      bool authState = await auth.authenticate(
+      if (config['bio_auth'] == true) {
+        final bool authState = await auth.authenticate(
           localizedReason: 'Authenticate to show password list',
           options: const AuthenticationOptions(
             stickyAuth: false,
             biometricOnly: true,
           ),
-          authMessages: [
-            const AndroidAuthMessages(
-              cancelButton: 'PIN auth',
+          authMessages: const [
+            AndroidAuthMessages(
+              cancelButton: 'Cancel',
             ),
-            const IOSAuthMessages(
-              cancelButton: 'PIN auth',
+            IOSAuthMessages(
+              cancelButton: 'Cancel',
             ),
-          ]);
-      if (authState) {
-        GoRouter.of(context).go('/listpwd');
+          ],
+        );
+
+        if (!mounted) return;
+
+        if (authState) {
+          GoRouter.of(context).go('/listpwd');
+        } else {
+          setState(() {
+            authActionStatus = false;
+          });
+          GoRouter.of(context).go('/');
+        }
       } else {
-        setState(() {
-          authActionStatus = false;
-        });
+        if (!mounted) return;
+        GoRouter.of(context).go('/listpwd');
       }
-    } on PlatformException {
-      LogFileIO.logging('Bio authentication PlatformException');
-      GoRouter.of(context).go('/listpwd');
+    } on PlatformException catch (e) {
+      LogFileIO.logging(
+          'Bio authentication PlatformException: ${e.code} ${e.message}');
+
+      if (!mounted) return;
+      GoRouter.of(context).go('/');
     } catch (e) {
       LogFileIO.logging(e.toString());
-      return;
+
+      if (!mounted) return;
+      GoRouter.of(context).go('/');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-            child: AnimatedOpacity(
-                opacity: authActionStatus ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 5000),
-                curve: Curves.easeInOut,
-                child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(999),
-                        gradient: const LinearGradient(colors: [
-                          Colors.blue,
-                          Colors.white,
-                        ])),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shape: const CircleBorder(),
-                          padding: EdgeInsets.zero,
-                        ),
-                        onPressed: () {
-                          Validation.checkFilePath().then((result) {
-                            ConfigFileIO.getConfig().then((config) {
-                              if (config['bio_auth']) {
-                                bioAuth();
-                              } else {
-                                GoRouter.of(context).go('/listpwd');
-                              }
-                            });
-                          });
-                        },
-                        child: Text('Login again',
-                            style: Theme.of(context).textTheme.bodyLarge))))));
+    return config.isEmpty
+        ? Container()
+        : config["bio_auth"]
+            ? Scaffold(
+                body: Center(
+                    child: AnimatedOpacity(
+                        opacity: authActionStatus ? 0.0 : 1.0,
+                        duration: const Duration(milliseconds: 5000),
+                        curve: Curves.easeInOut,
+                        child: Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(999),
+                                gradient: const LinearGradient(colors: [
+                                  Colors.blue,
+                                  Colors.white,
+                                ])),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.zero,
+                                ),
+                                onPressed: () {
+                                  bioAuth();
+                                },
+                                child: Text('Login again',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge))))))
+            : Container();
   }
 }

@@ -1,4 +1,4 @@
-import 'package:src/config/config.dart';
+import 'package:src/common/config.dart';
 import 'package:src/services/config_file_io.dart';
 import 'package:src/services/data_file_io.dart';
 import 'package:src/services/log_file_io.dart';
