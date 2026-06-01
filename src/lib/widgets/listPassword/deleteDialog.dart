@@ -36,7 +36,6 @@ class _DeleteDialogState extends State<DeleteDialog> {
     double uiHeight = uiSize.height;
 
     return AlertDialog(
-      backgroundColor: const Color.fromARGB(255, 209, 226, 228),
       title: Text(
           // ignore: prefer_interpolation_to_compose_strings
           'Delete ' + primaryKey + ' ?'),

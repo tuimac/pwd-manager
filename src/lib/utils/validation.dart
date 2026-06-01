@@ -20,6 +20,16 @@ class Validation {
     if (!config.containsKey('bio_auth')) {
       config['bio_auth'] = false;
     }
+    // Rule for generating password
+    if (!config.containsKey('password_rule')) {
+      config['password_rule'] = {
+        'length': 12,
+        'uppercase': true,
+        'lowercase': true,
+        'numbers': true,
+        'special_chars': true
+      };
+    }
     // Sort Type
     if (!config.containsKey('sort_type')) {
       config['sort_type'] = {'type': 'Modify Timestamp', 'state': false};

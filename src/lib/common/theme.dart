@@ -4,6 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomTheme {
   static ThemeData get getDefault {
     return ThemeData(
+        dialogTheme: const DialogTheme(
+            backgroundColor: Color.fromARGB(255, 209, 226, 228),
+            titleTextStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
         scaffoldBackgroundColor: const Color.fromARGB(255, 53, 80, 91),
         appBarTheme: AppBarTheme(
             titleTextStyle: GoogleFonts.getFont('Outfit',

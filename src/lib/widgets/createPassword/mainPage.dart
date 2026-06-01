@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:src/services/data_file_io.dart';
+import 'package:src/utils/generate_password.dart';
 
 class CreatePassword extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -16,12 +17,21 @@ class _CreatePasswordState extends State<CreatePassword> {
   late bool passwordVisible;
   late String primaryKey;
   final formKey = GlobalKey<FormState>();
+  late String randomPasswordSuggestion = "";
+  TextEditingController? autocompletePasswordController;
+  final ValueNotifier<String> suggestionNotifier = ValueNotifier<String>('');
 
   @override
   void initState() {
     super.initState();
     data = widget.data;
     passwordVisible = true;
+  }
+
+  @override
+  void dispose() {
+    suggestionNotifier.dispose();
+    super.dispose();
   }
 
   void savePassword(Map<String, dynamic> newPassword) async {
@@ -46,9 +56,7 @@ class _CreatePasswordState extends State<CreatePassword> {
     Map<String, double> contentPadding = {'y': 4, 'x': 10};
 
     return Scaffold(
-        appBar: AppBar(
-            title: const Text('Create new Password'),
-            backgroundColor: const Color.fromARGB(255, 56, 168, 224)),
+        appBar: AppBar(title: const Text('Create new Password')),
         body: SafeArea(
             maintainBottomViewPadding: true,
             child: SingleChildScrollView(
@@ -93,7 +101,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                     cursorColor: Colors.white,
                                     validator: (input) {
                                       if (input!.isEmpty) {
-                                        return '"User Name" is empty.';
+                                        return '"Password Name" is empty.';
                                       } else {
                                         if (data.containsKey(input)) {
                                           return '"$input" have already been registered.';
@@ -115,6 +123,9 @@ class _CreatePasswordState extends State<CreatePassword> {
                                   child: TextFormField(
                                     style: TextStyle(fontSize: textSize),
                                     textInputAction: TextInputAction.next,
+                                    keyboardType: TextInputType.text,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     decoration: InputDecoration(
                                       filled: true,
                                       contentPadding: EdgeInsets.symmetric(
@@ -151,11 +162,88 @@ class _CreatePasswordState extends State<CreatePassword> {
                                     },
                                   )),
                               Padding(
-                                  padding: EdgeInsets.only(top: paddingTop),
-                                  child: TextFormField(
+                                padding: EdgeInsets.only(top: paddingTop),
+                                child: Autocomplete<String>(optionsBuilder:
+                                    (TextEditingValue textEditingValue) async {
+                                  suggestionNotifier.value =
+                                      await GeneratePassword.genPassword();
+
+                                  if (textEditingValue.text.isEmpty) {
+                                    return [randomPasswordSuggestion];
+                                  }
+                                  return const Iterable<String>.empty();
+                                }, onSelected: (String selectedValue) {
+                                  // The selected password will be inserted automatically
+                                  // into the TextFormField by Autocomplete.
+                                }, optionsViewBuilder: (
+                                  BuildContext context,
+                                  AutocompleteOnSelected<String> onSelected,
+                                  Iterable<String> options,
+                                ) {
+                                  return Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Material(
+                                      elevation: 4,
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.8,
+                                        child: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          shrinkWrap: true,
+                                          itemCount: options.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return ListTile(
+                                              title: ValueListenableBuilder<
+                                                  String>(
+                                                valueListenable:
+                                                    suggestionNotifier,
+                                                builder: (context, suggestion,
+                                                    child) {
+                                                  return Text(
+                                                    suggestion,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelLarge,
+                                                  );
+                                                },
+                                              ),
+                                              onTap: () {
+                                                onSelected(
+                                                    suggestionNotifier.value);
+                                              },
+                                              trailing: IconButton(
+                                                icon: const Icon(Icons.refresh),
+                                                onPressed: () async {
+                                                  suggestionNotifier.value =
+                                                      await GeneratePassword
+                                                          .genPassword();
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }, fieldViewBuilder: (
+                                  BuildContext context,
+                                  TextEditingController textEditingController,
+                                  FocusNode focusNode,
+                                  VoidCallback onFieldSubmitted,
+                                ) {
+                                  autocompletePasswordController =
+                                      textEditingController;
+                                  return TextFormField(
                                       style: TextStyle(fontSize: textSize),
+                                      controller: textEditingController,
                                       obscureText: passwordVisible,
+                                      focusNode: focusNode,
                                       textInputAction: TextInputAction.next,
+                                      keyboardType: TextInputType.text,
+                                      autovalidateMode: AutovalidateMode
+                                          .onUserInteraction,
                                       decoration: InputDecoration(
                                           filled: true,
                                           contentPadding: EdgeInsets.symmetric(
@@ -196,15 +284,17 @@ class _CreatePasswordState extends State<CreatePassword> {
                                           )),
                                       cursorColor: Colors.white,
                                       validator: (input) {
-                                        if (input!.isEmpty) {
-                                          return '"User Name" is empty.';
+                                        if (input == null || input.isEmpty) {
+                                          return '"Password" is empty.';
                                         } else {
                                           return null;
                                         }
                                       },
                                       onSaved: (String? value) {
                                         newPassword['password'] = value;
-                                      })),
+                                      });
+                                }),
+                              ),
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
