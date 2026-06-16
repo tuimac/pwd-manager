@@ -18,7 +18,6 @@ class _CreatePasswordState extends State<CreatePassword> {
   late String primaryKey;
   final formKey = GlobalKey<FormState>();
   late String randomPasswordSuggestion = "";
-  TextEditingController? autocompletePasswordController;
   final ValueNotifier<String> suggestionNotifier = ValueNotifier<String>('');
 
   @override
@@ -66,6 +65,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                         child: Form(
                             key: formKey,
                             child: Column(children: <Widget>[
+                              // Password Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
@@ -118,6 +118,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       primaryKey = value!;
                                     },
                                   )),
+                              // User Name section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
@@ -161,140 +162,155 @@ class _CreatePasswordState extends State<CreatePassword> {
                                       newPassword['username'] = value;
                                     },
                                   )),
+                              // Password section
                               Padding(
                                 padding: EdgeInsets.only(top: paddingTop),
-                                child: Autocomplete<String>(optionsBuilder:
-                                    (TextEditingValue textEditingValue) async {
-                                  suggestionNotifier.value =
-                                      await GeneratePassword.genPassword();
+                                child: Autocomplete<String>(
+                                    optionsBuilder: (TextEditingValue
+                                        textEditingValue) async {
+                                      suggestionNotifier.value =
+                                          await GeneratePassword.genPassword();
 
-                                  if (textEditingValue.text.isEmpty) {
-                                    return [randomPasswordSuggestion];
-                                  }
-                                  return const Iterable<String>.empty();
-                                }, onSelected: (String selectedValue) {
-                                  // The selected password will be inserted automatically
-                                  // into the TextFormField by Autocomplete.
-                                }, optionsViewBuilder: (
-                                  BuildContext context,
-                                  AutocompleteOnSelected<String> onSelected,
-                                  Iterable<String> options,
-                                ) {
-                                  return Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Material(
-                                      elevation: 4,
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: ListView.builder(
-                                          padding: EdgeInsets.zero,
-                                          shrinkWrap: true,
-                                          itemCount: options.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return ListTile(
-                                              title: ValueListenableBuilder<
-                                                  String>(
-                                                valueListenable:
-                                                    suggestionNotifier,
-                                                builder: (context, suggestion,
-                                                    child) {
-                                                  return Text(
-                                                    suggestion,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelLarge,
-                                                  );
-                                                },
-                                              ),
-                                              onTap: () {
-                                                onSelected(
-                                                    suggestionNotifier.value);
-                                              },
-                                              trailing: IconButton(
-                                                icon: const Icon(Icons.refresh),
-                                                onPressed: () async {
-                                                  suggestionNotifier.value =
-                                                      await GeneratePassword
-                                                          .genPassword();
-                                                },
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
+                                      if (textEditingValue.text.isEmpty) {
+                                        return [randomPasswordSuggestion];
+                                      }
+                                      return const Iterable<String>.empty();
+                                    },
+                                    initialValue: const TextEditingValue(
+                                      text: '',
                                     ),
-                                  );
-                                }, fieldViewBuilder: (
-                                  BuildContext context,
-                                  TextEditingController textEditingController,
-                                  FocusNode focusNode,
-                                  VoidCallback onFieldSubmitted,
-                                ) {
-                                  autocompletePasswordController =
-                                      textEditingController;
-                                  return TextFormField(
-                                      style: TextStyle(fontSize: textSize),
-                                      controller: textEditingController,
-                                      obscureText: passwordVisible,
-                                      focusNode: focusNode,
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType: TextInputType.text,
-                                      autovalidateMode: AutovalidateMode
-                                          .onUserInteraction,
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          contentPadding: EdgeInsets.symmetric(
-                                            vertical: contentPadding['y']!,
-                                            horizontal: contentPadding['x']!,
+                                    onSelected: (String selectedValue) {
+                                      // The selected password will be inserted automatically
+                                      // into the TextFormField by Autocomplete.
+                                    },
+                                    optionsViewBuilder: (
+                                      BuildContext context,
+                                      AutocompleteOnSelected<String> onSelected,
+                                      Iterable<String> options,
+                                    ) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 4,
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            child: ListView.builder(
+                                              padding: EdgeInsets.zero,
+                                              shrinkWrap: true,
+                                              itemCount: options.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return ListTile(
+                                                  title: ValueListenableBuilder<
+                                                      String>(
+                                                    valueListenable:
+                                                        suggestionNotifier,
+                                                    builder: (context,
+                                                        suggestion, child) {
+                                                      return Text(
+                                                        suggestion,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .labelLarge,
+                                                      );
+                                                    },
+                                                  ),
+                                                  onTap: () {
+                                                    onSelected(
+                                                        suggestionNotifier
+                                                            .value);
+                                                  },
+                                                  trailing: IconButton(
+                                                    icon: const Icon(
+                                                        Icons.refresh),
+                                                    onPressed: () async {
+                                                      suggestionNotifier.value =
+                                                          await GeneratePassword
+                                                              .genPassword();
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                            ),
                                           ),
-                                          errorStyle: const TextStyle(
-                                              color: Colors.white),
-                                          fillColor: const Color.fromARGB(
-                                              255, 158, 158, 158),
-                                          enabledBorder:
-                                              const OutlineInputBorder(
+                                        ),
+                                      );
+                                    },
+                                    fieldViewBuilder: (
+                                      BuildContext context,
+                                      TextEditingController
+                                          textEditingController,
+                                      FocusNode focusNode,
+                                      VoidCallback onFieldSubmitted,
+                                    ) {
+                                      return TextFormField(
+                                          style: TextStyle(fontSize: textSize),
+                                          controller: textEditingController,
+                                          obscureText: passwordVisible,
+                                          focusNode: focusNode,
+                                          textInputAction: TextInputAction.next,
+                                          keyboardType: TextInputType.text,
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
+                                          decoration: InputDecoration(
+                                              filled: true,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                vertical: contentPadding['y']!,
+                                                horizontal:
+                                                    contentPadding['x']!,
+                                              ),
+                                              errorStyle: const TextStyle(
+                                                  color: Colors.white),
+                                              fillColor: const Color.fromARGB(
+                                                  255, 158, 158, 158),
+                                              enabledBorder:
+                                                  const OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Colors.white,
+                                                          width: 2.0)),
+                                              focusedBorder:
+                                                  const OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Colors.white,
+                                                          width: 2.0)),
+                                              border: const OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: Colors.white,
                                                       width: 2.0)),
-                                          focusedBorder:
-                                              const OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0)),
-                                          border: const OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white,
-                                                  width: 2.0)),
-                                          labelText: 'Password',
-                                          labelStyle: const TextStyle(
-                                              color: Colors.white),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(passwordVisible
-                                                ? Icons.visibility_off
-                                                : Icons.visibility),
-                                            onPressed: () {
-                                              setState(() {
-                                                passwordVisible =
-                                                    !passwordVisible;
-                                              });
-                                            },
-                                          )),
-                                      cursorColor: Colors.white,
-                                      validator: (input) {
-                                        if (input == null || input.isEmpty) {
-                                          return '"Password" is empty.';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      onSaved: (String? value) {
-                                        newPassword['password'] = value;
-                                      });
-                                }),
+                                              labelText: 'Password',
+                                              labelStyle: const TextStyle(
+                                                  color: Colors.white),
+                                              suffixIcon: IconButton(
+                                                icon: Icon(passwordVisible
+                                                    ? Icons.visibility_off
+                                                    : Icons.visibility),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    passwordVisible =
+                                                        !passwordVisible;
+                                                  });
+                                                },
+                                              )),
+                                          cursorColor: Colors.white,
+                                          validator: (input) {
+                                            if (input == null ||
+                                                input.isEmpty) {
+                                              return '"Password" is empty.';
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                          onSaved: (String? value) {
+                                            newPassword['password'] = value;
+                                          });
+                                    }),
                               ),
+                              // Memo section
                               Padding(
                                   padding: EdgeInsets.only(top: paddingTop),
                                   child: TextFormField(
