@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomTheme {
   static ThemeData get getDefault {
     return ThemeData(
-        dialogTheme: const DialogTheme(
+        dialogTheme: const DialogThemeData(
             backgroundColor: Color.fromARGB(255, 209, 226, 228),
             titleTextStyle: TextStyle(
                 color: Colors.black,
